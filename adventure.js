@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.1-01';
+  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.1-02';
   const fingerprint=text=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return `${text.length}:${h>>>0}`};
   const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-all'},custom:[],water:0,suns:0,growth:0,flowers:[],history:[],active:null});
   const freshNavy=()=>({totalArrows:0,history:[],legacyHistory:[],active:null});
@@ -20,11 +20,26 @@
   const active=()=>state.navy.active;
   const ended=a=>!a||['won','sunk'].includes(a.phase);
   function renderInventory(){renderVocabulary();$('inventory').textContent=`💧 ${state.garden.water}　☀ ${state.garden.suns}　🌸 ${state.garden.flowers.length}`}
+  function answerTotals(){
+    const a=active(),saved=state.navy.history.some(h=>h.id===a?.id);
+    const wrong=[...state.navy.legacyHistory,...state.navy.history].reduce((sum,h)=>sum+h.total-h.correct,0)+(a&&!saved?a.holes:0);
+    return {correct:state.navy.totalArrows,wrong,roundCorrect:a?.correct||0,roundWrong:a?.holes||0};
+  }
+  function renderAnswerTotals(){const totals=answerTotals();$('answer-totals').textContent=`历史累计：答对 ${totals.correct} · 答错 ${totals.wrong}`;}
+  function renderCaptain(holes,phase){
+    const pose=holes===0?0:holes<=2?1:holes<=4?2:holes<=7?3:4;
+    const labels=['稳坐摇扇','船歪了，扶稳船边','坐不稳了，赶紧撑住','半站起来，抓紧船舷','船快沉了，抱紧船边'];
+    const body=$('kongming-body'),panel=$('captain-panel'),sunk=phase==='sunk';
+    for(const node of [body,panel]){node.dataset.pose=String(pose);node.dataset.phase=phase||'ready';node.style.setProperty('--pose-position',`${pose*25}%`);}
+    body.style.setProperty('--body-balance',`${[0,-2,-5,-10,-14][pose]}deg`);
+    body.setAttribute('aria-label',`诸葛亮：${sunk?'随草船沉入江水':labels[pose]}`);
+    $('captain-state').textContent=sunk?'草船沉没，下次再来':phase==='won'?'满载归来！':labels[pose];
+  }
   function renderBoat(){
     const a=active(),holes=Math.min(a?.holes||0,10),damage=Math.min(holes,9),heel=damage*8;
-    $('arrow-count').textContent=`收箭 ${a?.correct||0} / 10`;
+    renderCaptain(a?.holes||0,a?.phase);$('arrow-count').textContent=`答对 ${a?.correct||0} / 10`;renderAnswerTotals();
     $('timer').textContent=`${Math.ceil((a?.remaining??state.settings.seconds*1000)/1000)} 秒`;
-    $('leak-label').textContent=`漏水 ${a?.holes||0} 处 · 连续失误 ${a?.streak||0} / 10`;
+    $('leak-label').textContent=`本轮答错 ${a?.holes||0} · 累计漏水 ${a?.holes||0} / 10（答对不减）`;
     const spots=[28,78,40,65,52,34,72,46,60,82];
     $('holes').innerHTML=Array.from({length:holes},(_,i)=>`<span class="hull-hole" style="left:${spots[i]}%;top:${83+(i%3)*2}%"></span>`).join('');
     $('stuck-arrows').innerHTML=Array.from({length:Math.min(a?.correct||0,10)},(_,i)=>`<i class="arrow-slot" data-index="${i}" style="left:${[27,37,47,65,74,82][i%6]+(i>=6?2:0)}%;top:${i<6?71:75}%">${arrowSVG()}</i>`).join('');
@@ -49,7 +64,7 @@
   function pause(show=true){clearTimeout(endTimer);VoyageAudio.stop();VictoryVoice.stop();stopWater();$('river').classList.add('paused');running=false;cancelAnimationFrame(raf);C.stopSpeech();setLeakSound(0);if(!ended(active()))saveRemaining(true);if(show&&!ended(active()))overlay('雾江暂歇，进度已保存','剩余时间已暂停。回来后继续这一题，已经获得的奖励不会重复发放。','继续借箭 →');else if(show&&active())renderLanding()}
   function clearRain(){drops=[];$('rain').replaceChildren();spawnClock=0;targetClock=0}
   function announce(){const a=active();if(!a||ended(a))return;$('sail-word').textContent=a.word[a.language==='meaning'?0:1];$('cue').textContent=a.language==='meaning'?'听英文，看英文提示，找中文意思':'听英文，看中文提示，找英文单词';VoyageAudio.speechBegin();C.speak(a.word[0],ok=>{VoyageAudio.speechEnd();if(!ok&&running)$('cue').textContent='声音暂不可用，仍可看船帆答题'})}
-  function resume(){reloadState();if(['correct','wrong'].includes(active()?.phase))continueOldAnswer();const a=active();if(ended(a))return start();if(!update(s=>{s.navy.active.paused=false}))return;$('overlay').hidden=true;$('river').classList.remove('paused');running=true;VoyageAudio.start(a.holes);lastFrame=performance.now();clearRain();resetSelection();renderBoat();announce();spawn(true);spawn(false);startWater();raf=requestAnimationFrame(tick)}
+  function resume(){reloadState();if(!ended(active())&&active().holes>=10)return finish('sunk');if(['correct','wrong'].includes(active()?.phase))continueOldAnswer();const a=active();if(ended(a))return start();if(!update(s=>{s.navy.active.paused=false}))return;$('overlay').hidden=true;$('river').classList.remove('paused');running=true;VoyageAudio.start(a.holes);lastFrame=performance.now();clearRain();resetSelection();renderBoat();announce();spawn(true);spawn(false);startWater();raf=requestAnimationFrame(tick)}
   function chooseWord(exclude){let pool=C.words(state.garden).filter(w=>w[0]!==exclude);if(!pool.length)pool=C.words(state.garden);return C.copy(pool[Math.floor(Math.random()*pool.length)])}
   function start(){clearTimeout(endTimer);VoyageAudio.stop();VictoryVoice.stop();if(!ended(active()))return resume();sinkingUntil=0;waterParticles=[];stopWater();$('effects').replaceChildren();const opts={mode:$('mode').value,language:$('language').value,seconds:Number($('seconds').value)};if(!update(s=>{s.settings=opts;s.navy.active={id:C.uid(),word:chooseWord(),index:0,correct:0,streak:0,holes:0,batchCorrect:0,...opts,remaining:opts.seconds*1000,phase:'ready',paused:true}}))return;$('hero-boat').classList.remove('sinking');$('feedback').textContent='';resume()}
   function arrowSVG(){return '<svg viewBox="0 0 104 26" aria-hidden="true"><path d="M7 13H91" stroke="#493523" stroke-width="5"/><path d="M7 12H91" stroke="#e6c382" stroke-width="2.5"/><path d="M6 13L1 4L18 9L23 13L17 18L1 22Z" fill="#eee3ce" stroke="#695643" stroke-width="1"/><path d="M89 13L100 7L96 13L100 19Z" fill="#e2edf0" stroke="#647e88" stroke-width="1"/></svg>'}
@@ -111,16 +126,16 @@
   function answer(value,sourcePoint,expectedKey){
     const a=active();if(!running||!a||a.phase!=='ready'||(expectedKey&&expectedKey!==questionKey(a)))return false;
     const oldWord=C.copy(a.word),nextWord=chooseWord(a.word[0]),ok=value!==null&&value===a.word[a.language==='meaning'?1:0],outcome=ok?'correct':value===null?'timeout':'wrong';
-    if(!update(s=>{const r=s.navy.active;if(questionKey(r)!==questionKey(a)||r.phase!=='ready')return false;r.phase=ok?'correct':'wrong';r.lastReview={word:oldWord,outcome};if(ok){r.correct++;r.batchCorrect++;r.streak=0;s.navy.totalArrows++;s.garden.water++}else{r.streak++;r.holes++}if(r.correct<10&&r.streak<10){assessBatch(s);r.index++;r.word=nextWord;r.phase='ready';r.remaining=r.seconds*1000}})){pause();return false}
+    if(!update(s=>{const r=s.navy.active;if(questionKey(r)!==questionKey(a)||r.phase!=='ready')return false;r.phase=ok?'correct':'wrong';r.lastReview={word:oldWord,outcome};if(ok){r.correct++;r.batchCorrect++;r.streak=0;s.navy.totalArrows++;s.garden.water++}else{r.streak++;r.holes++}if(r.correct<10&&r.holes<10){assessBatch(s);r.index++;r.word=nextWord;r.phase='ready';r.remaining=r.seconds*1000}})){pause();return false}
     resetSelection();clearRain();renderBoat();
     if(ok){shoot(sourcePoint);$('feedback').textContent='收箭 +1 · 水滴 +1，下一题已开始'}else{if(!VoyageAudio.effect('crack'))C.sound('miss');$('feedback').textContent=outcome==='timeout'?'超时漏水，下一题已开始':'选错漏水，下一题已开始'}
-    if(active().streak===10){finish('sunk');return false}if(active().correct>=10){finish('won');return true}
+    if(active().holes>=10){finish('sunk');return false}if(active().correct>=10){finish('won');return true}
     lastFrame=performance.now();announce();if(!ok&&active().holes===5)VoyageAudio.queueFive();spawn(true);spawn(false);return ok;
   }
-  function continueOldAnswer(){const a=active();if(!a)return;if(a.streak===10)return finish('sunk');if(a.correct>=10)return finish('won');const word=C.copy(a.word),next=chooseWord(a.word[0]);update(s=>{const r=s.navy.active;assessBatch(s);r.lastReview={word,outcome:r.phase==='correct'?'correct':'wrong'};r.index++;r.word=next;r.phase='ready';r.remaining=r.seconds*1000})}
+  function continueOldAnswer(){const a=active();if(!a)return;if(a.holes>=10)return finish('sunk');if(a.correct>=10)return finish('won');const word=C.copy(a.word),next=chooseWord(a.word[0]);update(s=>{const r=s.navy.active;assessBatch(s);r.lastReview={word,outcome:r.phase==='correct'?'correct':'wrong'};r.index++;r.word=next;r.phase='ready';r.remaining=r.seconds*1000})}
   function assessBatch(s){const a=s.navy.active;if((a.index+1)%10===0){if(a.batchCorrect>=9)s.garden.suns++;a.batchCorrect=0}}
   function deadline(){if(!running||ended(active())||pendingEnd)return;pendingEnd=true;try{answer(null,undefined,questionKey())}finally{pendingEnd=false}}
-  function finish(outcome){running=false;cancelAnimationFrame(raf);C.stopSpeech();setLeakSound(0);resetSelection();if(!update(s=>{const r=s.navy.active;assessBatch(s);r.phase=outcome;r.paused=true;r.remaining=0;if(!s.navy.history.some(h=>h.id===r.id))s.navy.history.push({id:r.id,at:new Date().toISOString(),correct:r.correct,total:r.index+1,mode:'听音＋看帆',outcome})})){pause();return}renderBoat();renderRecords();VoyageAudio.terminal(outcome);const a=active();if(outcome==='sunk'){sinkingUntil=performance.now()+2600;startWater();$('hero-boat').classList.add('sinking');endTimer=setTimeout(()=>{if(active()?.phase==='sunk')overlay('草船沉没，下次再出发','连续失误十题。已经获得的水滴仍在花园里，放慢速度再试试。','重新启航 →')},2500)}else{stopWater();endTimer=setTimeout(()=>{if(active()?.id===a.id&&active()?.phase==='won'&&view==='voyage')overlay('“哈哈，孔明，谢谢丞相赐箭！”',`已收齐十支箭，本次正确率 ${Math.round(a.correct/(a.index+1)*100)}%。每十题考核达到90%，额外送一颗太阳。奖励已送到花园。`,'再次启航 →',true);if(active()?.id===a.id&&active()?.phase==='won'&&view==='voyage'&&!document.hidden)VictoryVoice.play()},1100)}}
+  function finish(outcome){running=false;cancelAnimationFrame(raf);C.stopSpeech();setLeakSound(0);resetSelection();if(!update(s=>{const r=s.navy.active;assessBatch(s);r.phase=outcome;r.paused=true;r.remaining=0;if(!s.navy.history.some(h=>h.id===r.id))s.navy.history.push({id:r.id,at:new Date().toISOString(),correct:r.correct,total:r.index+1,mode:'听音＋看帆',outcome})})){pause();return}renderBoat();renderRecords();VoyageAudio.terminal(outcome);const a=active();if(outcome==='sunk'){$('feedback').textContent='累计漏水十处，草船正在沉没…';sinkingUntil=performance.now()+2600;startWater();$('hero-boat').classList.add('sinking');endTimer=setTimeout(()=>{if(active()?.phase==='sunk')overlay('草船沉没，下次再出发','本轮累计答错或超时十题，草船沉没。已获得的水滴保留，下次再来。','重新启航 →')},2500)}else{$('feedback').textContent='十支箭已收齐，满载归航！';stopWater();endTimer=setTimeout(()=>{if(active()?.id===a.id&&active()?.phase==='won'&&view==='voyage')overlay('“哈哈，孔明，谢谢丞相赐箭！”',`已收齐十支箭，本次正确率 ${Math.round(a.correct/(a.index+1)*100)}%。每十题考核达到90%，额外送一颗太阳。奖励已送到花园。`,'再次启航 →',true);if(active()?.id===a.id&&active()?.phase==='won'&&view==='voyage'&&!document.hidden)VictoryVoice.play()},1100)}}
   function spawn(target=false){const a=active();if(!a||ended(a)||drops.length>=35)return;const pool=C.distractors(a.word,state.garden,12);const word=target?a.word:pool[Math.floor(Math.random()*pool.length)];const b=document.createElement('button');b.type='button';b.className='rain-word';b.textContent=word[a.language==='meaning'?1:0];b.setAttribute('aria-label',`选择 ${b.textContent}`);b.style.fontSize=`${15+Math.random()*3}px`;$('rain').append(b);const width=$('rain').clientWidth-b.offsetWidth-10;let x=5+Math.random()*Math.max(0,width);for(let k=0;k<8&&drops.some(d=>d.y<52&&Math.abs(d.x-x)<Math.max(d.b.offsetWidth,b.offsetWidth)+8);k++)x=5+Math.random()*Math.max(0,width);if(drops.some(d=>d.y<0&&d.x<x+b.offsetWidth+4&&d.x+d.b.offsetWidth+4>x)){b.remove();return}let speed=30+Math.random()*24;for(const old of drops)if(old.x<x+b.offsetWidth+4&&old.x+old.b.offsetWidth+4>x)speed=Math.min(speed,old.speed);const d={b,x,y:-46,speed,angle:Math.random()*6-3};b.style.transform=`translate(${x}px,-46px) rotate(${d.angle}deg)`;b.onclick=()=>{const r=b.getBoundingClientRect(),stage=$('river').getBoundingClientRect();selectAnswer(b.textContent,{x:r.left+r.width/2-stage.left,y:r.top+r.height/2-stage.top},b)};drops.push(d)}
   function tick(now){if(!running)return;const elapsed=Math.max(0,(now-lastFrame)/1000),dt=Math.min(elapsed,.15);lastFrame=now;active().remaining=Math.max(0,active().remaining-elapsed*1000);$('timer').textContent=`${Math.ceil(active().remaining/1000)} 秒`;spawnClock+=dt;targetClock+=dt;if(spawnClock>.42){spawnClock=0;spawn(false)}if(targetClock>1.8){targetClock=0;spawn(true)}const h=$('rain').clientHeight;drops=drops.filter(d=>{d.y+=d.speed*dt;d.b.style.transform=`translate(${d.x}px,${d.y}px) rotate(${d.angle}deg)`;if(d.y>h+45){d.b.remove();return false}return true});if(active().remaining<=0)deadline();if(running)raf=requestAnimationFrame(tick)}
   function switchView(next){pause(false);view=next;$('voyage-view').hidden=next!=='voyage';$('garden-view').hidden=next!=='garden';$('nav-voyage').setAttribute('aria-selected',String(next==='voyage'));$('nav-garden').setAttribute('aria-selected',String(next==='garden'));if(next==='garden')$('garden-frame').src='garden/?embed=1';else{reloadState();renderBoat();renderRecords();renderLanding()}window.scrollTo(0,0)}
@@ -135,5 +150,5 @@
   $('offline-status').textContent=`版本 ${RELEASE} · 离线资源准备中…`;
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>{$('offline-status').textContent=`版本 ${RELEASE} · 离线已准备 · 点中自动射箭，立即换题`}).catch(()=>{$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，请联网重新打开`});
   $('check-update').onclick=async()=>{pause(false);$('check-update').disabled=true;try{const reg=await navigator.serviceWorker?.getRegistration();await reg?.update();const r=await fetch(`index.html?update=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw Error('network');location.reload()}catch{$('check-update').disabled=false;C.toast('暂时无法联网更新，存档已保留。')}};
-  window.Adventure={release:RELEASE,get state(){return state},update,validate,validGarden,validNavy,start,resume,pause,answer,deadline,finish,switchView,restore,spawn,fire,selectAnswer,questionKey,get waterStats(){return {particles:waterParticles.length,active:!!waterRaf,sinking:sinkingUntil>performance.now()}},get running(){return running},get drops(){return drops}};
+  window.Adventure={release:RELEASE,get state(){return state},update,validate,validGarden,validNavy,start,resume,pause,answer,deadline,finish,switchView,restore,spawn,fire,selectAnswer,questionKey,answerTotals,get waterStats(){return {particles:waterParticles.length,active:!!waterRaf,sinking:sinkingUntil>performance.now()}},get running(){return running},get drops(){return drops}};
 })();
