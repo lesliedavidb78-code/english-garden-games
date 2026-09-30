@@ -1,0 +1,55 @@
+{
+  "at": "2026-09-30T14:45:48.237Z",
+  "site": "http://127.0.0.1:8086/",
+  "environment": "Chrome 390×844，实际WAV浏览器解码及播放状态；未做iPhone真机检查",
+  "checks": [
+    {
+      "name": "版本9.30-11默认加载用户录音，浏览器解码4.5秒",
+      "result": "PASS"
+    },
+    {
+      "name": "字幕、台词和设置状态更新",
+      "result": "PASS"
+    },
+    {
+      "name": "十题胜利人物出场并自动播放真实音频",
+      "result": "PASS"
+    },
+    {
+      "name": "不再调用系统语音朗读胜利台词，奖励保留",
+      "result": "PASS"
+    },
+    {
+      "name": "暂停停止录音",
+      "result": "PASS"
+    },
+    {
+      "name": "重听按钮播放同一录音",
+      "result": "PASS"
+    },
+    {
+      "name": "切换花园停止录音",
+      "result": "PASS"
+    },
+    {
+      "name": "新局停止胜利录音",
+      "result": "PASS"
+    },
+    {
+      "name": "仍支持本机配音覆盖",
+      "result": "PASS"
+    },
+    {
+      "name": "移除本机配音恢复默认用户录音，学习奖励不清除",
+      "result": "PASS"
+    },
+    {
+      "name": "v11预缓存录音",
+      "result": "PASS"
+    },
+    {
+      "name": "断网重开可播放录音，进度保留",
+      "result": "PASS"
+    }
+  ]
+}
