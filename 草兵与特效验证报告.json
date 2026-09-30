@@ -1,0 +1,78 @@
+{
+  "at": "2026-09-30T02:59:56.329Z",
+  "environment": "Chrome 390×844模拟手机，真实鼠标输入；系统英文朗读回调为模拟，音效仅验证AudioContext运行",
+  "checks": [
+    {
+      "name": "英文朗读与帆上原词同时出现",
+      "result": "PASS"
+    },
+    {
+      "name": "新图已加载人形草兵素材",
+      "result": "PASS"
+    },
+    {
+      "name": "实际点选正确词触发可见飞箭",
+      "result": "PASS"
+    },
+    {
+      "name": "箭落到草兵后留下箭杆并触发冲击、草屑和大字奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "箭和水滴只增加一次",
+      "result": "PASS"
+    },
+    {
+      "name": "音效使用已运行的设备AudioContext",
+      "result": "PASS"
+    },
+    {
+      "name": "同题重复点击不给奖励，并明确提示已经收箭",
+      "result": "PASS"
+    },
+    {
+      "name": "误点只新增一个喷水洞，重复选择提示首答已记录",
+      "result": "PASS"
+    },
+    {
+      "name": "四孔倾斜32度、水位上升，出现危险氛围",
+      "result": "PASS"
+    },
+    {
+      "name": "五孔倾斜40度，持续水柱和水滴",
+      "result": "PASS"
+    },
+    {
+      "name": "正确中断连错，已有喷水洞与倾斜仍保留",
+      "result": "PASS"
+    },
+    {
+      "name": "暂停停止漏水声音，进度与精确时间保存",
+      "result": "PASS"
+    },
+    {
+      "name": "刷新保留船损、插箭、水滴与船帆英文",
+      "result": "PASS"
+    },
+    {
+      "name": "旧看帆存档也同时播放英文和显示原词",
+      "result": "PASS"
+    },
+    {
+      "name": "九次连续超时仍未沉船",
+      "result": "PASS"
+    },
+    {
+      "name": "仍按连续十题失误沉船，奖励不被扣除",
+      "result": "PASS"
+    },
+    {
+      "name": "v6离线缓存包含新草兵素材",
+      "result": "PASS"
+    },
+    {
+      "name": "减少动态偏好关闭持续喷水动画但保留静态喷水",
+      "result": "PASS"
+    }
+  ]
+}
