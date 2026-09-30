@@ -1,0 +1,130 @@
+{
+  "at": "2026-09-30T01:34:06.808Z",
+  "environment": "Desktop Chrome headless; mobile viewport 390x844; localhost secure context. Speech callbacks mocked for deterministic tests; not a real iPhone.",
+  "results": [
+    {
+      "name": "Garden mobile layout fits 390 px",
+      "result": "PASS"
+    },
+    {
+      "name": "Actual letter buttons submit spelling and award one drop",
+      "result": "PASS"
+    },
+    {
+      "name": "Repeated answer cannot duplicate drop",
+      "result": "PASS"
+    },
+    {
+      "name": "Reload restores answered question and earned drop",
+      "result": "PASS"
+    },
+    {
+      "name": "90% gives 9 drops and one sun",
+      "result": "PASS"
+    },
+    {
+      "name": "Reload and duplicate settlement cannot repeat sun",
+      "result": "PASS"
+    },
+    {
+      "name": "80% gives drops without sun",
+      "result": "PASS"
+    },
+    {
+      "name": "100 point bloom keeps flower and carries surplus",
+      "result": "PASS"
+    },
+    {
+      "name": "Water consumption persists growth",
+      "result": "PASS"
+    },
+    {
+      "name": "Flowers, inventory and growth survive reload",
+      "result": "PASS"
+    },
+    {
+      "name": "Invalid custom words rejected",
+      "result": "PASS"
+    },
+    {
+      "name": "Four valid textbook words accepted",
+      "result": "PASS"
+    },
+    {
+      "name": "Bad import preserves original progress",
+      "result": "PASS"
+    },
+    {
+      "name": "Backup import restores saved growth",
+      "result": "PASS"
+    },
+    {
+      "name": "Service worker cached both apps and local assets",
+      "result": "PASS"
+    },
+    {
+      "name": "Garden opens offline and retains progress",
+      "result": "PASS"
+    },
+    {
+      "name": "Second independent app opens offline",
+      "result": "PASS"
+    },
+    {
+      "name": "Navy mobile layout fits 390 px",
+      "result": "PASS"
+    },
+    {
+      "name": "Garden backup cannot be imported as navy",
+      "result": "PASS"
+    },
+    {
+      "name": "Rain creates moving tappable word cards",
+      "result": "PASS"
+    },
+    {
+      "name": "Actual rain selection sends one arrow",
+      "result": "PASS"
+    },
+    {
+      "name": "Repeated tap cannot award another arrow",
+      "result": "PASS"
+    },
+    {
+      "name": "Wrong first answer queues reinforcement",
+      "result": "PASS"
+    },
+    {
+      "name": "Interrupted voyage retains arrows and missed word",
+      "result": "PASS"
+    },
+    {
+      "name": "Retry fills fleet without inflating accuracy",
+      "result": "PASS"
+    },
+    {
+      "name": "Zhuge Liang thanks player when fleet is full",
+      "result": "PASS"
+    },
+    {
+      "name": "Victory cannot be settled twice",
+      "result": "PASS"
+    },
+    {
+      "name": "Translation mode displays Chinese options",
+      "result": "PASS"
+    },
+    {
+      "name": "Pause stops countdown",
+      "result": "PASS"
+    },
+    {
+      "name": "Game save keys are independent",
+      "result": "PASS"
+    },
+    {
+      "name": "Saved mid-session is resumable",
+      "result": "PASS"
+    }
+  ]
+}

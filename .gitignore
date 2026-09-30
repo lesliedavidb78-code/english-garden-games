@@ -1,0 +1,5 @@
+# Local backups and generated test artifacts must never be published.
+*-进度-*.json
+*.log
+*.tmp
+.DS_Store
