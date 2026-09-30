@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#eaf5e8"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="单词花园"><meta name="apple-mobile-web-app-status-bar-style" content="default"><title>单词花园</title><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="../base.css"><link rel="stylesheet" href="garden.css"></head>
-<body><main class="app">
+<body><script>if(!new URLSearchParams(location.search).has("embed"))location.replace("../#garden");</script><style>body:has(.topbar){padding-bottom:12px}.topbar{display:none}</style><main class="app">
 <header class="topbar"><span class="brand">🌷 单词花园</span><button class="icon-btn" id="parent-open">家长设置</button></header>
 <nav class="tabs" aria-label="花园页面"><button data-tab="home" aria-selected="true">我的花园</button><button data-tab="history" aria-selected="false">学习记录</button><button data-tab="collection" aria-selected="false">花朵收藏</button></nav>
 <section id="home" class="screen"><div class="welcome"><div><p class="eyebrow">一点一点，长出自己的花</p><h1 id="greeting">今天也来浇浇水吧</h1><p class="muted" id="home-note">每个答对的单词，都会变成一滴水。</p></div><span class="pill" id="bloom-count">已开 0 朵花</span></div>

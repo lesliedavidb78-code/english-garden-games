@@ -1,0 +1,122 @@
+{
+  "at": "2026-09-30T02:26:53.477Z",
+  "environment": "Chrome headless 390×844，系统语音回调未验证",
+  "checks": [
+    {
+      "name": "合并入口适配390px手机",
+      "result": "PASS"
+    },
+    {
+      "name": "单词雨持续生成小文字，位置和高度错落",
+      "result": "PASS"
+    },
+    {
+      "name": "首次正确只发一支箭和一个共享水滴",
+      "result": "PASS"
+    },
+    {
+      "name": "时间到自动换词，不需要下一题按钮",
+      "result": "PASS"
+    },
+    {
+      "name": "同一道题重复误点只增加一次漏水",
+      "result": "PASS"
+    },
+    {
+      "name": "答对中断连续失误",
+      "result": "PASS"
+    },
+    {
+      "name": "暂停不会扣时间",
+      "result": "PASS"
+    },
+    {
+      "name": "重开保留本题判断和奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "连续九次超时尚未沉没",
+      "result": "PASS"
+    },
+    {
+      "name": "连续十次超时沉船并保存成绩",
+      "result": "PASS"
+    },
+    {
+      "name": "看帆模式显示题目，105秒慢练可选",
+      "result": "PASS"
+    },
+    {
+      "name": "十次正确满箭胜利，100%考核只发一个太阳",
+      "result": "PASS"
+    },
+    {
+      "name": "重复结算不重复太阳和记录",
+      "result": "PASS"
+    },
+    {
+      "name": "同一APP内花园读取借箭奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "共享水滴浇花，100成长保留鲜花",
+      "result": "PASS"
+    },
+    {
+      "name": "四词课本仍有至少两个课外干扰项",
+      "result": "PASS"
+    },
+    {
+      "name": "随机题目允许复现，不按小词库逐个排除",
+      "result": "PASS"
+    },
+    {
+      "name": "损坏备份不覆盖进度",
+      "result": "PASS"
+    },
+    {
+      "name": "全部备份同时恢复两游戏和花园",
+      "result": "PASS"
+    },
+    {
+      "name": "旧花园存档迁入并保留原始数据",
+      "result": "PASS"
+    },
+    {
+      "name": "迁移只执行一次，不重复叠加奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "新版插画和代码已缓存",
+      "result": "PASS"
+    },
+    {
+      "name": "断网仍能打开合并游戏、花园与存档",
+      "result": "PASS"
+    },
+    {
+      "name": "真实动画时钟归零后自动换题",
+      "result": "PASS"
+    },
+    {
+      "name": "十题90%得到太阳，超时也纳入考核",
+      "result": "PASS"
+    },
+    {
+      "name": "十题80%不给太阳",
+      "result": "PASS"
+    },
+    {
+      "name": "旧借箭累计箭数、成绩与进行中题目迁入",
+      "result": "PASS"
+    },
+    {
+      "name": "暂停保存精确剩余时间",
+      "result": "PASS"
+    },
+    {
+      "name": "窄手机320px没有横向溢出",
+      "result": "PASS"
+    }
+  ]
+}
