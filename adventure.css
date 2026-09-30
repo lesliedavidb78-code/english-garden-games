@@ -72,3 +72,5 @@
 .stage-overlay.victory h2{font-size:24px;margin:0}.stage-overlay.victory p{color:#38564e;font-size:12px;line-height:1.6;margin:4px 0 8px}.stage-overlay.victory .eyebrow{color:#42635d}
 @keyframes portrait-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.victory-portrait{animation:none}}
+
+.story-caption{position:absolute;left:50%;bottom:92px;translate:-50% 0;max-width:85%;width:max-content;z-index:15;background:rgba(18,49,55,.92);color:#fff5da;border:1px solid #d9be75;border-radius:16px;padding:8px 14px;font-size:15px;pointer-events:none}.story-caption[hidden]{display:none}

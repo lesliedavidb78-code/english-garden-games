@@ -1,0 +1,120 @@
+[
+  {
+    "file": "audio/ambience/amb_river_mist_loop.wav",
+    "duration": 15.0,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\ambience\\amb_river_mist_loop.mp3",
+    "bytes": 241205,
+    "headerRepaired": true,
+    "sha256Original": "18a85f6d4497798ecb76ed26e1b55d2b6db005f754ce94f5281d3b2748e3e3d1"
+  },
+  {
+    "file": "audio/dialogue/vo_five_leaks_01.wav",
+    "duration": 2.08,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\dialogue\\vo_five_leaks_01.mp3",
+    "bytes": 34315,
+    "headerRepaired": true,
+    "sha256Original": "2b378d26e8895108c8d8301b41e208ac5e6c7029012bc1eb1250c4793b7ab928"
+  },
+  {
+    "file": "audio/dialogue/vo_sink_01.wav",
+    "duration": 2.78,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\dialogue\\vo_sink_01.mp3",
+    "bytes": 45600,
+    "headerRepaired": true,
+    "sha256Original": "d1b3bab461028808b7c4a42bc23f42c246c12fc75f34a37457f6d107d1e71891"
+  },
+  {
+    "file": "audio/dialogue/vo_victory_thanks_kongming.wav",
+    "duration": 4.5,
+    "rate": 40000,
+    "channels": 2,
+    "existingVictoryIdentical": true,
+    "sha256Original": "2e39bb7261718f6c7eac89c126fece3757b5ddae0cd759e12fc231d2a90820ee"
+  },
+  {
+    "file": "audio/music/bgm_river_adventure_loop_adventurous.wav",
+    "duration": 35.0,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\music\\bgm_river_adventure_loop_adventurous.mp3",
+    "bytes": 560944,
+    "headerRepaired": true,
+    "sha256Original": "52f5f9aa016b246028f3b5b2045da9dfd9f3c5be3d8a82ddeacff1dbf1a0e87f"
+  },
+  {
+    "file": "audio/music/bgm_river_adventure_loop_quiet.wav",
+    "duration": 35.0,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\music\\bgm_river_adventure_loop_quiet.mp3",
+    "bytes": 560944,
+    "headerRepaired": true,
+    "sha256Original": "63af714bf989dc9322939aafe73bf0a77c5ecdbc07d9fcd5b2946f174cc34d49"
+  },
+  {
+    "file": "audio/sfx/sfx_arrow_straw_hit.wav",
+    "duration": 0.5,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\sfx\\sfx_arrow_straw_hit.mp3",
+    "bytes": 9238,
+    "headerRepaired": true,
+    "sha256Original": "35ed1e31297c960432eb94030bc5ad1c82e5acb7d25b2046d2f18ac3519ac7c0"
+  },
+  {
+    "file": "audio/sfx/sfx_arrow_whoosh.wav",
+    "duration": 0.5,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\sfx\\sfx_arrow_whoosh.mp3",
+    "bytes": 9238,
+    "headerRepaired": true,
+    "sha256Original": "47d56c76c6f6e9a5dca74f5b61dd949759a35e03eecb5b394b6a818ebae3d6a3"
+  },
+  {
+    "file": "audio/sfx/sfx_boat_sink.wav",
+    "duration": 3.0,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\sfx\\sfx_boat_sink.mp3",
+    "bytes": 48944,
+    "headerRepaired": true,
+    "sha256Original": "a908e4d4f6dfb8607895b592792ccc52cfd5f67540136682cfbac1294ea62a8b"
+  },
+  {
+    "file": "audio/sfx/sfx_hull_crack.wav",
+    "duration": 0.5,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\sfx\\sfx_hull_crack.mp3",
+    "bytes": 9238,
+    "headerRepaired": true,
+    "sha256Original": "faa6b077cecb889f4f7e7b52065f38ba66a97019a777a73ad7987face27e75de"
+  },
+  {
+    "file": "audio/sfx/sfx_victory_sting.wav",
+    "duration": 0.8,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\sfx\\sfx_victory_sting.mp3",
+    "bytes": 13835,
+    "headerRepaired": true,
+    "sha256Original": "9cd19a4d62c7e081fc3a1c5bee5f0cd728c262e8ed4e3073e92539f94f9ae7c7"
+  },
+  {
+    "file": "audio/sfx/sfx_water_leak_loop.wav",
+    "duration": 4.0,
+    "rate": 40000,
+    "channels": 2,
+    "mp3": "assets\\audio\\sfx\\sfx_water_leak_loop.mp3",
+    "bytes": 65244,
+    "headerRepaired": true,
+    "sha256Original": "dbb627e085b0830bdb145200506d7d97340691b9deefbf32e1959a079aa3f72c"
+  }
+]

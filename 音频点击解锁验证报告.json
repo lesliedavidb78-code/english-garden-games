@@ -1,0 +1,15 @@
+{
+  "before": "suspended",
+  "policy": "document-user-activation-required",
+  "checks": [
+    {
+      "name": "受限自动播放策略下真实点击启航解锁AudioContext",
+      "result": "PASS"
+    },
+    {
+      "name": "真实点击启航后暂停仍停止配乐",
+      "result": "PASS"
+    }
+  ],
+  "limitation": "Chrome实际鼠标点击，非iPhone真机"
+}
