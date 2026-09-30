@@ -14,6 +14,7 @@
   function toast(message){const t=$('toast');if(!t)return;t.textContent=message;t.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('visible'),4200)}
   function int(n,max=1000000){return Number.isInteger(n)&&n>=0&&n<=max}
   function validWord(w){return Array.isArray(w)&&w.length===3&&typeof w[0]==='string'&&/^[a-z]+(?:[ '.-][a-z]+)*\.?$/i.test(w[0])&&w[0].length<=40&&typeof w[1]==='string'&&w[1].trim().length>0&&w[1].length<=40&&typeof w[2]==='string'&&w[2].length<=12}
+  function validPlanting(s){return (s.selectedSeed===undefined&&s.seedGrowth===undefined)||(int(s.selectedSeed,5)&&Array.isArray(s.seedGrowth)&&s.seedGrowth.length===6&&s.seedGrowth.every(g=>int(g,99))&&s.seedGrowth[s.selectedSeed]===s.growth)}
   function validBase(s,app){return s&&s.version===1&&s.app===app&&s.settings&&(s.settings.pack==='custom'||PACKS.some(p=>p.id===s.settings.pack))&&Array.isArray(s.custom)&&s.custom.length<=1000&&s.custom.every(validWord)&&new Set(s.custom.map(w=>w[0])).size===s.custom.length&&Array.isArray(s.history)&&s.history.length<=20000&&s.history.every(h=>h&&typeof h.id==='string'&&Number.isFinite(Date.parse(h.at))&&int(h.correct,10)&&int(h.total,10)&&h.total===10&&typeof h.mode==='string'&&h.mode.length<30)}
   function validRound(a){return a===null||(a&&typeof a.id==='string'&&Array.isArray(a.words)&&a.words.length===10&&a.words.every(validWord)&&int(a.index,9)&&int(a.correct,10)&&Array.isArray(a.missed)&&a.missed.length<=10&&a.missed.every(validWord)&&['ready','answered','done'].includes(a.phase)&&typeof a.lastOK==='boolean'&&typeof a.mode==='string'&&a.correct+a.missed.length===a.index+(a.phase==='ready'?0:1)&&(a.phase!=='done'||a.index===9))}
   class Store {
@@ -42,5 +43,5 @@
     export(){if(!this.shared)return super.export();const data=localStorage.getItem('english-adventure-v2');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=`英语花园-全部进度-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
     async import(file){if(this.shared&&window.parent.Adventure)return window.parent.Adventure.restore(file);return super.import(file)}
   }
-  window.GameCommon={$,$$:(sel)=>document.querySelectorAll(sel),PACKS,copy,shuffle,uid,escape,toast,int,validWord,validBase,validRound,Store:SharedGardenStore,words,deck,distractors,parseWords,parentSetup,historyRows,speak,stopSpeech,sound,install};
+  window.GameCommon={$,$$:(sel)=>document.querySelectorAll(sel),PACKS,copy,shuffle,uid,escape,toast,int,validWord,validBase,validRound,validPlanting,Store:SharedGardenStore,words,deck,distractors,parseWords,parentSetup,historyRows,speak,stopSpeech,sound,install};
 })();
