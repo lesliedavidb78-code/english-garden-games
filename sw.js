@@ -1,5 +1,5 @@
 /* Cache only this app's local files; no remote requests or storage uploads. */
-const CACHE='english-games-offline-v6';
+const CACHE='english-games-offline-v7';
 const FILES=['./','./index.html','./adventure.js','./adventure.css','./manifest.webmanifest','./assets/mist-river.png','./assets/straw-boat.png','./assets/straw-soldier-boat.png','./base.css','./common.js','./THIRD_PARTY_NOTICES.md','./garden/','./garden/index.html','./garden/garden.css','./garden/garden.js','./garden/manifest.webmanifest','./garden/icon.svg','./garden/icon-192.png','./garden/icon-512.png','./navy/','./navy/index.html','./navy/navy.css','./navy/navy.js','./navy/manifest.webmanifest','./navy/icon.svg','./navy/icon-192.png','./navy/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('english-games-offline-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
