@@ -62,3 +62,5 @@
 .hull-hole{width:8px;height:7px;box-shadow:0 0 0 2px #573626,0 0 0 3px #c0965980}
 .feedback{top:122px;font-size:11px}
 .impact-reward{top:57%;font-size:15px}
+
+.version-row{display:flex;align-items:center;gap:8px;justify-content:space-between}.version-row .quiet{font-size:11px;white-space:nowrap;padding:7px 10px}.version-row .note{flex:1}.game-hud{gap:5px;font-size:11px}.sail-word{font-family:Georgia,"Songti SC",serif}
