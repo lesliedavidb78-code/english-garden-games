@@ -1,9 +1,10 @@
 (() => {
   'use strict';
   const C=GameCommon,{$,escape:E,int,validBase,validRound}=C;
-  const fresh=()=>({version:1,app:'garden',settings:{pack:'pep5-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
+  const fresh=()=>({version:1,app:'garden',settings:{pack:'pep5-photo-upper-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
   const validate=s=>validBase(s,'garden')&&C.validPlanting(s)&&int(s.water)&&int(s.suns)&&int(s.growth,99)&&Array.isArray(s.flowers)&&s.flowers.length<=10000&&s.flowers.every(f=>f&&int(f.variety,5)&&typeof f.at==='string'&&Number.isFinite(Date.parse(f.at)))&&validRound(s.active)&&(s.active===null||['spell','listen'].includes(s.active.mode));
   const store=new C.Store('garden',fresh,validate);
+  if(!store.blocked&&!store.state.photoVocabularyRevision)store.update(s=>C.migratePhotoPack(s));
   const seeds=[{name:'玫瑰',english:'Rose',color:'#e785a1'},{name:'向日葵',english:'Sunflower',color:'#efbf45'},{name:'薰衣草',english:'Lavender',color:'#9a87d0'},{name:'郁金香',english:'Tulip',color:'#ee997a'},{name:'勿忘我',english:'Forget-me-not',color:'#7eb9db'},{name:'雏菊',english:'Daisy',color:'#f6faf3'}];
   function migratePlanting(){if(store.state.selectedSeed!==undefined)return;const initialize=s=>{s.selectedSeed=s.flowers.length%6;s.seedGrowth=[0,0,0,0,0,0];s.seedGrowth[s.selectedSeed]=s.growth};if(store.blocked||!store.update(initialize)){const display=C.copy(store.state);initialize(display);store.state=display;store.blocked=true}}
   migratePlanting();

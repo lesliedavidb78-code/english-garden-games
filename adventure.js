@@ -1,8 +1,8 @@
 (() => {
   'use strict';
-  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.2-05';
+  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.2-06';
   const fingerprint=text=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return `${text.length}:${h>>>0}`};
-  const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
+  const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-photo-upper-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
   const freshNavy=()=>({totalArrows:0,history:[],legacyHistory:[],active:null});
   const validGarden=s=>C.validBase(s,'garden')&&C.validPlanting(s)&&C.int(s.water)&&C.int(s.suns)&&C.int(s.growth,99)&&Array.isArray(s.flowers)&&s.flowers.length<=10000&&s.flowers.every(f=>f&&C.int(f.variety,5)&&Number.isFinite(Date.parse(f.at)))&&C.validRound(s.active)&&(s.active===null||['spell','listen'].includes(s.active.mode));
   const validActive=a=>a===null||(a&&typeof a.id==='string'&&C.validWord(a.word)&&C.int(a.index,10000)&&C.int(a.correct,a.index+1)&&C.int(a.streak,10)&&C.int(a.holes,10000)&&C.int(a.batchCorrect,10)&&['audio','sail'].includes(a.mode)&&['word','meaning'].includes(a.language)&&[10,15,20,105].includes(a.seconds)&&Number.isFinite(a.remaining)&&a.remaining>=0&&a.remaining<=a.seconds*1000&&['ready','correct','wrong','won','sunk'].includes(a.phase)&&typeof a.paused==='boolean'&&(a.seenWords===undefined||(Array.isArray(a.seenWords)&&a.seenWords.length<=1000&&new Set(a.seenWords).size===a.seenWords.length&&a.seenWords.every(x=>typeof x==='string'&&x.length<=40)))&&(a.lastReview===undefined||(a.lastReview&&C.validWord(a.lastReview.word)&&['correct','wrong','timeout'].includes(a.lastReview.outcome))));
@@ -15,6 +15,7 @@
   function update(fn){reloadState();if(blocked){C.toast('原存档已保留，请在家长设置备份或恢复。');return false}const next=C.copy(state);if(fn(next)===false)return false;if(!validate(next)){C.toast('进度未保存，数据校验未通过。');return false}try{localStorage.setItem(KEY,JSON.stringify(next));state=next;return true}catch(e){C.toast('储存空间不足，进度未保存。');return false}}
   // Expand the old demo preset once, preserving custom vocabulary and current questions.
   if(!blocked&&!state.vocabularyRevision)update(s=>{if(['nature','life','action'].includes(s.garden.settings.pack))s.garden.settings.pack='pep5-all';s.vocabularyRevision=1});
+  if(!blocked&&!state.garden.photoVocabularyRevision)update(s=>{if(C.migratePhotoPack(s.garden))C.retargetNavy(s)});
   function renderVocabulary(){const words=C.words(state.garden),pack=C.PACKS.find(p=>p.id===state.garden.settings.pack);$('vocabulary-summary').textContent=`当前词库：${pack?.name||'我的课本词汇'} · ${words.length} 个词条（单词＋短语）`;$('pack-count').textContent=`已选 ${words.length} 个词条。目标词和干扰项都来自所选范围。切换范围会重新准备练习，已得奖励保留。`;}
   let running=false,lastFrame=0,spawnClock=0,targetClock=0,raf=0,drops=[],pendingEnd=false,view='voyage',selectedAnswer=null,endTimer=0;
   const active=()=>state.navy.active;

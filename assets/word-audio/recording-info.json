@@ -1,12 +1,12 @@
 {
   "voice": "Microsoft Zira Desktop en-US",
   "rate": -1,
-  "entries": 305,
-  "packs": 11,
-  "seconds": 530.21641723356,
-  "bytes": 3188115,
+  "entries": 382,
+  "packs": 14,
+  "seconds": 659.5564172335601,
+  "bytes": 3966040,
   "format": "48kbps MP3, mono 22050Hz; 150ms gap between clips; generated locally, no textbook recordings",
-  "standaloneEntries": 305,
-  "standaloneBytes": 3094623,
+  "standaloneEntries": 382,
+  "standaloneBytes": 3849286,
   "playback": "HTMLAudioElement standalone MP3 first, compact Web Audio packs fallback"
 }
