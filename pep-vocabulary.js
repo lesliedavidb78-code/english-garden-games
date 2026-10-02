@@ -2,7 +2,7 @@
 window.PEP_REFERENCE_PACKS = [
   {
     "id": "pep5-all",
-    "name": "PEP参考 · 五年级上下册综合",
+    "name": "PEP旧版参考 · 五年级上下册综合",
     "icon": "📚",
     "words": [
       [
@@ -1414,7 +1414,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-upper",
-    "name": "PEP参考 · 五年级上册综合",
+    "name": "PEP旧版参考 · 五年级上册综合",
     "icon": "📘",
     "words": [
       [
@@ -2071,7 +2071,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-lower",
-    "name": "PEP参考 · 五年级下册综合",
+    "name": "PEP旧版参考 · 五年级下册综合",
     "icon": "📗",
     "words": [
       [
@@ -2853,7 +2853,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-upper-u1",
-    "name": "PEP参考五年级上 U1 · 人物与性格",
+    "name": "PEP旧版参考五年级上 U1 · 人物与性格",
     "icon": "📚",
     "words": [
       [
@@ -2955,7 +2955,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-upper-u2",
-    "name": "PEP参考五年级上 U2 · 一周生活",
+    "name": "PEP旧版参考五年级上 U2 · 一周生活",
     "icon": "📚",
     "words": [
       [
@@ -3102,7 +3102,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-upper-u3",
-    "name": "PEP参考五年级上 U3 · 食物与味道",
+    "name": "PEP旧版参考五年级上 U3 · 食物与味道",
     "icon": "📚",
     "words": [
       [
@@ -3189,7 +3189,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-upper-u4",
-    "name": "PEP参考五年级上 U4 · 才艺与活动",
+    "name": "PEP旧版参考五年级上 U4 · 才艺与活动",
     "icon": "📚",
     "words": [
       [
@@ -3336,7 +3336,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-upper-u5",
-    "name": "PEP参考五年级上 U5 · 房间与方位",
+    "name": "PEP旧版参考五年级上 U5 · 房间与方位",
     "icon": "📚",
     "words": [
       [
@@ -3468,7 +3468,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-upper-u6",
-    "name": "PEP参考五年级上 U6 · 自然公园",
+    "name": "PEP旧版参考五年级上 U6 · 自然公园",
     "icon": "📚",
     "words": [
       [
@@ -3550,7 +3550,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-lower-u1",
-    "name": "PEP参考五年级下 U1 · 日常作息",
+    "name": "PEP旧版参考五年级下 U1 · 日常作息",
     "icon": "📚",
     "words": [
       [
@@ -3737,7 +3737,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-lower-u2",
-    "name": "PEP参考五年级下 U2 · 四季与活动",
+    "name": "PEP旧版参考五年级下 U2 · 四季与活动",
     "icon": "📚",
     "words": [
       [
@@ -3869,7 +3869,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-lower-u3",
-    "name": "PEP参考五年级下 U3 · 月份与节日",
+    "name": "PEP旧版参考五年级下 U3 · 月份与节日",
     "icon": "📚",
     "words": [
       [
@@ -4051,7 +4051,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-lower-u4",
-    "name": "PEP参考五年级下 U4 · 日期与序数",
+    "name": "PEP旧版参考五年级下 U4 · 日期与序数",
     "icon": "📚",
     "words": [
       [
@@ -4163,7 +4163,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-lower-u5",
-    "name": "PEP参考五年级下 U5 · 物品归属与动作",
+    "name": "PEP旧版参考五年级下 U5 · 物品归属与动作",
     "icon": "📚",
     "words": [
       [
@@ -4250,7 +4250,7 @@ window.PEP_REFERENCE_PACKS = [
   },
   {
     "id": "pep5-lower-u6",
-    "name": "PEP参考五年级下 U6 · 行为规则",
+    "name": "PEP旧版参考五年级下 U6 · 行为规则",
     "icon": "📚",
     "words": [
       [
