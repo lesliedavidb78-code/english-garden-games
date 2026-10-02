@@ -98,3 +98,7 @@
 @media(orientation:landscape) and (max-height:600px){.voyage-focus .rain{top:calc(125px + env(safe-area-inset-top));bottom:90px;right:38%}.voyage-focus .fleet{left:auto;right:-3%;width:55%;height:230px;translate:none;bottom:20px}.voyage-focus .question-cue{left:12px;right:auto;max-width:49%;bottom:75px}.voyage-focus .previous-answer{left:12px;right:auto;width:44%;bottom:28px;font-size:11px}.voyage-focus .leak-label{left:auto;right:12px;bottom:10px;font-size:10px;max-width:45%}.voyage-focus .rain-word{font-size:21px!important}}
 
 :root{color-scheme:only light}
+
+/* Embedded study fills the available browser area, including short WebViews. */
+.garden-focus{overflow:hidden;padding:0}.garden-focus .app-header,.garden-focus .bottom-nav{display:none}
+.garden-focus #garden-frame{position:fixed;inset:0;width:100%;height:var(--play-height,100dvh);min-height:0;z-index:50;background:#edf7e8;display:block}

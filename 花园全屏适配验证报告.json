@@ -1,0 +1,168 @@
+{
+  "at": "2026-10-02T15:17:18.211Z",
+  "site": "http://127.0.0.1:8086/",
+  "release": "10.2-07",
+  "environment": "Chrome模拟浏览器可用视口；真实按钮点击、长单词、答后锁定、元素边界与无滚动验证；非用户微信真机。",
+  "checks": [
+    {
+      "name": "320×480 spell题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 spell复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 spell下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 spell退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 listen题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 listen复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 listen下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 listen退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 spell题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 spell复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 spell下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 spell退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 listen题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 listen复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 listen下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "360×560 listen退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 spell题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 spell复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 spell下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 spell退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 listen题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 listen复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 listen下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 listen退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 spell题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 spell复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 spell下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 spell退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 listen题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 listen复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 listen下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "430×800 listen退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 spell题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 spell复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 spell下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 spell退出恢复导航",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 listen题目及提交同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 listen复盘锁定及正确答案同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 listen下一题恢复答题",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 listen退出恢复导航",
+      "result": "PASS"
+    }
+  ]
+}

@@ -5,3 +5,52 @@ body{background:linear-gradient(180deg,#edf7e8,#f7f8ed 70%,#f4eee7)}.welcome{dis
 .seed-shelf{margin:18px 0 20px}.seed-shelf h2{font-size:19px;margin:0 0 12px}.seed-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.seed-choice{position:relative;background:#fffdf4;border:1px solid #d6dfc9;border-radius:17px;padding:10px 5px;color:#415738;text-align:center;min-height:155px;box-shadow:0 3px 0 #dfe5d433;transition:background .2s,border-color .2s}.seed-choice[aria-pressed="true"]{background:#e6f1df;border:2px solid #648d59;box-shadow:0 0 0 2px #cdddbe}.seed-choice[aria-pressed="true"]:after{content:'✓';position:absolute;right:7px;top:5px;color:#47703a;font-weight:800}.seed-choice:focus-visible{outline:3px solid #e4b452;outline-offset:3px}.seed-preview{display:block;height:78px;overflow:hidden}.seed-preview svg{height:78px;max-width:100%}.seed-choice strong{display:block;font-size:12px;margin-top:5px}.seed-choice small{display:block;font-size:10px;color:#809075;margin-top:4px;overflow-wrap:anywhere}.seed-progress{display:block;font-size:10px;margin-top:7px;color:#5d7c4c}.seed-shelf .muted{font-size:12px;line-height:1.7;margin:12px 0 0}.seed-choice:disabled{opacity:.6}@media(min-width:650px){.seed-choices{grid-template-columns:repeat(6,minmax(0,1fr))}}@media(prefers-reduced-motion:reduce){.seed-choice{transition:none}}
 
 .resume-actions{flex-wrap:wrap;gap:12px}.restart-note{font-size:12px;line-height:1.7;color:#657b6a;margin:12px 0 0}.answer-review{text-align:left;border:1px solid #bed9bd;background:#eef7e9;border-radius:16px;padding:16px;margin:12px 0 18px;overflow-wrap:anywhere}.answer-review[hidden]{display:none}.answer-review p{margin:0;line-height:1.8}.submitted-answer{color:#52665c;font-size:14px}.submitted-answer>span{font-weight:800;margin-left:8px}.correct-answer{font-size:19px;color:#24593d;margin-top:8px!important}.correct-answer>span{font-weight:850}.answer-hint{font-size:12px;color:#667b6d;margin-top:8px!important}.bridge span.wrong-letter{background:#ffe1d5;border-color:#b8694b;color:#903c24}.flower-choices .choice.submitted{outline:3px solid #315f46;outline-offset:2px}.flower-choices .choice.incorrect{background:#fff0e9;border-color:#b6694e;outline-color:#b6694e;color:#853f2d}
+
+/* A complete question on one screen; answer review keeps the submitted card. */
+body.study-focus{height:100vh;height:100dvh;overflow:hidden;padding:0!important}
+.study-focus .app{height:100%;max-width:900px;padding:calc(8px + env(safe-area-inset-top)) 12px calc(8px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.study-focus .tabs,.study-focus .footer,.study-focus .topbar{display:none}
+.study-focus #study{display:flex;flex-direction:column;flex:1;min-height:0;animation:none}
+.study-focus .question-header{flex-shrink:0;margin:0 0 8px;gap:8px;min-height:44px}
+.study-focus .question-header button{min-height:44px;font-size:13px;padding:8px 12px}
+.study-focus .study-card{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:18px;overflow:auto}
+.study-focus #study-mode{margin:0;font-size:11px;line-height:1.2}
+.study-focus .word-picture,.study-focus .bridge-walker{display:none}
+.study-focus .study-card h2{font-size:clamp(18px,5vw,24px);line-height:1.3;margin:0;overflow-wrap:anywhere}
+.study-focus #listen-word{align-self:center;min-height:44px;padding:8px 16px;font-size:15px;flex-shrink:0}
+.study-focus #spell-zone{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.study-focus #spell-zone.hidden,.study-focus #listen-choices.hidden{display:none}
+.study-focus .bridge{margin:0;min-height:58px;padding:5px;gap:4px;border-bottom-width:6px;flex-shrink:0}
+.study-focus .bridge span{width:25px;height:34px;font-size:20px}
+.study-focus .letter-pool{margin:0;gap:8px;flex-shrink:0}
+.study-focus .letter{width:44px;height:44px;min-height:44px;font-size:22px}
+.study-focus #spell-zone .actions{gap:8px;flex-wrap:nowrap;flex-shrink:0}
+.study-focus #spell-zone .actions .btn{min-height:44px;font-size:13px;padding:8px 10px}
+.study-focus .flower-choices{flex:1;min-height:0;margin:0;gap:8px;grid-template-rows:repeat(2,minmax(0,1fr))}
+.study-focus .flower-choices .choice{min-height:64px;padding:8px;font-size:clamp(14px,4vw,18px);line-height:1.35;overflow-wrap:anywhere;border-radius:14px}
+.study-focus .flower-choices .choice:before{font-size:18px;margin:0}
+.study-focus #feedback{display:none}
+.study-focus .answer-review{flex-shrink:0;margin:0;padding:8px 10px;border-radius:12px}
+.study-focus .answer-review p{line-height:1.4}
+.study-focus .submitted-answer{font-size:12px}
+.study-focus .correct-answer{font-size:16px;margin-top:4px!important}
+.study-focus .answer-hint{display:none}
+.study-focus #study-next{flex-shrink:0;margin-top:auto;min-height:44px;padding:9px 14px;font-size:16px}
+.study-focus.answer-shown #letter-pool,.study-focus.answer-shown #spell-zone .actions{display:none}
+.study-focus.answer-shown #spell-zone{flex:1}
+@media(orientation:landscape) and (max-height:520px){
+ .study-focus .app{padding:6px 12px}.study-focus .question-header{margin-bottom:4px}
+ .study-focus .study-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);grid-template-rows:auto auto 1fr auto;gap:6px 12px;padding:8px}
+ .study-focus #study-mode{grid-column:1;grid-row:1}.study-focus #study-prompt{grid-column:1;grid-row:2;font-size:18px}
+ .study-focus #listen-word{grid-column:1;grid-row:3;justify-self:center}
+ .study-focus #spell-zone,.study-focus #listen-choices{grid-column:2;grid-row:1/4}
+ .study-focus #answer-review{grid-column:1;grid-row:4}.study-focus #study-next{grid-column:2;grid-row:4}
+ .study-focus .flower-choices .choice{min-height:50px;font-size:14px}.study-focus .flower-choices .choice:before{display:none}
+ .study-focus #spell-zone{gap:8px}.study-focus .letter-pool{gap:6px}
+}
+@media(max-height:600px) and (orientation:portrait){
+ .study-focus .app{padding:calc(6px + env(safe-area-inset-top)) 8px calc(6px + env(safe-area-inset-bottom))}
+ .study-focus .study-card{padding:8px;gap:6px}.study-focus .question-header{margin-bottom:6px}
+ .study-focus #spell-zone{gap:8px}.study-focus .letter-pool{gap:4px}
+ .study-focus .study-card h2{font-size:18px}.study-focus .flower-choices .choice:before{display:none}
+}
