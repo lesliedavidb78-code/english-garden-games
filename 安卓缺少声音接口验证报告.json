@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-02T13:35:23.768Z",
+  "site": "http://127.0.0.1:8086/",
+  "environment": "Chrome禁用AudioContext/webkitAudioContext/Object.hasOwn、系统朗读故意报错，真实手势点击与MP3时间推进检查；不是微信或小米真机",
+  "checks": [
+    {
+      "name": "缺少Web Audio和系统朗读仍实际推进单词MP3播放",
+      "result": "PASS"
+    },
+    {
+      "name": "接口缺失条件下新词MP3也实际播放并累计奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "再听一次仍从当前单词录音播放",
+      "result": "PASS"
+    },
+    {
+      "name": "答错仍继续换题发音且只累计一处漏水",
+      "result": "PASS"
+    },
+    {
+      "name": "暂停确实停止MP3播放器",
+      "result": "PASS"
+    }
+  ]
+}

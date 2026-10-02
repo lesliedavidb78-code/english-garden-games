@@ -5,5 +5,8 @@
   "packs": 11,
   "seconds": 530.21641723356,
   "bytes": 3188115,
-  "format": "48kbps MP3, mono 22050Hz; 150ms gap between clips; generated locally, no textbook recordings"
+  "format": "48kbps MP3, mono 22050Hz; 150ms gap between clips; generated locally, no textbook recordings",
+  "standaloneEntries": 305,
+  "standaloneBytes": 3094623,
+  "playback": "HTMLAudioElement standalone MP3 first, compact Web Audio packs fallback"
 }
