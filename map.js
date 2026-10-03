@@ -1,0 +1,24 @@
+(() => {
+ 'use strict';
+ const $=id=>document.getElementById(id),A=Adventure;
+ const regions=[
+  {id:'garden',name:'单词花园',subtitle:'学习 · 种花 · 收集',x:29,y:45,icon:'🌻',type:'garden'},
+  {id:'voyage',name:'草船港口',subtitle:'听单词 · 帮草船收箭',x:26,y:69,icon:'⛵',type:'voyage'},
+  {id:'city',name:'守护城市',subtitle:'英语对话 · 奥特曼大战',x:70,y:31,icon:'',type:'city'},
+  {id:'training',name:'探险训练营',subtitle:'听力 · 跟读 · 翻译',x:70,y:69,icon:'📖',type:'training'}
+ ];
+ function icon(r){if(r.type==='city')return '<span class="map-hero-pair" aria-hidden="true"><img src="assets/battle-art/hero-v3.png" alt=""><img src="assets/battle-art/monster-v3.png" alt=""></span>';if(r.type==='voyage')return '<span class="map-boat-icon" aria-hidden="true"><img src="assets/straw-soldier-boat.png" alt=""></span>';return `<span class="map-pin-icon" aria-hidden="true">${r.icon}</span>`}
+ function build(){const pins=$('map-pins'),list=$('map-destinations');for(const r of regions){for(const parent of [pins,list]){const b=document.createElement('button');b.type='button';b.className=parent===pins?'map-pin map-pin-'+r.type:'map-destination';b.dataset.region=r.id;b.style.setProperty('--pin-x',r.x+'%');b.style.setProperty('--pin-y',r.y+'%');b.innerHTML=icon(r)+`<span class="map-pin-label"><strong>${r.name}</strong><small>${r.subtitle}</small></span>`;b.setAttribute('aria-label','进入'+r.name+'：'+r.subtitle);b.onclick=()=>open(r.id);parent.append(b)}}}
+ function layoutPins(){const w=document.querySelector('.map-world').getBoundingClientRect();if(!w.width)return;for(const r of regions){const b=document.querySelector('#map-pins [data-region="'+r.id+'"]'),half=b.offsetWidth/2;const x=Math.max(half+12,Math.min(innerWidth-half-12,w.left+w.width*r.x/100));b.style.setProperty('--pin-x',(x-w.left)+'px')}}
+ function refresh(){const g=A.state.garden;$('map-water').textContent=g.water;$('map-suns').textContent=g.suns;$('map-flowers').textContent=g.flowers.length;$('map-growth').textContent=`成长 ${g.seedGrowth?.[g.selectedSeed||0]??g.growth} / 100`;$('map-pack').textContent=GameCommon.PACKS.find(p=>p.id===g.settings.pack)?.name||'我的课本词汇';const a=A.state.training?.active,n=A.state.navy.active;$('map-resume').hidden=(!a||a.phase==='done')&&(!n||['won','sunk'].includes(n.phase));$('map-resume').textContent=a&&a.phase!=='done'?'继续上次训练 →':'继续上次借箭 →';$('map-version').textContent='版本 '+A.release;requestAnimationFrame(layoutPins)}
+ function home(){A.switchView('map');refresh()}
+ function open(id){if(id==='city'){A.switchView('training');const a=EnglishTraining.active;if(a?.mode==='dialogue'&&a.phase!=='done'){EnglishTraining.render(true)}else EnglishTraining.start('dialogue')}else A.switchView(id);refresh()}
+ function resume(){const a=A.state.training?.active;if(a&&a.phase!=='done'){A.switchView('training');$('training-continue').click()}else A.switchView('voyage')}
+ build();$('map-settings').onclick=()=>$('settings-open').click();$('map-resume').onclick=resume;$('map-check-update').onclick=()=>$('check-update').click();$('nav-map').onclick=home;$('return-map').onclick=home;$('training-map').onclick=home;$('map-history').onclick=()=>{const rows=[...(A.state.training?.history||[]).map(x=>({...x,label:{listening:'听力',follow:'跟读',reaction:'反应',meaning:'词义',dialogue:'城市守护',translate:'翻译'}[x.mode]||'训练'})),...A.state.navy.history.map(x=>({...x,label:'草船借箭'})),...A.state.garden.history.map(x=>({...x,label:x.mode||'花园学习'}))].filter((row,i,all)=>!row.id||all.findIndex(x=>x.id===row.id)===i).sort((a,b)=>new Date(b.at)-new Date(a.at)).slice(0,8);const list=$('map-history-list');list.replaceChildren();for(const r of rows){const row=document.createElement('p');row.textContent=`${r.label} · ${r.localOnly?'录音/跳过（未评测）':'答对 '+r.correct+'/'+r.total} · ${new Date(r.at).toLocaleDateString('zh-CN')}`;list.append(row)}if(!rows.length)list.textContent='完成一场探险，你的学习记录就会出现在这里。';$('map-log-dialog').showModal()};$('map-log-close').onclick=()=>$('map-log-dialog').close();
+ document.addEventListener('adventure-view',e=>{document.body.classList.toggle('map-home',e.detail==='map');document.body.dataset.adventureView=e.detail;if(e.detail==='map')refresh()});
+ window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===$('garden-frame').contentWindow&&e.data==='garden-updated')refresh()});
+ window.addEventListener('storage',e=>{if(e.key==='english-adventure-v2')refresh()});
+ window.addEventListener('resize',layoutPins);window.visualViewport?.addEventListener('resize',layoutPins);
+ window.AdventureMap={regions,open,home,refresh};
+ if(location.hash!=='#garden')home();else{document.body.dataset.adventureView='garden';refresh()}
+})();

@@ -1,0 +1,251 @@
+{
+  "at": "2026-10-03T12:59:02.685Z",
+  "site": "http://127.0.0.1:8086/",
+  "environment": "Chrome模拟视口与真实指针事件；MediaRecorder模拟音源及模拟权限拒绝；不是用户手机真机或发音评测。",
+  "checks": [
+    {
+      "name": "新局三拍故事明确入侵与通讯员角色",
+      "result": "PASS"
+    },
+    {
+      "name": "跳过开场保存seen并开始英文题",
+      "result": "PASS"
+    },
+    {
+      "name": "新版对话大战20题队列，双方初始10血",
+      "result": "PASS"
+    },
+    {
+      "name": "首错怪兽攻击，奥特曼扣一格血",
+      "result": "PASS"
+    },
+    {
+      "name": "答对反击，之前受伤仍累计",
+      "result": "PASS"
+    },
+    {
+      "name": "连续五对触发光大招但每题只扣一血",
+      "result": "PASS"
+    },
+    {
+      "name": "错题重置连击但伤害不清零",
+      "result": "PASS"
+    },
+    {
+      "name": "刷新续玩保存双方血量",
+      "result": "PASS"
+    },
+    {
+      "name": "先十次答对怪兽失败，超过十题仍继续",
+      "result": "PASS"
+    },
+    {
+      "name": "胜利历史记录真实十二题",
+      "result": "PASS"
+    },
+    {
+      "name": "九错仍可作答不会提前结束",
+      "result": "PASS"
+    },
+    {
+      "name": "十错奥特曼失败并触发落败音效",
+      "result": "PASS"
+    },
+    {
+      "name": "落败保存历史且不会重复结算",
+      "result": "PASS"
+    },
+    {
+      "name": "重新选择返回全部游戏且保留资源历史",
+      "result": "PASS"
+    },
+    {
+      "name": "重选可进入另一游戏",
+      "result": "PASS"
+    },
+    {
+      "name": "跟读不能伪装自评直接通过",
+      "result": "PASS"
+    },
+    {
+      "name": "按住收音松开完成且仍未判正确",
+      "result": "PASS"
+    },
+    {
+      "name": "松开录音后麦克风轨道已释放",
+      "result": "PASS"
+    },
+    {
+      "name": "录后仍可重复听同词示范",
+      "result": "PASS"
+    },
+    {
+      "name": "同词可再次重听不换题",
+      "result": "PASS"
+    },
+    {
+      "name": "跳过锁定为未评测且不发水滴",
+      "result": "PASS"
+    },
+    {
+      "name": "跳过后下一题不携带旧录音",
+      "result": "PASS"
+    },
+    {
+      "name": "权限拒绝不误判通过，可跳过",
+      "result": "PASS"
+    },
+    {
+      "name": "权限等待中松手不在后台偷偷录音",
+      "result": "PASS"
+    },
+    {
+      "name": "单元对话也有同单元干扰回复，避免唯一答案",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 listening游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 follow游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 reaction游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 meaning游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 dialogue游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 translate游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 listening游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 follow游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 reaction游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 meaning游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 dialogue游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "390×650 translate游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 listening游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 follow游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 reaction游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 meaning游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 dialogue游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 translate游戏场景和答题复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "新分层程序音效已由手势解锁并启动音频节点",
+      "result": "PASS"
+    },
+    {
+      "name": "旧对话存档升级保留已经答错累计",
+      "result": "PASS"
+    },
+    {
+      "name": "十连对胜利只发十水滴和一太阳",
+      "result": "PASS"
+    },
+    {
+      "name": "重复查看终局不会重复发水滴太阳",
+      "result": "PASS"
+    },
+    {
+      "name": "跟读十题全跳过不计正确不发任何奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "旧跟读待答存档跳过显示未评测且不发奖",
+      "result": "PASS"
+    },
+    {
+      "name": "录音器不支持时关闭轨道不占用麦克风",
+      "result": "PASS"
+    },
+    {
+      "name": "旧权限拒绝回调不会污染新游戏提示",
+      "result": "PASS"
+    },
+    {
+      "name": "旧第二单元单选项存档升级补足范围内干扰项",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 dialogue最长题目和选错复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 translate最长题目和选错复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 follow最长题目和选错复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 dialogue最长题目和选错复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 translate最长题目和选错复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 follow最长题目和选错复盘同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "v24缓存新战场原画、剧情与音效模块",
+      "result": "PASS"
+    },
+    {
+      "name": "断网地图原画完整可进入城市",
+      "result": "PASS"
+    },
+    {
+      "name": "断网重开剧情对战并播放本地战斗音效",
+      "result": "PASS"
+    }
+  ]
+}

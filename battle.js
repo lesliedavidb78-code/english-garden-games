@@ -1,97 +1,49 @@
 (() => {
  'use strict';
- let animationTimer = null;
- const stage = () => document.getElementById('dialogue-battle');
- const integer = n => Math.min(10, Math.max(0, Math.floor(Number(n) || 0)));
- function markup() {
-  return `<section id="dialogue-battle" class="dialogue-battle" aria-label="奥特曼对话大战">
-   <div class="battle-health"><div class="battle-health-side"><div class="battle-health-label"><strong>奥特曼</strong><span data-battle="hero-count">10 / 10</span></div><div class="battle-health-track" role="progressbar" aria-label="奥特曼血量" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10" data-battle="hero-bar"><span></span></div></div><span class="battle-versus" aria-hidden="true">VS</span><div class="battle-health-side"><div class="battle-health-label"><strong>怪兽</strong><span data-battle="monster-count">10 / 10</span></div><div class="battle-health-track monster-health" role="progressbar" aria-label="怪兽血量" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10" data-battle="monster-bar"><span></span></div></div></div>
-   <div class="battle-arena"><svg class="battle-scene" viewBox="0 0 600 220" role="img" aria-label="奥特曼与怪兽站在星空城市中对战">
-    <defs><linearGradient id="battle-sky" x2="0" y2="1"><stop stop-color="#233a61"/><stop offset="1" stop-color="#697cb2"/></linearGradient><linearGradient id="battle-silver" x2="1" y2="1"><stop stop-color="#fff8ec"/><stop offset=".55" stop-color="#d9e7f1"/><stop offset="1" stop-color="#8fa4bf"/></linearGradient><linearGradient id="battle-red" x2=".6" y2="1"><stop stop-color="#fb6573"/><stop offset="1" stop-color="#bc274a"/></linearGradient><linearGradient id="battle-monster" x2="1" y2="1"><stop stop-color="#b293eb"/><stop offset="1" stop-color="#61529b"/></linearGradient><linearGradient id="battle-light"><stop stop-color="#eaffff"/><stop offset=".45" stop-color="#70e6ff"/><stop offset="1" stop-color="#c3ffff" stop-opacity=".1"/></linearGradient></defs>
-    <rect width="600" height="220" rx="18" fill="url(#battle-sky)"/>
-    <g fill="#ffeabe" opacity=".75"><circle cx="42" cy="22" r="2"/><circle cx="242" cy="27" r="2"/><circle cx="334" cy="12" r="2"/><circle cx="530" cy="28" r="2"/><path d="M312 45l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><path d="M53 90l2 4 4 2-4 2-2 4-2-4-4-2 4-2z"/></g>
-    <circle cx="465" cy="39" r="19" fill="#c6e7ee" opacity=".55"/><circle cx="474" cy="33" r="19" fill="#314766"/>
-    <g fill="#17354b" opacity=".4"><path d="M0 202V120h38v82h14v-51h43v51h28v-88h45v88h22v-58h30v58h29v-67h49v67h20v-49h38v49h16v-80h43v80h33v-46h27v46h16v-72h42v72h39v-87h40v87z"/><path d="M150 114V94h8v20h19v88h-42v-88zM407 122v-28h8v28z"/></g>
-    <g fill="#f5d688" opacity=".35"><path d="M10 135h6v8h-6zm15 0h6v8h-6zm36 31h6v8h-6zm15 0h6v8h-6zm63-38h6v8h-6zm16 0h6v8h-6zm119 21h6v8h-6zm16 0h6v8h-6zm111-13h6v8h-6zm16 0h6v8h-6zm82 6h6v8h-6zm16 0h6v8h-6z"/></g>
-    <ellipse cx="300" cy="202" rx="290" ry="17" fill="#b9bff0" opacity=".24"/>
-    <ellipse cx="134" cy="201" rx="52" ry="8" fill="#132947" opacity=".45"/><ellipse cx="466" cy="201" rx="64" ry="9" fill="#132947" opacity=".45"/>
-    <g transform="translate(70, 5)"><g class="battle-hero">
-     <g class="battle-hero-body" stroke="#3e4561" stroke-width="3" stroke-linejoin="round">
-      <path d="M53 139L44 184 36 192q-2 7 7 7h23l5-55M79 140l9 44-3 12h25q8-4 2-10l-9-45" fill="url(#battle-silver)"/>
-      <path d="M46 170l22 3-2 19H43zM90 173l17-3 4 22H88z" fill="url(#battle-red)"/>
-      <path d="M40 78q-12-2-18 13l-8 37q-1 11 8 14 10 1 12-10l8-27M99 78q13 2 17 15l13 31q5 10-4 14-10 5-15-6l-15-27" fill="url(#battle-silver)"/>
-      <path d="M17 121l19 5-4 14-13 2-5-11zM108 126l18-7 6 14-7 8-12-1z" fill="url(#battle-red)"/>
-      <path d="M43 77q24-11 53 0l10 29-7 38q-26 12-53-1l-8-37z" fill="url(#battle-silver)"/>
-      <path d="M43 81l28 21 25-21 6 15-31 27-30-23zM46 126l24 13 30-15-1 20q-26 12-53-1z" fill="url(#battle-red)"/>
-      <path d="M54 70h32v17q-14 7-29 0z" fill="#cad9e5"/>
-      <path d="M43 56C35 22 52 8 73 10c22 1 36 19 28 48-5 16-18 23-30 23-13 0-24-9-28-25z" fill="url(#battle-silver)"/>
-      <path d="M69 11l5-11 7 13-4 46-8 5z" fill="#dae9ed"/>
-      <path d="M43 38q8-7 22-3l-2 19q-14 3-19-8zM83 35q14-3 19 4l-1 9q-8 10-20 6z" fill="#ffeeb5" stroke="#bc9964" stroke-width="2"/>
-      <path d="M61 66q12 6 23-1" fill="none" stroke="#8399ab" stroke-width="2"/>
-      <circle class="battle-hero-core" cx="71" cy="107" r="10" fill="#67e5ff" stroke="#f8ffff"/><circle cx="68" cy="104" r="3" fill="#fff" stroke="none"/>
-     </g>
-     <g class="battle-hero-sweat" fill="#a6edff" stroke="#59a5d2" stroke-width="2"><path d="M17 44q-9 13-4 18t10-1q2-6-6-17z"/><path d="M118 28q-7 10-3 15t8-1q1-4-5-14z"/></g>
-     <g class="battle-hero-celebration" fill="#fff0a6"><path d="M0 62l5 11 11 3-11 4-5 11-4-11-11-4 11-3zM119 5l4 9 9 3-9 3-4 9-3-9-9-3 9-3z"/></g>
-    </g></g>
-    <g transform="translate(404, 13)"><g class="battle-monster">
-     <g class="battle-monster-body" stroke="#343e68" stroke-width="3" stroke-linejoin="round">
-      <path d="M97 146q55-27 59 11-18-15-41 12" fill="url(#battle-monster)"/>
-      <path d="M26 130L9 148q-16 13-8 18 10 7 20-1l13-15M111 127l23 18q17 11 12 19-5 11-20 0l-16-10" fill="url(#battle-monster)"/>
-      <path d="M32 166L25 179l-14 8q-7 8 6 9h31l9-24M85 168l10 15-1 13h37q11-5 0-11l-19-9-7-14" fill="url(#battle-monster)"/>
-      <path d="M22 82q-8 57 9 86 37 15 78-2 21-34 6-83" fill="url(#battle-monster)"/>
-      <ellipse cx="71" cy="130" rx="29" ry="35" fill="#d9bef3" stroke="#8165ae" stroke-width="2"/>
-      <path d="M44 111h54M43 124h57M45 138h53M52 151h37" fill="none" stroke="#b699d3" stroke-width="2"/>
-      <path d="M32 33L20 4q20 5 27 28M88 28L106 2q6 22-4 37" fill="#f3d992"/>
-      <path d="M25 34q29-17 63-10l26 17 5 37q-11 30-51 29-32-1-46-23L16 61z" fill="url(#battle-monster)"/>
-      <path d="M29 39q13-3 22 4M80 38q12-5 24 0" fill="none" stroke-width="4"/>
-      <ellipse cx="41" cy="55" rx="12" ry="15" fill="#fff4db"/><ellipse cx="93" cy="51" rx="12" ry="15" fill="#fff4db"/>
-      <ellipse cx="44" cy="57" rx="5" ry="7" fill="#344469" stroke="none"/><ellipse cx="89" cy="53" rx="5" ry="7" fill="#344469" stroke="none"/>
-      <path d="M46 81q21 14 45-3" fill="none" stroke-width="4" stroke-linecap="round"/>
-      <path d="M47 80l6 12 6-7M82 84l5 8 6-15" fill="#fff4d9" stroke-width="2"/>
-      <ellipse cx="26" cy="75" rx="9" ry="5" fill="#e99cc8" stroke="none"/><ellipse cx="107" cy="73" rx="8" ry="5" fill="#e99cc8" stroke="none"/>
-     </g>
-     <g class="battle-monster-stars" fill="#ffe795" stroke="#efb856" stroke-width="1"><path d="M19 20l4 7 8 1-6 6 1 9-7-4-7 4 1-9-6-6 8-1zM109 15l4 7 8 1-6 6 1 9-7-4-7 4 1-9-6-6 8-1z"/></g>
-    </g></g>
-    <g class="battle-light-beam"><path d="M183 111L472 44v148z" fill="url(#battle-light)"/><path d="M183 111h297" stroke="#fff" stroke-width="12" stroke-linecap="round"/><path d="M183 111h297" stroke="#99eeff" stroke-width="5" stroke-linecap="round"/><circle cx="183" cy="111" r="24" fill="#e7ffff" opacity=".8"/></g>
-    <g class="battle-hero-impact" transform="translate(141, 93)"><path class="battle-impact-burst" d="M0-33L8-14 30-20 19-2 36 11 15 14 12 35-3 20-21 32-17 12-36 6-18-7-22-27-7-18z" fill="#ffcc70" stroke="#fff6d9" stroke-width="3"/><text y="8" text-anchor="middle" fill="#9e3850" font-size="22" font-weight="900">咚!</text></g>
-    <g class="battle-monster-impact" transform="translate(469, 88)"><path class="battle-impact-burst" d="M0-33L8-14 30-20 19-2 36 11 15 14 12 35-3 20-21 32-17 12-36 6-18-7-22-27-7-18z" fill="#9df0ff" stroke="#edffff" stroke-width="3"/><text y="8" text-anchor="middle" fill="#225873" font-size="22" font-weight="900">啪!</text></g>
-    <g class="battle-combo-badge"><rect x="205" y="18" width="190" height="32" rx="16" fill="#fff1a9"/><text x="300" y="40" text-anchor="middle" fill="#6d4b16" font-size="19" font-weight="800">★ 光之力量 ★</text></g>
-   </svg></div>
-   <p class="battle-caption" data-battle="caption" role="status">选对回答，帮奥特曼打怪兽！</p>
-  </section>`;
- }
- function clean(s) {
-  return { correct: integer(s?.correct), wrong: integer(s?.wrong), streak: Math.max(0, Math.floor(Number(s?.streak) || 0)) };
- }
- function render(stats) {
-  const el = stage(); if (!el) return;
-  const s = clean(stats), won = s.correct >= 10, lost = s.wrong >= 10;
-  for (const [name, left] of [['hero', 10-s.wrong], ['monster', 10-s.correct]]) {
-   const bar = el.querySelector(`[data-battle="${name}-bar"]`);
-   bar.setAttribute('aria-valuenow', String(left));
-   bar.classList.toggle('low-health', left <= 3);
-   bar.querySelector('span').style.width = `${left*10}%`;
-   el.querySelector(`[data-battle="${name}-count"]`).textContent = `${left} / 10`;
-  }
-  el.classList.toggle('hero-danger', s.wrong >= 7 && !lost);
-  el.classList.toggle('is-won', won);
-  el.classList.toggle('is-lost', lost && !won);
-  el.querySelector('[data-battle="caption"]').textContent = won ? '胜利！小朋友，你相信光吗？' : lost ? '怪兽获胜！记住正确答案，再挑战一次。' : s.streak ? `连对 ${s.streak} 题 · 答对 ${s.correct}，答错 ${s.wrong}` : `答对 ${s.correct}，答错 ${s.wrong} · 两边各有 10 格血量`;
- }
- function stop() {
-  clearTimeout(animationTimer); animationTimer = null;
-  const el = stage(); if (el) el.classList.remove('hero-attacks', 'monster-attacks', 'special-attack');
- }
- function hit(ok, stats) {
-  stop(); render(stats);
-  const el = stage(); if (!el) return;
-  const s = clean(stats), special = ok && s.streak > 0 && s.streak % 5 === 0;
-  // Restart the visual effect even if two answers arrive within one animation.
-  void el.offsetWidth;
-  el.classList.add(ok ? 'hero-attacks' : 'monster-attacks');
-  if (special) el.classList.add('special-attack');
-  el.querySelector('[data-battle="caption"]').textContent = s.correct >= 10 ? '胜利！小朋友，你相信光吗？' : s.wrong >= 10 ? '怪兽获胜！记住正确答案，再挑战一次。' : special ? `连对 ${s.streak} 题！光之大招发动！` : ok ? '答对了！奥特曼出击，怪兽掉 1 格血。' : '答错了！怪兽反击，奥特曼掉 1 格血。';
-  animationTimer = setTimeout(() => { stop(); render(stats); }, special ? 1700 : 900);
- }
- window.DialogueBattle = { markup, render, hit, stop };
+ const art='assets/battle-art/',stage=()=>document.getElementById('dialogue-battle');
+ const reduced=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ const int=n=>Math.min(10,Math.max(0,Math.floor(Number(n)||0)));
+ let combatFrame=0,typingFrame=0,introFrame=0,combatEpoch=0,typingEpoch=0,introEpoch=0,dialogueKey='',dialogueText='',boundStage=null;
+ let animations=new Set(),timeouts=new Set(),lastStats={correct:0,wrong:0,streak:0},liveDialogue=null,intro=null;
+ function markup(){return `<section id="dialogue-battle" class="dialogue-battle is-paused" aria-label="奥特曼与怪兽的英语对话大战">
+  <div class="battle-backdrop" aria-hidden="true"><img src="${art}battlefield-v3.png" alt=""><div class="battle-atmosphere"></div></div>
+  <div class="battle-idle-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="battle-hud"><div class="battle-health-side"><div class="battle-health-label"><strong>奥特曼</strong><span data-battle="hero-count">10 / 10</span></div><div class="battle-health-track" role="progressbar" aria-label="奥特曼生命值" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10" data-battle="hero-bar"><span></span></div></div><span class="battle-versus" aria-hidden="true">VS</span><div class="battle-health-side"><div class="battle-health-label"><strong>怪兽</strong><span data-battle="monster-count">10 / 10</span></div><div class="battle-health-track monster-health" role="progressbar" aria-label="怪兽生命值" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10" data-battle="monster-bar"><span></span></div></div></div>
+  <div class="battle-mission" data-battle="mission">任务 · 守护地球</div>
+  <div class="battle-characters" aria-label="对战角色"><div class="battle-fighter battle-hero"><div class="battle-mover"><div class="battle-charge-ring"></div><img class="battle-figure" src="${art}hero-v3.png" alt="银红铠甲的奥特曼，举拳守护城市"><span class="battle-ground-shadow"></span></div></div><div class="battle-fighter battle-monster"><div class="battle-mover"><div class="battle-charge-ring"></div><img class="battle-figure" src="${art}monster-v3.png" alt="有角的怪兽，准备迎接挑战"><span class="battle-ground-shadow"></span></div></div></div>
+  <div class="battle-story-line" data-battle="story-line" aria-live="polite"></div>
+  <canvas id="battle-effects" aria-hidden="true"></canvas><div class="battle-flash" aria-hidden="true"></div>
+  <div class="battle-combo-card" aria-hidden="true"><small>FIVE IN A ROW</small><strong>光之大招</strong><span>相信光的力量！</span></div>
+  <div class="battle-impact-word" aria-hidden="true">命中！</div>
+  <div class="battle-terminal-banner" aria-hidden="true"><small>英语守护者</small><strong data-battle="result-title"></strong></div>
+  <section class="battle-dialogue" role="button" tabindex="0" aria-label="点击显示全部对话"><div class="battle-dialogue-heading"><span class="battle-speaker-dot"></span><strong class="battle-dialogue-name">怪兽 · 发起挑战</strong><small class="battle-read-hint">点击展开</small></div><div class="battle-dialogue-controls"></div><div class="battle-dialogue-line"><p class="battle-caption" data-battle="caption" aria-live="off">听清问题，选一句回答！</p><span class="battle-type-cursor" aria-hidden="true"></span></div><p class="battle-dialogue-translation"></p></section>
+  <div class="battle-intro" hidden><div class="battle-intro-shade"></div><div class="battle-intro-content"><p class="battle-intro-kicker">地球守护任务</p><strong class="battle-intro-speaker"></strong><p class="battle-intro-text" aria-live="off"></p><p class="battle-intro-translation"></p><div class="battle-intro-progress"></div><div class="battle-intro-actions"><button type="button" class="battle-intro-next">下一段 →</button><button type="button" class="battle-intro-skip">跳过开场</button></div></div></div>
+ </section>`}
+ function ensure(){const el=stage();if(!el)return null;if(el!==boundStage){boundStage=el;dialogueKey='';liveDialogue=null;const box=el.querySelector('.battle-dialogue');box.addEventListener('click',e=>{if(!e.target.closest('.battle-dialogue-controls'))revealDialogue()});box.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('.battle-dialogue-controls')){e.preventDefault();revealDialogue()}});el.querySelector('.battle-intro-next').addEventListener('click',advanceIntro);el.querySelector('.battle-intro-skip').addEventListener('click',()=>finishIntro(true))}return el}
+ function clean(s){return {correct:int(s?.correct),wrong:int(s?.wrong),streak:Math.max(0,Math.floor(Number(s?.streak)||0)),terminal:s?.terminal||null}}
+ function render(stats){const el=ensure();if(!el)return;lastStats=clean(stats);const won=lastStats.correct>=10||lastStats.terminal==='won',lost=!won&&(lastStats.wrong>=10||lastStats.terminal==='lost');for(const[name,left]of[['hero',10-lastStats.wrong],['monster',10-lastStats.correct]]){const bar=el.querySelector(`[data-battle="${name}-bar"]`);bar.setAttribute('aria-valuenow',String(left));bar.classList.toggle('low-health',left<=3);bar.querySelector('span').style.width=`${left*10}%`;el.querySelector(`[data-battle="${name}-count"]`).textContent=`${left} / 10`}el.classList.toggle('hero-danger',lastStats.wrong>=7&&!lost);el.classList.toggle('is-won',won);el.classList.toggle('is-lost',lost);el.classList.remove('is-paused');el.querySelector('[data-battle="result-title"]').textContent=won?'城市守护成功！':lost?'挑战结束 · 再次集结！':'';if(!liveDialogue){const p=el.querySelector('[data-battle="caption"]');p.textContent=won?'小朋友，你相信光吗？':lost?'记住正确回答，我们再挑战一次！':'怪兽发来英语挑战，选一句回答！';p.setAttribute('aria-label',p.textContent)}}
+ function schedule(fn,ms){const id=setTimeout(()=>{timeouts.delete(id);fn()},ms);timeouts.add(id);return id}
+ function clearCombat(){combatEpoch++;cancelAnimationFrame(combatFrame);combatFrame=0;for(const a of animations)a.cancel();animations.clear();for(const id of timeouts)clearTimeout(id);timeouts.clear();const el=stage();if(!el)return;el.classList.remove('hero-attacks','monster-attacks','special-attack','impact-freeze','battle-shaking');const canvas=el.querySelector('#battle-effects'),ctx=canvas?.getContext('2d');if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height)}
+ function stop(){clearCombat();revealDialogue();finishIntro(false);stage()?.classList.add('is-paused')}
+ function revealDialogue(){typingEpoch++;cancelAnimationFrame(typingFrame);typingFrame=0;const el=stage();if(!el)return;if(dialogueText)el.querySelector('[data-battle="caption"]').textContent=dialogueText;el.classList.remove('is-typing');el.querySelector('.battle-read-hint').textContent=''}
+ function setDialogue(d={}){const el=ensure();if(!el)return;const key=JSON.stringify([d.key??'',d.question??'',d.answer??'',d.phase??'ready',d.ok??false,d.terminal??null]);if(key===dialogueKey)return;typingEpoch++;cancelAnimationFrame(typingFrame);typingFrame=0;dialogueKey=key;liveDialogue=d;const answered=d.phase==='answered'||d.phase==='done',terminal=d.terminal||null;let speaker='怪兽 · 发起挑战',text=String(d.question||'听清问题，选一句回答！'),translation=String(d.story?.context||d.context||'');if(answered){speaker=d.ok?'奥特曼 · 英语反击':'奥特曼 · 记住正确回答';text=String(d.answer||'');translation=(d.ok?'✓ 回答正确 · ':'正确意思 · ')+String(d.translation||'')}if(terminal){speaker=terminal==='won'?'奥特曼 · 守护成功':'怪兽 · 本次获胜';translation=(d.ok?'✓ 正确回应 · ':'正确回应 · ')+String(d.translation||'')+' '+String(d.story?.context||'记住正确回答，我们再一起出发！')}dialogueText=text;const letters=Array.from(text),p=el.querySelector('[data-battle="caption"]');p.setAttribute('aria-label',text);el.querySelector('.battle-dialogue').setAttribute('aria-label',`${speaker}。${text}。${translation}。点击显示全部`);el.querySelector('.battle-dialogue-name').textContent=speaker;el.querySelector('.battle-dialogue-translation').textContent=translation;el.querySelector('.battle-dialogue').classList.toggle('hero-speaking',answered&&terminal!=='lost');el.querySelector('.battle-dialogue').classList.toggle('dialogue-correction',answered&&!d.ok);el.classList.remove('is-paused');const story=d.story||{};el.querySelector('[data-battle="mission"]').textContent=story.mission||'任务 · 守护地球';el.querySelector('[data-battle="story-line"]').textContent=answered?(d.ok?story.heroLine:story.monsterLine)||'':story.monsterLine||story.heroLine||'';if(reduced()||!text){p.textContent=text;el.classList.remove('is-typing');el.querySelector('.battle-read-hint').textContent='';return}p.textContent='';el.classList.add('is-typing');el.querySelector('.battle-read-hint').textContent='点击展开';const epoch=typingEpoch,start=performance.now();const tick=now=>{if(epoch!==typingEpoch||el!==stage()||document.hidden)return;const count=Math.min(letters.length,1+Math.floor((now-start)/28));p.textContent=letters.slice(0,count).join('');if(count<letters.length)typingFrame=requestAnimationFrame(tick);else{typingFrame=0;el.classList.remove('is-typing');el.querySelector('.battle-read-hint').textContent=''}};typingFrame=requestAnimationFrame(tick)}
+ function finishIntro(callFinish){introEpoch++;cancelAnimationFrame(introFrame);introFrame=0;const callback=intro?.onFinish;intro=null;const el=stage();if(el){el.classList.remove('intro-active');el.querySelector('.battle-intro').hidden=true}if(callFinish&&callback)callback()}
+ function introStep(){const el=ensure();if(!el||!intro)return;introEpoch++;cancelAnimationFrame(introFrame);introFrame=0;const raw=intro.lines[intro.index],line=typeof raw==='string'?{text:raw}:raw||{},text=String(line.text||line.line||line.en||''),p=el.querySelector('.battle-intro-text');el.querySelector('.battle-intro-speaker').textContent=line.speaker||line.name||'城市通讯';p.setAttribute('aria-label',text);el.querySelector('.battle-intro-translation').textContent=line.translation||line.zh||'';el.querySelector('.battle-intro-progress').textContent=`${intro.index+1} / ${intro.lines.length}`;el.querySelector('.battle-intro-next').textContent=intro.index===intro.lines.length-1?'开始守护 →':'下一段 →';if(reduced()){p.textContent=text;return}p.textContent='';const letters=Array.from(text),epoch=introEpoch,start=performance.now();const tick=now=>{if(!intro||epoch!==introEpoch||document.hidden)return;const count=Math.min(letters.length,1+Math.floor((now-start)/28));p.textContent=letters.slice(0,count).join('');if(count<letters.length)introFrame=requestAnimationFrame(tick);else introFrame=0};introFrame=requestAnimationFrame(tick)}
+ function advanceIntro(){if(!intro)return;if(introFrame){introEpoch++;cancelAnimationFrame(introFrame);introFrame=0;const raw=intro.lines[intro.index];stage().querySelector('.battle-intro-text').textContent=typeof raw==='string'?raw:raw?.text||raw?.line||raw?.en||'';return}if(intro.index<intro.lines.length-1){intro.index++;introStep()}else finishIntro(true)}
+ function showIntro({lines=[],onFinish}={}){finishIntro(false);const el=ensure();if(!el)return;if(!lines.length){onFinish?.();return}intro={lines,index:0,onFinish};el.querySelector('.battle-intro').hidden=false;el.classList.add('intro-active');el.classList.remove('is-paused');introStep()}
+ function animate(node,frames,options){if(!node?.animate||reduced())return null;const a=node.animate(frames,options);animations.add(a);a.finished.then(()=>animations.delete(a),()=>animations.delete(a));return a}
+ function canvasRun(el,ok,special,duration){if(reduced())return;const canvas=el.querySelector('#battle-effects'),ctx=canvas.getContext('2d');if(!ctx)return;const bounds=el.getBoundingClientRect(),w=bounds.width,h=bounds.height,dpr=Math.min(devicePixelRatio||1,2);if(!w||!h)return;canvas.width=Math.ceil(w*dpr);canvas.height=Math.ceil(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);const hero=el.querySelector('.battle-hero').getBoundingClientRect(),monster=el.querySelector('.battle-monster').getBoundingClientRect(),a=ok?hero:monster,b=ok?monster:hero,from={x:a.left-bounds.left+a.width*.5,y:a.top-bounds.top+a.height*.42},target={x:b.left-bounds.left+b.width*.5,y:b.top-bounds.top+b.height*.43},impactAt=special?560:470,colors=ok?['#fffce1','#91f5ff','#a3bcff','#fff']:['#fff0bd','#ff9e74','#ffd081','#fff'];const particles=Array.from({length:special?105:56},(_,i)=>({angle:i*2.39996,speed:70+(i%11)*17,life:.35+(i%9)*.065,size:1.5+(i%4),delay:special?(i%4)*.035:0,color:colors[i%colors.length]})),epoch=combatEpoch,start=performance.now();
+  const tick=now=>{if(epoch!==combatEpoch||stage()!==el||document.hidden)return;const elapsed=now-start,t=elapsed/1000;ctx.clearRect(0,0,w,h);const charge=Math.max(0,1-Math.abs(elapsed-190)/230);if(charge>0){const radius=18+charge*25;ctx.strokeStyle=ok?'rgba(128,244,255,.8)':'rgba(255,176,119,.8)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(from.x,from.y,radius,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(from.x,from.y,radius+12,.1+t*6,1.7+t*6);ctx.stroke()}
+   if(elapsed>220&&elapsed<impactAt+60){const p=Math.min(1,(elapsed-220)/(impactAt-220)),x=from.x+(target.x-from.x)*p,y=from.y+(target.y-from.y)*p;ctx.strokeStyle=ok?'rgba(161,244,255,.85)':'rgba(255,197,125,.9)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(x,y);ctx.stroke();for(let i=0;i<5;i++){const offset=(i-2)*10;ctx.strokeStyle=`rgba(255,255,255,${.5-i*.06})`;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(from.x,from.y+offset);ctx.lineTo(x-((target.x-from.x)>0?18:-18),y+offset);ctx.stroke()}}
+   if(special&&elapsed>=350&&elapsed<1300){const strength=Math.min(1,(elapsed-350)/150)*Math.min(1,(1300-elapsed)/220),height=18+strength*40,grad=ctx.createLinearGradient(from.x,from.y,target.x,from.y);grad.addColorStop(0,'rgba(228,255,255,.9)');grad.addColorStop(.4,'rgba(97,239,255,.8)');grad.addColorStop(1,'rgba(204,255,255,.35)');ctx.globalAlpha=strength;ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(from.x,from.y-8);ctx.lineTo(target.x,target.y-height);ctx.lineTo(target.x,target.y+height);ctx.lineTo(from.x,from.y+8);ctx.closePath();ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(target.x,target.y);ctx.stroke();ctx.strokeStyle='#8bf4ff';ctx.lineWidth=3;ctx.stroke();ctx.globalAlpha=1;for(let i=0;i<4;i++){const p=(t*2+i*.25)%1,x=from.x+(target.x-from.x)*p;ctx.strokeStyle=`rgba(231,255,255,${1-p})`;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(x,from.y,9+p*12,18+p*28,0,0,Math.PI*2);ctx.stroke()}}
+   const age=(elapsed-impactAt)/1000;if(age>=0){for(const p of particles){const pt=age-p.delay;if(pt<0||pt>p.life)continue;const alpha=1-pt/p.life,x=target.x+Math.cos(p.angle)*p.speed*pt,y=target.y+Math.sin(p.angle)*p.speed*pt+125*pt*pt;ctx.globalAlpha=alpha;ctx.strokeStyle=p.color;ctx.lineWidth=p.size;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-Math.cos(p.angle)*8,y-Math.sin(p.angle)*8);ctx.stroke()}ctx.globalAlpha=1;const life=Math.max(0,1-age/.48);if(life){ctx.strokeStyle=`rgba(255,255,255,${life})`;ctx.lineWidth=2+life*3;ctx.beginPath();ctx.arc(target.x,target.y,20+age*180,0,Math.PI*2);ctx.stroke()}}
+   if(elapsed<duration)combatFrame=requestAnimationFrame(tick);else{combatFrame=0;ctx.clearRect(0,0,w,h)}};combatFrame=requestAnimationFrame(tick)}
+ function hit(ok,stats){clearCombat();render(stats);const el=ensure();if(!el)return;const s=clean(stats),special=ok&&s.streak>0&&s.streak%5===0,duration=special?1750:1150,epoch=combatEpoch;el.classList.add(ok?'hero-attacks':'monster-attacks');if(special)el.classList.add('special-attack');const attacker=el.querySelector(ok?'.battle-hero .battle-mover':'.battle-monster .battle-mover'),defender=el.querySelector(ok?'.battle-monster .battle-mover':'.battle-hero .battle-mover'),ar=attacker.getBoundingClientRect(),dr=defender.getBoundingClientRect(),direction=ok?1:-1,travel=Math.max(24,Math.abs((dr.left+dr.width*.5)-(ar.left+ar.width*.5))*.72)*direction;
+  if(!special)animate(attacker,[{transform:'translate3d(0,0,0) rotate(0deg)',offset:0},{transform:`translate3d(${-direction*14}px,4px,0) rotate(${-direction*7}deg)`,offset:.18},{transform:`translate3d(${travel}px,-12px,0) rotate(${direction*10}deg)`,offset:.40},{transform:`translate3d(${travel}px,-12px,0) rotate(${direction*10}deg)`,offset:.54},{transform:`translate3d(${travel*.72}px,-3px,0) rotate(${direction*4}deg)`,offset:.70},{transform:'translate3d(0,0,0) rotate(0deg)',offset:1}],{duration,easing:'cubic-bezier(.2,.6,.3,1)'});
+  else animate(attacker,[{transform:'translate3d(0,0,0) scale(1)',offset:0},{transform:'translate3d(-8px,4px,0) scale(.96)',offset:.15},{transform:'translate3d(8px,-7px,0) scale(1.07)',offset:.30},{transform:'translate3d(8px,-7px,0) scale(1.07)',offset:.75},{transform:'translate3d(0,0,0) scale(1)',offset:1}],{duration,easing:'ease-in-out'});
+  animate(defender,[{transform:'translate3d(0,0,0) rotate(0deg)',offset:0},{transform:'translate3d(0,0,0) rotate(0deg)',offset:.40},{transform:`translate3d(${direction*24}px,-3px,0) rotate(${direction*13}deg)`,offset:.48},{transform:`translate3d(${direction*24}px,-3px,0) rotate(${direction*13}deg)`,offset:.57},{transform:`translate3d(${-direction*7}px,0,0) rotate(${-direction*4}deg)`,offset:.77},{transform:'translate3d(0,0,0) rotate(0deg)',offset:1}],{duration,easing:'ease-out'});
+  animate(defender.querySelector('.battle-figure'),[{filter:'drop-shadow(0 8px 9px #0008)',offset:0},{filter:'drop-shadow(0 8px 9px #0008)',offset:.39},{filter:'brightness(2.5) drop-shadow(0 0 7px white)',offset:.44},{filter:'brightness(1.7) drop-shadow(0 0 5px white)',offset:.53},{filter:'drop-shadow(0 8px 9px #0008)',offset:.69}],{duration:1000,easing:'linear'});
+  const impact=el.querySelector('.battle-impact-word');impact.textContent=special?'光之力量！':ok?'命中！':'被击中！';impact.style.left=ok?'70%':'22%';schedule(()=>{if(epoch!==combatEpoch)return;el.classList.add('impact-freeze','battle-shaking')},special?500:430);schedule(()=>{if(epoch===combatEpoch)el.classList.remove('impact-freeze','battle-shaking')},special?820:640);canvasRun(el,ok,special,duration);schedule(()=>{if(epoch!==combatEpoch)return;clearCombat();render(stats)},duration)}
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});window.addEventListener('pagehide',stop);
+ window.DialogueBattle={markup,render,hit,stop,setDialogue,revealDialogue,showIntro,get state(){return {typing:!!typingFrame,animating:!!combatFrame,intro:!!intro,dialogueText,stats:{...lastStats}}}};
 })();

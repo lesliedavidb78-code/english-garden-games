@@ -1,0 +1,20 @@
+/* Match the island's warm toy materials without changing the compact study layout. */
+body:not(.study-focus){background:linear-gradient(#d7eff0,#f4efda 300px);background-attachment:fixed;color:#365d44}
+body:not(.study-focus) .tabs{padding:6px;border:1px solid #f4f7d3;background:#fff8e5;border-radius:18px;box-shadow:0 4px 0 #c8b67f;gap:6px}
+body:not(.study-focus) .tabs button{border:0;background:transparent;font-weight:800;border-radius:12px}
+body:not(.study-focus) .tabs button[aria-selected=true]{background:linear-gradient(#d7edb2,#aacc7a);box-shadow:0 3px 0 #82a252;color:#3d6237}
+body:not(.study-focus) .seed-shelf{border:2px solid #fff8e6;border-radius:20px;padding:14px;background:#fff8e2;box-shadow:0 5px 0 #ccba84}
+body:not(.study-focus) .seed-choice{border:2px solid #e5d8af;background:linear-gradient(#fffdf0,#f0e2bb);border-radius:15px;box-shadow:0 3px 0 #ceb47d}
+body:not(.study-focus) .seed-choice[aria-pressed=true]{border-color:#75a35a;background:linear-gradient(#f8ffd6,#d8efb0);box-shadow:0 3px 0 #7c9b54}
+body:not(.study-focus) .garden-scene{border:3px solid #fff6db;border-radius:26px;box-shadow:0 7px 0 #b8bd80,0 14px 30px #739c6f22;background:linear-gradient(#8dd7e8 0%,#cef0e2 57%,#b8d88b 58%,#8fb969 100%)}
+body:not(.study-focus) .resources .resource{border:2px solid #fff5dd;border-radius:18px;box-shadow:0 4px 0 #b9be84}
+body:not(.study-focus) .quest{border:2px solid #fff5da;background:linear-gradient(#fffaf0,#f4e5bd);box-shadow:0 5px 0 #c9b27d;border-radius:22px}
+body:not(.study-focus) .quest:nth-child(2){background:linear-gradient(#eff5ff,#dae7ec);box-shadow:0 5px 0 #9eb7b9}
+body:not(.study-focus) .quest strong{color:#45664d}
+body:not(.study-focus) .btn{background:linear-gradient(#a8d878,#7bb653);border:1px solid #f5ffd6;box-shadow:0 4px 0 #598b3a;color:#fffdf0}
+body:not(.study-focus) .btn.secondary{background:#fff5dc;color:#6f6d42;box-shadow:0 3px 0 #c1ae75;border-color:#e3d09d}
+body:not(.study-focus) .progress-track{background:#ddd6b0;border:1px solid #fff6d1;height:14px}.progress-fill{background:linear-gradient(90deg,#7fc353,#c6e678)}
+body:not(.study-focus) h1,body:not(.study-focus) h2{font-family:'Microsoft YaHei',system-ui,sans-serif;font-weight:850}
+.study-focus .study-card{border:2px solid #e6dabb;background:#fffdf4;box-shadow:inset 0 1px #fff}
+.study-focus .btn{border-radius:13px;background:linear-gradient(#77af58,#578c40);color:#fffdf0;border:1px solid #b9d99b;box-shadow:0 3px 0 #456a37}
+.study-focus .btn.secondary{background:#fff9e6;color:#657d4c;border-color:#d5d7ac;box-shadow:0 3px 0 #c6c697}

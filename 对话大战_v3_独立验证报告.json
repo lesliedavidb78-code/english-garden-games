@@ -1,0 +1,60 @@
+{
+  "results": [
+    {
+      "name": "逐字问句正在播放且完整aria文本可读",
+      "result": "PASS"
+    },
+    {
+      "name": "点击立即全部显示",
+      "result": "PASS"
+    },
+    {
+      "name": "三个美术图片载入且旧SVG被移除",
+      "result": "PASS"
+    },
+    {
+      "name": "stage全幅及10格正确血量",
+      "result": "PASS"
+    },
+    {
+      "name": "英雄确实冲刺且受击火花canvas非空",
+      "result": "PASS"
+    },
+    {
+      "name": "stop取消combat所有定时动画且暂停idle",
+      "result": "PASS"
+    },
+    {
+      "name": "连续5正确超大光束与徽章",
+      "result": "PASS"
+    },
+    {
+      "name": "暂停把正文补全并保留中文正确意思",
+      "result": "PASS"
+    },
+    {
+      "name": "三拍剧情开场显示",
+      "result": "PASS"
+    },
+    {
+      "name": "退出剧情不执行finish",
+      "result": "PASS"
+    },
+    {
+      "name": "跳过剧情只触发一次finish",
+      "result": "PASS"
+    },
+    {
+      "name": "十对胜利主角庆祝敌方倒地",
+      "result": "PASS"
+    },
+    {
+      "name": "十错战败",
+      "result": "PASS"
+    },
+    {
+      "name": "减少动态时无逐字及粒子RAF",
+      "result": "PASS"
+    }
+  ]
+}
