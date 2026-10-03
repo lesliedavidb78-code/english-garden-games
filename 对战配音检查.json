@@ -1,0 +1,30 @@
+{
+  "voice": "Microsoft Huihui Desktop zh-CN，本机合成；非影视原声",
+  "clips": [
+    {
+      "file": "hero-hit.wav",
+      "seconds": 2.36,
+      "peak": 25440
+    },
+    {
+      "file": "hero-special.wav",
+      "seconds": 4.87,
+      "peak": 30788
+    },
+    {
+      "file": "hero-win.wav",
+      "seconds": 4.39,
+      "peak": 26939
+    },
+    {
+      "file": "monster-hit.wav",
+      "seconds": 5.6,
+      "peak": 30474
+    },
+    {
+      "file": "monster-win.wav",
+      "seconds": 7.55,
+      "peak": 31609
+    }
+  ]
+}
