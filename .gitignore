@@ -3,3 +3,6 @@
 *.log
 *.tmp
 .DS_Store
+
+# User-supplied editable source media stays local; publish processed runtime assets.
+/地球守护战素材包/

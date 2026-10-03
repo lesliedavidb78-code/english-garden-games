@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.3-03';
+  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.3-04';
   const fingerprint=text=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return `${text.length}:${h>>>0}`};
   const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-photo-upper-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
   const freshNavy=()=>({totalArrows:0,history:[],legacyHistory:[],active:null});
@@ -153,7 +153,16 @@
   function fitViewport(){document.documentElement.style.setProperty('--play-height',`${window.visualViewport?.height||window.innerHeight}px`)}fitViewport();window.addEventListener('resize',fitViewport);window.visualViewport?.addEventListener('resize',fitViewport);
   fillSettings();renderBoat();renderRecords();renderLanding();if(location.hash==='#garden')switchView('garden');
   $('offline-status').textContent=`版本 ${RELEASE} · 离线资源准备中…`;
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>{$('offline-status').textContent=`版本 ${RELEASE} · 离线已准备 · 点中自动射箭，立即换题`}).catch(()=>{$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，请联网重新打开`});
+  if('serviceWorker'in navigator){
+   const showOfflineState=async()=>{try{
+    const cache=await caches.open('english-games-offline-v25');
+    const essential=['assets/battle-media/manifest.js','assets/battle-media/video/portrait/victory_shield.mp4','assets/battle-media/video/landscape/victory_shield.mp4','assets/battle-media/audio/voice/vo_intro_monster.mp3','assets/word-audio/words/w0381.mp3'];
+    const ready=(await Promise.all(essential.map(f=>cache.match(new URL(f,location.href),{ignoreSearch:true})))).every(Boolean);
+    $('offline-status').textContent=`版本 ${RELEASE} · ${ready?'离线已准备 · 动画和内置词库可离线使用':'正在下载离线动画，请保持联网…'}`
+   }catch{$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，请联网重新打开`}};
+   navigator.serviceWorker.addEventListener('controllerchange',showOfflineState);
+   navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(showOfflineState).catch(()=>{$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，请联网重新打开`})
+  }
   $('check-update').onclick=async()=>{pause(false);$('check-update').disabled=true;try{const reg=await navigator.serviceWorker?.getRegistration();await reg?.update();const r=await fetch(`index.html?update=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw Error('network');location.reload()}catch{$('check-update').disabled=false;C.toast('暂时无法联网更新，存档已保留。')}};
   window.Adventure={release:RELEASE,get state(){return state},update,validate,validGarden,validNavy,start,resume,pause,answer,deadline,finish,switchView,restore,spawn,fire,selectAnswer,questionKey,answerTotals,get waterStats(){return {particles:waterParticles.length,active:!!waterRaf,sinking:sinkingUntil>performance.now()}},get running(){return running},get drops(){return drops}};
 })();

@@ -1,0 +1,50 @@
+{
+  "sourceCount": 48,
+  "audioCount": 34,
+  "videoCount": 14,
+  "sourceMediaPreserved": true,
+  "sourceBytes": 53312932,
+  "runtimeBytes": 19541323,
+  "completeDecodeErrors": [],
+  "allVideosH264MutedFaststart": true,
+  "allAudioNoClipping": true,
+  "maximumDecodedPeakDBFS": -3.262,
+  "cues": {
+    "portrait": {
+      "hero_attack": {
+        "charge": 0.2,
+        "dash": 1.15,
+        "impact": 1.3
+      },
+      "monster_attack": {
+        "charge": 0.6,
+        "dash": 0.85,
+        "impact": 1.066667
+      },
+      "special_light": {
+        "charge": 0,
+        "beamStart": 2.5,
+        "impact": 2.6,
+        "beamEnd": 3.55
+      }
+    },
+    "landscape": {
+      "hero_attack": {
+        "charge": 0.2,
+        "dash": 1.05,
+        "impact": 1.2
+      },
+      "monster_attack": {
+        "charge": 0.15,
+        "dash": 0.65,
+        "impact": 1.033333
+      },
+      "special_light": {
+        "charge": 0,
+        "beamStart": 2.366667,
+        "impact": 2.5,
+        "beamEnd": 3.6
+      }
+    }
+  }
+}

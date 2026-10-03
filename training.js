@@ -1,12 +1,12 @@
 (() => {
  'use strict';
  const C=GameCommon,$=C.$,A=Adventure,D=TrainingData,names={listening:'听力训练',follow:'跟读训练',reaction:'反应训练',meaning:'词义配对',dialogue:'对话练习',translate:'句子翻译'},icons=['🎧','🎙️','⚡','🧩','💬','🌐'];
- let timer=null,deadline=0,media=new Audio(),record=null,stream=null,recordURL=null,playback=new Audio(),recordEpoch=0,audioEpoch=0,pressWanted=false,micPending=false,holdTimer=null,nextUnlockTimer=null,story=new Audio();
+ let timer=null,deadline=0,media=new Audio(),record=null,stream=null,recordURL=null,playback=new Audio(),recordEpoch=0,audioEpoch=0,pressWanted=false,micPending=false,holdTimer=null,nextUnlockTimer=null,story=new Audio(),battlePlaybackEpoch=0;
  const state=()=>A.state.training,active=()=>state()?.active;
  const scope=()=>JSON.stringify([A.state.garden.settings.pack,A.state.garden.custom]);
  const save=fn=>A.update(root=>{root.training??={active:null,history:[]};return fn(root.training,root.garden)});
  const sentencePool=()=>{const id=A.state.garden.settings.pack;if(id==='pep5-photo-upper-all')return D.sentences;const unit=/^pep5-photo-upper-u([1-6])$/.exec(id);return unit?D.sentences.filter(s=>s.unit===Number(unit[1])):[]};
- function halt(){pressWanted=false;clearTimeout(holdTimer);clearTimeout(nextUnlockTimer);nextUnlockTimer=null;$('training-next').disabled=false;document.querySelector('.training-card')?.classList.remove('battle-resolving','battle-intro-active');story.pause();window.BattleAudio?.stop();window.DialogueBattle?.stop();window.TrainingQuest?.stop();audioEpoch++;clearInterval(timer);timer=null;C.stopSpeech();media.pause();playback.pause();if(record?.state==='recording')record.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;recordEpoch++;if(recordURL){URL.revokeObjectURL(recordURL);recordURL=null}}
+ function halt(){battlePlaybackEpoch++;media.onended=null;media.onerror=null;pressWanted=false;clearTimeout(holdTimer);clearTimeout(nextUnlockTimer);nextUnlockTimer=null;$('training-next').disabled=false;document.querySelector('.training-card')?.classList.remove('battle-resolving','battle-intro-active');story.pause();window.BattleAudio?.stop();window.DialogueBattle?.stop();window.TrainingQuest?.stop();audioEpoch++;clearInterval(timer);timer=null;C.stopSpeech();media.pause();playback.pause();if(record?.state==='recording')record.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;recordEpoch++;if(recordURL){URL.revokeObjectURL(recordURL);recordURL=null}}
  function pause(){if(timer&&active()?.phase==='ready'){const left=Math.max(0,Math.min(10000,Math.ceil(deadline-performance.now())));save(t=>{t.active.remaining=left})}halt()}
  function focus(on){document.body.classList.toggle('training-focus',on);window.scrollTo(0,0)}
  function home(){pause();document.body.classList.remove('training-dialogue');focus(false);$('training-home').hidden=false;$('training-round').hidden=true;$('training-scope').textContent=C.PACKS.find(p=>p.id===A.state.garden.settings.pack)?.name||'我的课本词汇';if(active()&&active().scope!==scope()&&active().phase!=='done')save(t=>{t.active=null});const a=active();$('training-resume').hidden=!a||a.phase==='done';$('training-resume-label').textContent=a?`${names[a.mode]} · ${a.battle?`答对${a.correct} · 答错${a.battle.wrong}`:`第 ${a.index+1}/10 题`}`:'';$('training-history').replaceChildren();for(const h of (state()?.history||[]).slice(-10).reverse()){const row=document.createElement('p');row.textContent=`${names[h.mode]} · ${h.mode==='follow'?(h.localOnly?'完成10次录音/跳过（未评测）':'旧版自行跟读记录'):`答对 ${h.correct}/${h.total}`} · ${new Date(h.at).toLocaleDateString('zh-CN')}`;$('training-history').append(row)}}
@@ -16,23 +16,74 @@
  const direction=$('translation-direction').value,hear=$('listening-kind').value;
  if(pool.length<10)C.toast(`当前范围有${pool.length}条素材，练完后会循环复习。`);
  const items=cycle(pool,mode==='dialogue'?20:10).map(w=>{const english=mode==='dialogue'||mode==='translate'&&direction==='zh-en'||(mode==='listening'||mode==='reaction')&&hear==='word';const expected=english?w.en:w.zh;const others=C.shuffle([...new Set((mode==='dialogue'?sp:pool).map(p=>english?p.en:p.zh).filter(x=>x!==expected))]).slice(0,3);return {...w,expected,options:C.shuffle([expected,...others]),english,direction,hear}});
- if(!items.length){C.toast('当前范围没有适用的练习。');return}if(!save(t=>{t.active={id:C.uid(),mode,scope:scope(),items,index:0,correct:0,remaining:10000,phase:'ready',submitted:'',ok:false,...(mode==='dialogue'?{battle:{wrong:0,streak:0},storySeen:false}:{}),...(mode==='follow'?{followLocal:true,recorded:false}:{})}}))return;render(true)}
- function audio(text,file){const token=++audioEpoch;C.stopSpeech();media.pause();if(file){media.src=file;media.play().catch(()=>{if(token!==audioEpoch)return;$('training-audio-note').textContent='未能播放，请点“听示范”重试。'})}else C.speak(text,ok=>{if(token===audioEpoch&&!ok)$('training-audio-note').textContent='未能播放，请点“听示范”重试。'})}
+ if(!items.length){C.toast('当前范围没有适用的练习。');return}if(!save(t=>{t.active={id:C.uid(),mode,scope:scope(),items,index:0,correct:0,remaining:10000,phase:'ready',submitted:'',ok:false,...(mode==='dialogue'?{battle:{wrong:0,streak:0},storySeen:false,battlePlayed:[]}:{}),...(mode==='follow'?{followLocal:true,recorded:false}:{})}}))return;render(true)}
+ function audio(text,file){
+  const token=++audioEpoch;C.stopSpeech();media.pause();
+  const finish=ok=>{if(token!==audioEpoch)return;if(!ok)$('training-audio-note').textContent='未能播放，请点“听示范”重试。';if(active()?.mode==='dialogue')window.BattleAudio?.englishEnd()};
+  media.onended=()=>finish(true);media.onerror=()=>finish(false);
+  if(file){media.src=file;media.play().catch(()=>finish(false))}else C.speak(text,finish)
+ }
+ function narrationContext(a=active()){
+  return {roundId:a?.id,playedKeys:a?.battlePlayed||[],onMark:key=>{
+   if(!/^vo_[a-z_]+$/.test(key)||active()?.id!==a?.id)return;
+   save(t=>{const r=t.active;r.battlePlayed??=[];if(!r.battlePlayed.includes(key))r.battlePlayed.push(key)})
+  }}
+ }
+ function enterBattle(a){
+  const n=narrationContext(a),stats=battleStats(a);window.BattleAudio?.enter(stats,n.roundId,n.playedKeys,n.onMark);
+  window.BattleFilm?.init(document.getElementById('dialogue-battle'));
+  if(a.phase==='done'&&stats.terminal){
+   const ending=stats.terminal==='won'?'victory_shield':'defeat_retry';
+   if(!(BattleFilm.status.held&&BattleFilm.status.kind===ending))window.BattleFilm?.play(ending)
+  }else window.BattleFilm?.idle()
+ }
+ function performBattleAttack(a){
+  const stats=battleStats(active()),key=a.id+':'+a.index,epoch=battlePlaybackEpoch,special=a.ok&&stats.streak>0&&stats.streak%5===0;
+  const kind=special?'special_light':a.ok?'hero_attack':'monster_attack',n=narrationContext(a);
+  const current=()=>battlePlaybackEpoch===epoch&&active()?.id+':'+active()?.index===key&&active()?.phase==='answered';
+  let started=false;
+  const sound=(cues,durationMs)=>{if(started||!current())return;started=true;window.BattleAudio?.event(a.ok,stats,{...n,cueSeconds:cues,durationMs,terminalDelayMs:stats.terminal?durationMs:0})};
+  window.DialogueBattle?.hit(a.ok,stats);
+  const fallback=special?1750:1150;
+  const film=window.BattleFilm?.play(kind,{onStart:info=>sound(info.cueSeconds,info.durationMs)});
+  const attackDuration=film?.durationMs||fallback;
+  const endingDuration=stats.terminal?5100:0;
+  holdNextForAttack(key,Math.min(22000,attackDuration+endingDuration+6500));
+  if(!film){sound({impact:special ? .56 : .47,beam:.35},fallback);holdNextForAttack(key,fallback);return}
+  Promise.resolve(film.promise).then(async result=>{
+   if(!current())return;
+   if(result?.cancelled){
+    window.BattleAudio?.stop();const context=narrationContext(active());window.BattleAudio?.enter(stats,context.roundId,context.playedKeys,context.onMark);
+    if(stats.terminal){const ending=window.BattleFilm?.play(stats.terminal==='won'?'victory_shield':'defeat_retry');if(ending)await ending.promise}else window.BattleFilm?.idle();
+    if(current())unlockNext(key);return
+   }
+   if(!result?.played){
+    window.DialogueBattle?.hit(a.ok,stats);sound({impact:special ? .56 : .47,beam:.35},fallback);
+    holdNextForAttack(key,fallback);return
+   }
+   if(!started)sound({impact:special ? .56 : .47,beam:.35},fallback);
+   if(stats.terminal){const end=window.BattleFilm?.play(stats.terminal==='won'?'victory_shield':'defeat_retry',{hold:true});if(end)await end.promise}
+   else window.BattleFilm?.idle();
+   if(current())unlockNext(key)
+  }).catch(()=>{if(current()){sound({impact:special ? .56 : .47,beam:.35},fallback);unlockNext(key)}})
+ }
+ function unlockNext(key){const a=active();if(a?.mode!=='dialogue'||a.phase!=='answered'||a.id+':'+a.index!==key)return;clearTimeout(nextUnlockTimer);nextUnlockTimer=null;$('training-next').disabled=false;document.querySelector('.training-card').classList.remove('battle-resolving')}
+
  function listen(){const a=active();if(!a||a.phase==='done')return;const w=a.items[a.index];if(a.mode==='dialogue'){window.BattleAudio?.unlock();window.BattleAudio?.question()}WordAudio.unlock();audio(a.mode==='dialogue'?w.q:w.en,a.mode==='dialogue'?w.qAudio:w.audio)}
  function decorateDialogue(a,w){const dialogue=a.mode==='dialogue',card=document.querySelector('.training-card'),button=$('training-listen');card.classList.toggle('battle-complete',dialogue&&a.phase==='done');button.textContent=dialogue?'🔊 重听':'🔊 听示范';button.setAttribute('aria-label',dialogue?'重新听本题英语问句':'听英语示范');if(dialogue){window.DialogueBattle?.setDialogue({question:w.q,context:w.context,answer:w.en,translation:w.zh,phase:a.phase,ok:a.ok,terminal:battleStats(a).terminal,key:a.id+':'+a.index+':'+a.phase,story:window.BattleStory?.scene(battleStats(a),w)});const box=document.querySelector('.battle-dialogue');if(box){let controls=box.querySelector('.battle-dialogue-controls');if(!controls){controls=document.createElement('div');controls.className='battle-dialogue-controls';box.append(controls)}controls.append(button)}}else card.insertBefore(button,card.querySelector('.training-record-actions'))}
- function openStory(a){if(a.mode!=='dialogue'||a.phase!=='ready'||a.storySeen!==false||!window.BattleStory?.intro||!window.DialogueBattle?.showIntro)return false;const key=a.id;document.querySelector('.training-card').classList.add('battle-intro-active');window.DialogueBattle.showIntro({lines:window.BattleStory.intro,onFinish:()=>{const current=active();if(current?.id!==key||current.mode!=='dialogue'||current.phase!=='ready')return;save(t=>{t.active.storySeen=true});document.querySelector('.training-card').classList.remove('battle-intro-active');decorateDialogue(active(),active().items[active().index]);listen()}});return true}
+ function openStory(a){if(a.mode!=='dialogue'||a.phase!=='ready'||a.storySeen!==false||!window.BattleStory?.intro||!window.DialogueBattle?.showIntro)return false;const key=a.id;document.querySelector('.training-card').classList.add('battle-intro-active');window.DialogueBattle.showIntro({lines:window.BattleStory.intro,onStep:index=>{window.BattleAudio?.intro(index);if(index===0)window.BattleFilm?.play('intro_city',{onEnd:()=>{if(DialogueBattle.state.intro)window.BattleFilm?.idle()}});else window.BattleFilm?.idle()},onFinish:()=>{const current=active();if(current?.id!==key||current.mode!=='dialogue'||current.phase!=='ready')return;save(t=>{t.active.storySeen=true});document.querySelector('.training-card').classList.remove('battle-intro-active');window.BattleAudio?.stop();window.BattleFilm?.stop();enterBattle(current);decorateDialogue(active(),active().items[active().index]);listen()}});return true}
  function holdNextForAttack(key,duration=1150){const button=$('training-next');button.disabled=true;document.querySelector('.training-card').classList.add('battle-resolving');nextUnlockTimer=setTimeout(()=>{nextUnlockTimer=null;const a=active();if(a?.mode!=='dialogue'||a.phase!=='answered'||a.id+':'+a.index!==key)return;button.disabled=false;document.querySelector('.training-card').classList.remove('battle-resolving')},duration)}
  function render(autoplay=false){halt();if(active()?.mode==='dialogue'&&!active().battle&&active().phase!=='done')save(t=>{const r=t.active;r.battle={wrong:r.index+(r.phase==='ready'?0:1)-r.correct,streak:0};r.items.push(...cycle(r.items));const pool=sentencePool();r.items.forEach((w,i)=>{if(i===r.index&&r.phase==='answered')return;const others=C.shuffle([...new Set(pool.map(p=>p.en).filter(x=>x!==w.expected))]).slice(0,3);w.options=C.shuffle([w.expected,...others])})});const a=active();if(!a)return home();focus(true);$('training-home').hidden=true;$('training-round').hidden=false;const w=a.items[a.index],answered=a.phase!=='ready';$('training-game-scene').hidden=a.mode==='dialogue';$('training-battle-scene').hidden=a.mode!=='dialogue';window.TrainingQuest?.render({mode:a.mode,index:a.index,correct:a.correct,answered,ok:a.ok,skipped:a.submitted==='__skipped__',recorded:a.recorded});window.DialogueBattle?.render(battleStats(a));document.querySelector('.training-card').classList.toggle('reviewing',answered);document.body.classList.toggle('training-dialogue',a.mode==='dialogue');$('training-count').textContent=a.battle?`奥特曼对战 · 第${a.index+1}题`:`${names[a.mode]} · ${a.index+1}/10`;$('training-audio-note').textContent='';$('training-record').textContent='🎙️ 按住跟读';$('training-choices').replaceChildren();$('training-review').hidden=!answered;$('training-next').hidden=!answered;$('training-next').textContent=a.battle&&(a.correct>=10||a.battle.wrong>=10)?'查看对战结果 →':!a.battle&&a.index===9?'查看收获 →':'下一题 →';$('training-record').hidden=a.mode!=='follow'||answered;$('training-self').hidden=a.mode!=='follow'||answered;$('training-self').textContent='跳过本题（不计正确） →';$('training-playback').hidden=true;$('training-listen').hidden=a.mode==='meaning';$('training-timer').hidden=a.mode!=='reaction'||answered;
  $('training-prompt').textContent=a.mode==='follow'?w.en:a.mode==='meaning'?w.en:a.mode==='translate'?(w.direction==='zh-en'?w.zh:w.en):a.mode==='dialogue'?`听问句，选合适的回答。${w.context}`:a.mode==='reaction'?'10秒内选对，点亮闪电！':'听英文，选'+(w.hear==='word'?'对应单词':'中文意思');
  $('training-description').textContent=a.mode==='follow'?w.zh: a.mode==='translate'?'选择对应翻译':a.mode==='meaning'?'把这个英文与中文意思配成一对':'';
  if(a.mode!=='follow')for(const option of w.options){const b=document.createElement('button');b.type='button';b.className='training-choice';b.textContent=option;if(a.mode==='dialogue'){b.dataset.choice='ABCD'[w.options.indexOf(option)];b.setAttribute('aria-label',b.dataset.choice+'. '+option);if(answered&&option===a.submitted)b.classList.add('selected')}b.disabled=answered;b.onclick=()=>answer(option);if(answered){if(option===w.expected)b.classList.add('correct');if(option===a.submitted&&!a.ok)b.classList.add('incorrect')} $('training-choices').append(b)}
  $('training-review').textContent=answered?(a.mode==='follow'?(a.followLocal?`已跳过（不计正确）：${w.en} = ${w.zh}。录音留在本机，本题未做发音评测。`:`旧版自行跟读记录（未评测）：${w.en} = ${w.zh}`):`${a.ok?'✓ 答对':'✗ '+(a.submitted==='__timeout__'?'超时':'答错')} · 正确答案：${w.en} = ${w.zh}${a.mode==='dialogue'?'；问句：'+w.q:''}`):'';
- decorateDialogue(a,w);
+ decorateDialogue(a,w);if(a.mode==='dialogue')enterBattle(a);
  if(a.phase==='done'){focus(a.mode==='dialogue');document.body.classList.toggle('training-dialogue',a.mode==='dialogue');$('training-prompt').textContent=a.battle?(a.correct>=10?'光的力量，战胜怪兽！':'怪兽获胜，下次再挑战！'):'本轮训练完成';$('training-description').textContent=a.mode==='follow'?(a.followLocal?'本轮跟读已结束。录音和跳过不计正确、不发奖励；可重新选择游戏。':'旧版练习已结束，原奖励保留。'):a.battle?`答对 ${a.correct}，累计受击 ${a.battle.wrong}；奖励水滴已存入花园。`:`答对 ${a.correct}/10，获得 ${a.correct} 个水滴${a.correct>=9?'和1个太阳':''}。`; $('training-choices').replaceChildren();$('training-review').hidden=true;$('training-next').textContent='回训练首页 →';$('training-listen').hidden=true;return}
  if(!answered&&a.mode==='reaction'){deadline=performance.now()+a.remaining;const tick=()=>{const ms=deadline-performance.now();$('training-timer').textContent=`⚡ ${Math.max(0,Math.ceil(ms/1000))} 秒`;if(ms<=0){clearInterval(timer);timer=null;answer('__timeout__')}};tick();if(active()?.phase==='ready')timer=setInterval(tick,100)}
  if(openStory(a))return;
  if(autoplay&&!answered&&['listening','reaction','dialogue','follow'].includes(a.mode))listen()}
- function answer(value){const a=active();if(!a||a.phase!=='ready'||a.mode==='follow'&&value!=='__skipped__')return false;const ok=value===a.items[a.index].expected;halt();if(!save((t,g)=>{const r=t.active;if(r.id!==a.id||r.index!==a.index||r.phase!=='ready')return false;r.phase='answered';r.submitted=value;r.ok=ok;if(r.mode==='follow')r.followLocal=true;if(r.battle){r.storySeen=true;if(ok)r.battle.streak++;else{r.battle.wrong++;r.battle.streak=0}}if(ok){r.correct++;g.water++}}))return false;if(a.mode!=='follow'&&a.mode!=='dialogue')C.sound(ok?'drop':'miss');render();if(a.battle){const stats=battleStats(active());window.DialogueBattle?.hit(ok,stats);const feedback=window.BattleAudio?.event(ok,stats);holdNextForAttack(a.id+':'+a.index,Math.max(ok&&stats.streak%5===0?1750:1150,feedback?.durationMs||0))}else window.TrainingQuest?.hit(ok,{mode:a.mode,index:a.index,correct:active().correct,skipped:value==='__skipped__'});return ok}
+ function answer(value){const a=active();if(!a||a.phase!=='ready'||a.mode==='follow'&&value!=='__skipped__')return false;const ok=value===a.items[a.index].expected;halt();if(!save((t,g)=>{const r=t.active;if(r.id!==a.id||r.index!==a.index||r.phase!=='ready')return false;r.phase='answered';r.submitted=value;r.ok=ok;if(r.mode==='follow')r.followLocal=true;if(r.battle){r.storySeen=true;if(ok)r.battle.streak++;else{r.battle.wrong++;r.battle.streak=0}}if(ok){r.correct++;g.water++}}))return false;if(a.mode!=='follow'&&a.mode!=='dialogue')C.sound(ok?'drop':'miss');render();if(a.battle){performBattleAttack(active())}else window.TrainingQuest?.hit(ok,{mode:a.mode,index:a.index,correct:active().correct,skipped:value==='__skipped__'});return ok}
  function completeFollow(){const a=active();if(a?.mode!=='follow'||a.phase!=='ready')return;answer('__skipped__')}
  function battleStats(a=active()){return {correct:a?.correct||0,wrong:a?.battle?.wrong||0,streak:a?.battle?.streak||0,terminal:a?.battle?(a.correct>=10?'won':a.battle.wrong>=10?'lost':null):null}}
  function next(){const a=active();if(!a||a.phase==='ready')return;if(a.phase==='done')return home();if(!save((t,g)=>{const r=t.active,terminal=r.battle?(r.correct>=10||r.battle.wrong>=10):r.index===9;if(terminal){r.phase='done';if(!t.history.some(h=>h.id===r.id)){t.history.push({id:r.id,mode:r.mode,at:new Date().toISOString(),correct:r.correct,total:r.index+1,...(r.followLocal?{localOnly:true}:{})});if(r.mode!=='follow'){if(r.correct/(r.index+1)>=.9)g.suns++;if(!r.battle)g.history.push({id:r.id,mode:names[r.mode],at:new Date().toISOString(),correct:r.correct,total:10})}}}else{r.index++;r.phase='ready';r.remaining=10000;r.submitted='';r.ok=false;r.recorded=false;if(r.mode==='follow')r.followLocal=true}}))return;render(true)}
@@ -50,6 +101,11 @@
  }
  function pressMic(e){if(e?.button!==undefined&&e.button!==0||active()?.mode!=='follow'||active()?.phase!=='ready')return;e?.preventDefault();pressWanted=true;try{if(e?.pointerId!==undefined)$('training-record').setPointerCapture(e.pointerId)}catch{}microphone()}
  function releaseMic(){pressWanted=false;clearTimeout(holdTimer);if(record?.state==='recording')record.stop()}
+ // Battle sound preferences remain local and are independent of learning progress.
+ for(const [id,key] of [['battle-music','music'],['battle-sound-effects','effects'],['battle-voices','voices']]){
+  const input=$(id);if(!input)continue;input.checked=window.BattleAudio?.settings?.[key]!==false;
+  input.addEventListener('change',()=>window.BattleAudio?.setSettings({[key]:input.checked}))
+ }
  $('training-battle-scene').innerHTML=DialogueBattle.markup();$('training-game-scene').innerHTML=TrainingQuest.markup();
  $('training-modes').innerHTML=Object.entries(names).map(([key,name],i)=>`<button class="training-mode" data-training="${key}"><span>${icons[i]}</span><strong>${name}</strong><small>${['寻宝岛：听英文寻找宝藏','声音精灵：按住跟读、回听','雷电跑道：十秒闪电挑战','花牌岛：找出意思配对','奥特曼：对话打怪兽','修桥任务：中译英 / 英译中'][i]}</small></button>`).join('');
  document.querySelectorAll('[data-training]').forEach(b=>b.onclick=()=>start(b.dataset.training));$('training-continue').onclick=()=>{if(active()?.scope!==scope()){home();C.toast('词库已改变，请重新开始训练。')}else render(true)};$('training-restart').onclick=chooseAnother;$('training-switch').onclick=chooseAnother;$('training-exit').onclick=home;$('training-next').onclick=next;$('training-listen').onclick=listen;$('training-record').onpointerdown=pressMic;$('training-record').onpointerup=releaseMic;$('training-record').onpointercancel=releaseMic;$('training-record').onkeydown=e=>{if([' ','Enter'].includes(e.key)&&!e.repeat)pressMic(e)};$('training-record').onkeyup=e=>{if([' ','Enter'].includes(e.key))releaseMic()};$('training-playback').onclick=()=>playback.play().catch(()=>C.toast('回听未开始，请再点一次。'));$('training-self').onclick=completeFollow;

@@ -81,3 +81,16 @@ body.training-focus.training-dialogue button:focus-visible{outline:3px solid #ff
 }
 @media(prefers-reduced-motion:reduce){body.training-focus.training-dialogue .training-choice{transition:none}}
 @media(max-width:360px) and (orientation:portrait){body.training-focus.training-dialogue .training-card .training-choice,body.training-focus.training-dialogue .training-card.reviewing .training-choice{font-size:11px;line-height:1.16;padding-top:5px;padding-bottom:5px}body.training-focus.training-dialogue .training-header strong{font-size:11px}}
+/* Short browser viewports still reserve room for the fight, question and four answers. */
+@media(orientation:portrait) and (max-height:540px){
+ body.training-focus.training-dialogue .training-card{--dialogue-choice-height:108px}
+ body.training-focus.training-dialogue .battle-mission{display:none}
+ body.training-focus.training-dialogue .battle-dialogue{bottom:calc(var(--dialogue-choice-height) + 62px + env(safe-area-inset-bottom));padding:7px 10px}
+ body.training-focus.training-dialogue .battle-dialogue-name{min-height:25px;font-size:10px}
+ body.training-focus.training-dialogue [data-battle="caption"]{font-size:13px;line-height:1.13}
+ body.training-focus.training-dialogue .battle-dialogue-translation{font-size:10px;line-height:1.18;margin-top:3px}
+ body.training-focus.training-dialogue .training-card .training-choice,body.training-focus.training-dialogue .training-card.reviewing .training-choice{font-size:10px;line-height:1.12;padding:5px 6px 5px 27px}
+ body.training-focus.training-dialogue .training-choice::before{left:6px;top:7px;width:15px;height:17px}
+ body.training-focus.training-dialogue #training-choices,body.training-focus.training-dialogue .training-card.reviewing #training-choices{bottom:calc(54px + env(safe-area-inset-bottom));gap:6px}
+ body.training-focus.training-dialogue .battle-complete .battle-dialogue{bottom:calc(66px + env(safe-area-inset-bottom))}
+}
