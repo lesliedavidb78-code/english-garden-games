@@ -1,0 +1,195 @@
+{
+  "voice": "Microsoft Zira Desktop en-US, rate -1",
+  "clips": [
+    {
+      "file": "s00.wav",
+      "seconds": 1.82,
+      "peak": 23145
+    },
+    {
+      "file": "s01.wav",
+      "seconds": 2.31,
+      "peak": 20321
+    },
+    {
+      "file": "s02.wav",
+      "seconds": 2.23,
+      "peak": 17812
+    },
+    {
+      "file": "s03.wav",
+      "seconds": 2.85,
+      "peak": 20953
+    },
+    {
+      "file": "s04.wav",
+      "seconds": 2.63,
+      "peak": 20701
+    },
+    {
+      "file": "s05.wav",
+      "seconds": 2.13,
+      "peak": 19670
+    },
+    {
+      "file": "s06.wav",
+      "seconds": 3.23,
+      "peak": 20611
+    },
+    {
+      "file": "s07.wav",
+      "seconds": 2.27,
+      "peak": 18353
+    },
+    {
+      "file": "s08.wav",
+      "seconds": 5.81,
+      "peak": 20396
+    },
+    {
+      "file": "s09.wav",
+      "seconds": 2.64,
+      "peak": 21054
+    },
+    {
+      "file": "s10.wav",
+      "seconds": 3.4,
+      "peak": 20654
+    },
+    {
+      "file": "s11.wav",
+      "seconds": 2.8,
+      "peak": 22747
+    },
+    {
+      "file": "s12.wav",
+      "seconds": 2.05,
+      "peak": 19489
+    },
+    {
+      "file": "s13.wav",
+      "seconds": 2.95,
+      "peak": 19928
+    },
+    {
+      "file": "s14.wav",
+      "seconds": 4.8,
+      "peak": 20678
+    },
+    {
+      "file": "s15.wav",
+      "seconds": 3.7,
+      "peak": 19950
+    },
+    {
+      "file": "s16.wav",
+      "seconds": 2.69,
+      "peak": 18745
+    },
+    {
+      "file": "s17.wav",
+      "seconds": 4.07,
+      "peak": 20741
+    },
+    {
+      "file": "s18.wav",
+      "seconds": 4.13,
+      "peak": 20152
+    },
+    {
+      "file": "s19.wav",
+      "seconds": 6.17,
+      "peak": 22453
+    },
+    {
+      "file": "s20.wav",
+      "seconds": 3.97,
+      "peak": 20760
+    },
+    {
+      "file": "s21.wav",
+      "seconds": 2.54,
+      "peak": 17599
+    },
+    {
+      "file": "s22.wav",
+      "seconds": 2.63,
+      "peak": 22177
+    },
+    {
+      "file": "s23.wav",
+      "seconds": 2.29,
+      "peak": 22532
+    },
+    {
+      "file": "s24.wav",
+      "seconds": 2.6,
+      "peak": 18702
+    },
+    {
+      "file": "s25.wav",
+      "seconds": 4.34,
+      "peak": 20396
+    },
+    {
+      "file": "s26.wav",
+      "seconds": 2.19,
+      "peak": 22226
+    },
+    {
+      "file": "s27.wav",
+      "seconds": 2.32,
+      "peak": 26821
+    },
+    {
+      "file": "s28.wav",
+      "seconds": 2.89,
+      "peak": 21391
+    },
+    {
+      "file": "s29.wav",
+      "seconds": 2.41,
+      "peak": 17382
+    },
+    {
+      "file": "s30.wav",
+      "seconds": 2.82,
+      "peak": 19542
+    },
+    {
+      "file": "s31.wav",
+      "seconds": 1.67,
+      "peak": 19239
+    },
+    {
+      "file": "s32.wav",
+      "seconds": 3.39,
+      "peak": 21634
+    },
+    {
+      "file": "s33.wav",
+      "seconds": 2.92,
+      "peak": 21524
+    },
+    {
+      "file": "s34.wav",
+      "seconds": 2.45,
+      "peak": 16411
+    },
+    {
+      "file": "s35.wav",
+      "seconds": 3.57,
+      "peak": 19279
+    },
+    {
+      "file": "s36.wav",
+      "seconds": 2.33,
+      "peak": 15559
+    },
+    {
+      "file": "s37.wav",
+      "seconds": 3.2,
+      "peak": 19889
+    }
+  ]
+}

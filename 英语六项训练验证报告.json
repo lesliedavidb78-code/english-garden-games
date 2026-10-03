@@ -1,0 +1,275 @@
+{
+  "at": "2026-10-03T05:13:42.961Z",
+  "site": "http://127.0.0.1:8086/",
+  "environment": "Chrome模拟视口，DOM按钮与真实音频点击；麦克风拒绝模拟；不是手机真机或发音评分测试。",
+  "checks": [
+    {
+      "name": "六种训练入口及38课本句子",
+      "result": "PASS"
+    },
+    {
+      "name": "listening十题生成并校验有效",
+      "result": "PASS"
+    },
+    {
+      "name": "listening答案锁定与奖励最多一次",
+      "result": "PASS"
+    },
+    {
+      "name": "listening重复点击不发奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "listening下一题可继续",
+      "result": "PASS"
+    },
+    {
+      "name": "listening退出恢复导航并提供继续和重开",
+      "result": "PASS"
+    },
+    {
+      "name": "follow十题生成并校验有效",
+      "result": "PASS"
+    },
+    {
+      "name": "follow下一题可继续",
+      "result": "PASS"
+    },
+    {
+      "name": "follow退出恢复导航并提供继续和重开",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction十题生成并校验有效",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction答案锁定与奖励最多一次",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction重复点击不发奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction下一题可继续",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction退出恢复导航并提供继续和重开",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning十题生成并校验有效",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning答案锁定与奖励最多一次",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning重复点击不发奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning下一题可继续",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning退出恢复导航并提供继续和重开",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue十题生成并校验有效",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue答案锁定与奖励最多一次",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue重复点击不发奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue下一题可继续",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue退出恢复导航并提供继续和重开",
+      "result": "PASS"
+    },
+    {
+      "name": "translate十题生成并校验有效",
+      "result": "PASS"
+    },
+    {
+      "name": "translate答案锁定与奖励最多一次",
+      "result": "PASS"
+    },
+    {
+      "name": "translate重复点击不发奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "translate下一题可继续",
+      "result": "PASS"
+    },
+    {
+      "name": "translate退出恢复导航并提供继续和重开",
+      "result": "PASS"
+    },
+    {
+      "name": "第一单元句子与选项严格限定",
+      "result": "PASS"
+    },
+    {
+      "name": "第一单元单词与干扰项限定且十题去重",
+      "result": "PASS"
+    },
+    {
+      "name": "listening 320×480题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "follow 320×480题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction 320×480题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning 320×480题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue 320×480题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "translate 320×480题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "listening 390×650题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "follow 390×650题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction 390×650题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning 390×650题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue 390×650题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "translate 390×650题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "listening 740×360题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "follow 740×360题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "reaction 740×360题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "meaning 740×360题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "dialogue 740×360题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "translate 740×360题目/复盘/操作同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "十题全对只发十水滴和一太阳并入学习历史",
+      "result": "PASS"
+    },
+    {
+      "name": "完成后重复操作不重复奖励",
+      "result": "PASS"
+    },
+    {
+      "name": "跟读仅计完成不发准确率太阳",
+      "result": "PASS"
+    },
+    {
+      "name": "退出后限时训练不继续耗时",
+      "result": "PASS"
+    },
+    {
+      "name": "到时判错且不送水滴",
+      "result": "PASS"
+    },
+    {
+      "name": "刷新恢复已提交答案与锁定且奖励不重复",
+      "result": "PASS"
+    },
+    {
+      "name": "麦克风拒绝仍可自行跟读",
+      "result": "PASS"
+    },
+    {
+      "name": "课本句子独立录音实际推进",
+      "result": "PASS"
+    },
+    {
+      "name": "返回旧花园词库成长有效",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 dialogue最长句子与长选项同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 translate最长句子与长选项同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "320×480 follow最长句子与长选项同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 dialogue最长句子与长选项同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 translate最长句子与长选项同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "740×360 follow最长句子与长选项同屏",
+      "result": "PASS"
+    },
+    {
+      "name": "原生MediaRecorder可以生成本题回听录音（模拟音源）",
+      "result": "PASS"
+    },
+    {
+      "name": "v22预缓存六项训练与全部38句示范录音",
+      "result": "PASS"
+    },
+    {
+      "name": "实际断网重开课本句子继续发音",
+      "result": "PASS"
+    }
+  ]
+}

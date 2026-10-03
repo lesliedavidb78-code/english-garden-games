@@ -1,0 +1,268 @@
+[
+  {
+    "id": 0,
+    "unit": 1,
+    "en": "What's he like?",
+    "zh": "他什么样？",
+    "audio": "assets/sentence-audio/s00.wav"
+  },
+  {
+    "id": 1,
+    "unit": 1,
+    "en": "He's tall and strong.",
+    "zh": "他又高又壮。",
+    "audio": "assets/sentence-audio/s01.wav"
+  },
+  {
+    "id": 2,
+    "unit": 1,
+    "en": "Is he good at football?",
+    "zh": "他擅长踢足球吗？",
+    "audio": "assets/sentence-audio/s02.wav"
+  },
+  {
+    "id": 3,
+    "unit": 1,
+    "en": "Yes, I think he is.",
+    "zh": "是的，我想他擅长。",
+    "audio": "assets/sentence-audio/s03.wav"
+  },
+  {
+    "id": 4,
+    "unit": 1,
+    "en": "What can you do for the festival?",
+    "zh": "你能为科学艺术节做什么？",
+    "audio": "assets/sentence-audio/s04.wav"
+  },
+  {
+    "id": 5,
+    "unit": 1,
+    "en": "I can make a robot.",
+    "zh": "我能制作机器人。",
+    "audio": "assets/sentence-audio/s05.wav"
+  },
+  {
+    "id": 6,
+    "unit": 1,
+    "en": "Can you make robots, Sarah?",
+    "zh": "萨拉，你会制作机器人吗？",
+    "audio": "assets/sentence-audio/s06.wav"
+  },
+  {
+    "id": 7,
+    "unit": 1,
+    "en": "No, I can't.",
+    "zh": "不，我不能。",
+    "audio": "assets/sentence-audio/s07.wav"
+  },
+  {
+    "id": 8,
+    "unit": 2,
+    "en": "Hi, Mike. You look sad. What's the matter?",
+    "zh": "嗨，迈克。你看起来不开心。怎么回事？",
+    "audio": "assets/sentence-audio/s08.wav"
+  },
+  {
+    "id": 9,
+    "unit": 2,
+    "en": "It's about our school project.",
+    "zh": "是关于我们学校的项目。",
+    "audio": "assets/sentence-audio/s09.wav"
+  },
+  {
+    "id": 10,
+    "unit": 2,
+    "en": "And we have to finish our project by Monday.",
+    "zh": "而且我们得在星期一之前完成项目。",
+    "audio": "assets/sentence-audio/s10.wav"
+  },
+  {
+    "id": 11,
+    "unit": 2,
+    "en": "So you don't agree with each other?",
+    "zh": "所以你俩意见不一致？",
+    "audio": "assets/sentence-audio/s11.wav"
+  },
+  {
+    "id": 12,
+    "unit": 2,
+    "en": "Why not do both?",
+    "zh": "为什么不两个活动都做呢？",
+    "audio": "assets/sentence-audio/s12.wav"
+  },
+  {
+    "id": 13,
+    "unit": 2,
+    "en": "It's important to listen to each other.",
+    "zh": "听取彼此的想法很重要。",
+    "audio": "assets/sentence-audio/s13.wav"
+  },
+  {
+    "id": 14,
+    "unit": 2,
+    "en": "Yes, Miss White. I need to talk to Mike.",
+    "zh": "是的，怀特老师。我需要和迈克谈谈。",
+    "audio": "assets/sentence-audio/s14.wav"
+  },
+  {
+    "id": 15,
+    "unit": 3,
+    "en": "What's your favourite day at school, John?",
+    "zh": "你在学校最喜欢哪一天，约翰？",
+    "audio": "assets/sentence-audio/s15.wav"
+  },
+  {
+    "id": 16,
+    "unit": 3,
+    "en": "What do you have on Wednesdays?",
+    "zh": "星期三你有什么课？",
+    "audio": "assets/sentence-audio/s16.wav"
+  },
+  {
+    "id": 17,
+    "unit": 3,
+    "en": "I have Chinese, maths, music and PE.",
+    "zh": "我有语文课、数学课、音乐课和体育课。",
+    "audio": "assets/sentence-audio/s17.wav"
+  },
+  {
+    "id": 18,
+    "unit": 3,
+    "en": "What do you usually do at the weekend, children?",
+    "zh": "孩子们，周末你们通常做什么？",
+    "audio": "assets/sentence-audio/s18.wav"
+  },
+  {
+    "id": 19,
+    "unit": 3,
+    "en": "I often play football. Sometimes I play Chinese chess with my father.",
+    "zh": "我经常踢足球。有时我和我爸下象棋。",
+    "audio": "assets/sentence-audio/s19.wav"
+  },
+  {
+    "id": 20,
+    "unit": 3,
+    "en": "Does your mother work on both Saturdays and Sundays?",
+    "zh": "你妈妈周六周日都工作吗？",
+    "audio": "assets/sentence-audio/s20.wav"
+  },
+  {
+    "id": 21,
+    "unit": 3,
+    "en": "Yes, she does.",
+    "zh": "是的，她（周末两天）都工作。",
+    "audio": "assets/sentence-audio/s21.wav"
+  },
+  {
+    "id": 22,
+    "unit": 4,
+    "en": "How can we all stay healthy?",
+    "zh": "我们怎样才能保持健康？",
+    "audio": "assets/sentence-audio/s22.wav"
+  },
+  {
+    "id": 23,
+    "unit": 4,
+    "en": "We should eat healthy food.",
+    "zh": "我们应该吃健康的食物。",
+    "audio": "assets/sentence-audio/s23.wav"
+  },
+  {
+    "id": 24,
+    "unit": 4,
+    "en": "Can I play on Mum's phone?",
+    "zh": "我可以玩妈妈的手机吗？",
+    "audio": "assets/sentence-audio/s24.wav"
+  },
+  {
+    "id": 25,
+    "unit": 4,
+    "en": "No. You shouldn't play on a phone so often.",
+    "zh": "不行。你不该总是玩手机。",
+    "audio": "assets/sentence-audio/s25.wav"
+  },
+  {
+    "id": 26,
+    "unit": 5,
+    "en": "What would you like to eat?",
+    "zh": "你想吃些什么？",
+    "audio": "assets/sentence-audio/s26.wav"
+  },
+  {
+    "id": 27,
+    "unit": 5,
+    "en": "I'd like beef and rice.",
+    "zh": "我想吃牛肉和米饭。",
+    "audio": "assets/sentence-audio/s27.wav"
+  },
+  {
+    "id": 28,
+    "unit": 5,
+    "en": "Would you like some chicken soup too?",
+    "zh": "你还想喝鸡汤吗？",
+    "audio": "assets/sentence-audio/s28.wav"
+  },
+  {
+    "id": 29,
+    "unit": 5,
+    "en": "Yes, please.",
+    "zh": "是的，请（给我鸡汤）。",
+    "audio": "assets/sentence-audio/s29.wav"
+  },
+  {
+    "id": 30,
+    "unit": 5,
+    "en": "Where does your coconut come from?",
+    "zh": "你的椰子是哪里的？",
+    "audio": "assets/sentence-audio/s30.wav"
+  },
+  {
+    "id": 31,
+    "unit": 5,
+    "en": "Hainan!",
+    "zh": "海南！",
+    "audio": "assets/sentence-audio/s31.wav"
+  },
+  {
+    "id": 32,
+    "unit": 6,
+    "en": "There are also many rivers in the nature park.",
+    "zh": "这个自然公园里还有许多河流。",
+    "audio": "assets/sentence-audio/s32.wav"
+  },
+  {
+    "id": 33,
+    "unit": 6,
+    "en": "Is there a waterfall in the forest?",
+    "zh": "森林里有瀑布吗？",
+    "audio": "assets/sentence-audio/s33.wav"
+  },
+  {
+    "id": 34,
+    "unit": 6,
+    "en": "Yes, there is.",
+    "zh": "是的，这里有。",
+    "audio": "assets/sentence-audio/s34.wav"
+  },
+  {
+    "id": 35,
+    "unit": 6,
+    "en": "Are there any famous mountains in the nature park?",
+    "zh": "自然公园有名山吗？",
+    "audio": "assets/sentence-audio/s35.wav"
+  },
+  {
+    "id": 36,
+    "unit": 6,
+    "en": "Yes, there are.",
+    "zh": "是的，这里有。",
+    "audio": "assets/sentence-audio/s36.wav"
+  },
+  {
+    "id": 37,
+    "unit": 6,
+    "en": "There will be heavy rain in the afternoon too.",
+    "zh": "今天下午还将有大雨。",
+    "audio": "assets/sentence-audio/s37.wav"
+  }
+]
