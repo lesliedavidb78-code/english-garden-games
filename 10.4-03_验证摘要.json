@@ -1,0 +1,16 @@
+{
+  "release": "10.4-03",
+  "local": {
+    "mobilePlayer": 20,
+    "offline": 8,
+    "battleRegression": 37,
+    "rendererLifecycle": 33,
+    "jsSyntaxFiles": 23,
+    "animatedAssetsDecoded": 14,
+    "delayedRendererAndAssetReadiness": 9
+  },
+  "localAllPassed": true,
+  "compatibilityAssetBytes": 49183140,
+  "deviceBoundary": "Chrome隔离上下文、MiuiBrowser/微信样例UA与手机视口、真实多帧媒体、实际断网重载；未在小米原生内核或微信真机实测。",
+  "storage": "原english-adventure-v2键保持不变；不清除进度或录音。"
+}

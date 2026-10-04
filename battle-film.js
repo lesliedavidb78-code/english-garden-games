@@ -80,5 +80,13 @@
  }
  function idle(){return play('idle_loop')}
  function stop(){unwatch();clearOperation();const terminal=shown>=0&&terminalKinds.has(lastKind)&&slots[shown].readyState>=2&&slots[shown].currentTime>0;held=terminal;phase=terminal?'held':'stopped';host?.classList.toggle('film-terminal',terminal);if(!terminal){host?.classList.remove('film-active');for(const video of slots)video.classList.remove('film-visible');shown=-1;backdrop(null)}}
- window.BattleFilm={init,idle,play,stop,get status(){const video=slots[shown]||operation?.video;return {phase,initialized:!!host&&!!layer?.isConnected,active:!!host?.classList.contains('film-active'),kind:lastKind,orientation:lastOrientation||orientation(),playing:!!video&&!video.paused,held,loading:phase==='loading',currentTime:video?.currentTime||0,error:lastError}}};
+ const nativePlayer={init,idle,play,stop,get status(){const video=slots[shown]||operation?.video;return {renderer:'video',phase,initialized:!!host&&!!layer?.isConnected,active:!!host?.classList.contains('film-active'),kind:lastKind,orientation:lastOrientation||orientation(),playing:!!video&&!video.paused,held,loading:phase==='loading',currentTime:video?.currentTime||0,error:lastError}}};
+ // Xiaomi's native player may ignore inline-video hints and cover the game.
+ // Keep working WeChat/desktop playback intact. The compatibility renderer
+ // has real animated image frames and creates no HTMLVideoElement.
+ const ua=navigator.userAgent||'';
+ const prefersFrames=/(?:Miui|Mi|Xiaomi)Browser/i.test(ua)&&!/(?:MicroMessenger|wxwork)/i.test(ua);
+ const useFrames=prefersFrames&&!!window.BattleFramePlayer;
+ window.BattleFilm=useFrames?window.BattleFramePlayer:nativePlayer;
+ window.BattleFilm.usesFrames=useFrames;
 })();

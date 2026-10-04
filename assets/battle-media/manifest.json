@@ -1518,5 +1518,301 @@
       "clippedSamples": 0
     }
   },
-  "cueNote": "Action cues observed on processed 30fps frames, approximate onset within two frames (0.067s), not copied from source manifest. Charge/dash are broad phases; impact and beamStart are synchronization anchors."
+  "cueNote": "Action cues observed on processed 30fps frames, approximate onset within two frames (0.067s), not copied from source manifest. Charge/dash are broad phases; impact and beamStart are synchronization anchors.",
+  "frames": {
+    "portrait": {
+      "defeat_retry": {
+        "key": "defeat_retry",
+        "src": "assets/battle-media/frames/portrait/defeat_retry.webp",
+        "width": 540,
+        "height": 488,
+        "durationSeconds": 4.033333,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/portrait/defeat_retry.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 97,
+        "actualDurationSeconds": 4.041,
+        "bytes": 2889966,
+        "cropPixels": {
+          "x": 0,
+          "y": 308,
+          "width": 720,
+          "height": 652
+        }
+      },
+      "hero_attack": {
+        "key": "hero_attack",
+        "src": "assets/battle-media/frames/portrait/hero_attack.webp",
+        "width": 540,
+        "height": 452,
+        "durationSeconds": 2.5,
+        "cueSeconds": {
+          "charge": 0.2,
+          "dash": 1.15,
+          "impact": 1.3
+        },
+        "originalSource": "assets/battle-media/video/portrait/hero_attack.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 60,
+        "actualDurationSeconds": 2.499,
+        "bytes": 1993304,
+        "cropPixels": {
+          "x": 0,
+          "y": 332,
+          "width": 720,
+          "height": 602
+        }
+      },
+      "idle_loop": {
+        "key": "idle_loop",
+        "src": "assets/battle-media/frames/portrait/idle_loop.webp",
+        "width": 540,
+        "height": 412,
+        "durationSeconds": 8.1,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/portrait/idle_loop.mp4",
+        "loop": true,
+        "loopCount": 0,
+        "frameRate": 24,
+        "frameCount": 194,
+        "actualDurationSeconds": 8.082,
+        "bytes": 5766650,
+        "cropPixels": {
+          "x": 0,
+          "y": 372,
+          "width": 720,
+          "height": 550
+        }
+      },
+      "intro_city": {
+        "key": "intro_city",
+        "src": "assets/battle-media/frames/portrait/intro_city.webp",
+        "width": 540,
+        "height": 480,
+        "durationSeconds": 5.033008,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/portrait/intro_city.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 121,
+        "actualDurationSeconds": 5.041,
+        "bytes": 4447376,
+        "cropPixels": {
+          "x": 0,
+          "y": 308,
+          "width": 720,
+          "height": 640
+        }
+      },
+      "monster_attack": {
+        "key": "monster_attack",
+        "src": "assets/battle-media/frames/portrait/monster_attack.webp",
+        "width": 540,
+        "height": 452,
+        "durationSeconds": 2.5,
+        "cueSeconds": {
+          "charge": 0.6,
+          "dash": 0.85,
+          "impact": 1.066667
+        },
+        "originalSource": "assets/battle-media/video/portrait/monster_attack.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 60,
+        "actualDurationSeconds": 2.499,
+        "bytes": 1998850,
+        "cropPixels": {
+          "x": 0,
+          "y": 332,
+          "width": 720,
+          "height": 602
+        }
+      },
+      "victory_shield": {
+        "key": "victory_shield",
+        "src": "assets/battle-media/frames/portrait/victory_shield.webp",
+        "width": 540,
+        "height": 488,
+        "durationSeconds": 5.033008,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/portrait/victory_shield.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 121,
+        "actualDurationSeconds": 5.041,
+        "bytes": 3220600,
+        "cropPixels": {
+          "x": 0,
+          "y": 308,
+          "width": 720,
+          "height": 652
+        }
+      },
+      "special_light": {
+        "key": "special_light",
+        "src": "assets/battle-media/frames/portrait/special_light.webp",
+        "width": 540,
+        "height": 460,
+        "durationSeconds": 5.033008,
+        "cueSeconds": {
+          "charge": 0,
+          "beamStart": 2.5,
+          "impact": 2.6,
+          "beamEnd": 3.55
+        },
+        "originalSource": "assets/battle-media/video/portrait/special_light.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 121,
+        "actualDurationSeconds": 5.041,
+        "bytes": 3799702,
+        "cropPixels": {
+          "x": 0,
+          "y": 294,
+          "width": 720,
+          "height": 614
+        }
+      }
+    },
+    "landscape": {
+      "hero_attack": {
+        "key": "hero_attack",
+        "src": "assets/battle-media/frames/landscape/hero_attack.webp",
+        "width": 768,
+        "height": 432,
+        "durationSeconds": 2.5,
+        "cueSeconds": {
+          "charge": 0.2,
+          "dash": 1.05,
+          "impact": 1.2
+        },
+        "originalSource": "assets/battle-media/video/landscape/hero_attack.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 60,
+        "actualDurationSeconds": 2.499,
+        "bytes": 2294276,
+        "cropPixels": null
+      },
+      "defeat_retry": {
+        "key": "defeat_retry",
+        "src": "assets/battle-media/frames/landscape/defeat_retry.webp",
+        "width": 768,
+        "height": 432,
+        "durationSeconds": 4.033333,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/landscape/defeat_retry.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 97,
+        "actualDurationSeconds": 4.041,
+        "bytes": 3160726,
+        "cropPixels": null
+      },
+      "idle_loop": {
+        "key": "idle_loop",
+        "src": "assets/battle-media/frames/landscape/idle_loop.webp",
+        "width": 768,
+        "height": 432,
+        "durationSeconds": 8.1,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/landscape/idle_loop.mp4",
+        "loop": true,
+        "loopCount": 0,
+        "frameRate": 24,
+        "frameCount": 194,
+        "actualDurationSeconds": 8.082,
+        "bytes": 5451900,
+        "cropPixels": null
+      },
+      "monster_attack": {
+        "key": "monster_attack",
+        "src": "assets/battle-media/frames/landscape/monster_attack.webp",
+        "width": 768,
+        "height": 432,
+        "durationSeconds": 2.5,
+        "cueSeconds": {
+          "charge": 0.15,
+          "dash": 0.65,
+          "impact": 1.033333
+        },
+        "originalSource": "assets/battle-media/video/landscape/monster_attack.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 60,
+        "actualDurationSeconds": 2.499,
+        "bytes": 2207722,
+        "cropPixels": null
+      },
+      "intro_city": {
+        "key": "intro_city",
+        "src": "assets/battle-media/frames/landscape/intro_city.webp",
+        "width": 768,
+        "height": 432,
+        "durationSeconds": 5.033333,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/landscape/intro_city.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 121,
+        "actualDurationSeconds": 5.041,
+        "bytes": 3439166,
+        "cropPixels": null
+      },
+      "special_light": {
+        "key": "special_light",
+        "src": "assets/battle-media/frames/landscape/special_light.webp",
+        "width": 768,
+        "height": 432,
+        "durationSeconds": 5.033008,
+        "cueSeconds": {
+          "charge": 0,
+          "beamStart": 2.366667,
+          "impact": 2.5,
+          "beamEnd": 3.6
+        },
+        "originalSource": "assets/battle-media/video/landscape/special_light.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 121,
+        "actualDurationSeconds": 5.041,
+        "bytes": 4301874,
+        "cropPixels": null
+      },
+      "victory_shield": {
+        "key": "victory_shield",
+        "src": "assets/battle-media/frames/landscape/victory_shield.webp",
+        "width": 768,
+        "height": 432,
+        "durationSeconds": 5.033333,
+        "cueSeconds": {},
+        "originalSource": "assets/battle-media/video/landscape/victory_shield.mp4",
+        "loop": false,
+        "loopCount": 1,
+        "frameRate": 24,
+        "frameCount": 121,
+        "actualDurationSeconds": 5.041,
+        "bytes": 4211028,
+        "cropPixels": null
+      }
+    }
+  },
+  "compatibilityFrames": {
+    "purpose": "Xiaomi native browser: no video element; other browsers keep original MP4",
+    "processing": "Original processed MP4 exported locally to animated WebP, 24 fps, safe portrait crop",
+    "additionalBytes": 49183140
+  }
 }
