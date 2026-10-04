@@ -1,33 +1,57 @@
-/* 船队以江面为同一舞台，后景小船沿蛇形水道驶向前景收箭。 */
-.river .fleet.navy-fleet-enabled{position:absolute;left:0;right:0;bottom:47px;width:auto;height:56%;translate:none;overflow:visible;pointer-events:none;z-index:3}
+/* 首尾相接的草船队：少船横排，多船沿一条 S 航道，图层下方只有短缆。 */
+.river .fleet.navy-fleet-enabled{position:absolute;left:0;right:0;bottom:47px;width:auto;height:41%;translate:none;overflow:visible;pointer-events:none;z-index:3}
 .navy-fleet-enabled .distant-boat,.navy-fleet-enabled .campaign-fleet{display:none!important}
-.navy-fleet-stage .navy-fleet-hero-dock,.navy-fleet-stage .navy-fleet-ship{position:absolute;left:0;top:0;width:var(--fleet-ship-width,88%);aspect-ratio:3/2;transform-origin:50% 83%;pointer-events:none;will-change:transform}
+.navy-fleet-stage .navy-fleet-hero-dock,.navy-fleet-stage .navy-fleet-ship{position:absolute;left:0;top:0;width:var(--fleet-ship-width,78%);aspect-ratio:var(--fleet-ship-aspect,3 / 2);transform-origin:50% 83%;pointer-events:none;will-change:transform}
 .navy-fleet-stage .navy-fleet-hero-dock>.hero-boat{left:0;bottom:0;width:100%;position:relative;z-index:1}
-.navy-fleet-stage .navy-fleet-ship{filter:drop-shadow(0 10px 4px #082d3f85)}
+.navy-fleet-stage .navy-fleet-ship{filter:drop-shadow(0 5px 3px #082d3f65)}
 .navy-fleet-motion{position:relative;width:100%;transform-origin:50% 83%;rotate:var(--escort-heel,0deg);translate:0 var(--escort-flood,0px);transition:rotate .75s ease,translate .75s ease;animation:navy-fleet-bob 5.2s ease-in-out infinite}
 .navy-fleet-ship:nth-of-type(2n) .navy-fleet-motion{animation-delay:-2.1s}
 .navy-fleet-motion>img{width:100%;height:auto;display:block;user-select:none}
-.navy-fleet-motion:after{content:'';position:absolute;left:8%;right:5%;height:7%;bottom:1%;border-radius:50%;border-bottom:2px solid #b4e6e599;box-shadow:0 7px 7px #84d1d42b;animation:navy-fleet-wake 3s ease-in-out infinite}
-.navy-fleet-front-badge{position:absolute;left:50%;bottom:1%;translate:-50% 0;padding:4px 11px;border:1px solid #f2d89496;border-radius:16px;color:#fff6d9;background:linear-gradient(#194450e8,#0c303de8);font:800 11px/1.4 system-ui;white-space:nowrap;box-shadow:0 2px 12px #062c3c55;text-shadow:0 1px 1px #062636;z-index:10}
-.navy-fleet-badge{position:absolute;left:50%;bottom:2%;translate:-50% 0;padding:5px 13px;border:2px solid #ecd9a18a;border-radius:18px;color:#fff4d0;background:#173b44e6;font:850 18px/1.2 system-ui;white-space:nowrap}
-.navy-fleet-chains{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:63;pointer-events:none;filter:drop-shadow(0 2px 1px #0c273ac9)}
+.navy-fleet-motion:after{content:'';position:absolute;left:7%;right:4%;height:7%;bottom:0;border-radius:50%;border-bottom:2px solid #b4e6e599;box-shadow:0 5px 5px #84d1d42b;animation:navy-fleet-wake 3s ease-in-out infinite}
+.navy-fleet-front-badge,.navy-fleet-badge{position:absolute;left:50%;bottom:-19px;translate:-50% 0;border:1px solid #f2d89496;border-radius:10px;color:#fff6d9;background:linear-gradient(#194450eb,#0c303de8);font:800 10px/1.2 system-ui;white-space:nowrap;box-shadow:0 2px 7px #062c3c44;text-shadow:0 1px 1px #062636;z-index:10;padding:4px 7px}
+.navy-fleet-front-badge{border-color:#ffe4a4;color:#fff5c4;background:#27473cec}
+.navy-fleet-badge{font-size:10px;padding:3px 5px;bottom:-17px;color:#dde9dd;border-color:#adc9bf80;background:#173b44e6}
+.navy-fleet-chains{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:0;pointer-events:none;filter:drop-shadow(0 1px 1px #0c273a88)}
 .navy-fleet-chains path{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.navy-chain-shadow{stroke:#162b32;stroke-width:4.8}
-.navy-chain-metal{stroke:#b7a789;stroke-width:2.8}
-.navy-chain-links{stroke:#88785b;stroke-width:2.7;stroke-dasharray:3 4}
-.navy-fleet-sailing .navy-fleet-hero-dock:after{content:'';position:absolute;bottom:5%;left:-20%;width:70%;height:7%;border-radius:50%;border-bottom:3px solid #c2f6ef8a;box-shadow:0 7px 10px #82ecdf45;animation:navy-fleet-wake .65s linear infinite;pointer-events:none}
+.navy-chain-shadow{stroke:#273730;stroke-width:2.7}
+.navy-chain-metal{stroke:#b7a789;stroke-width:1.5}
+.navy-chain-links{stroke:#716956;stroke-width:1.7;stroke-dasharray:2 3}
+.navy-fleet-sailing .navy-fleet-hero-dock:after{content:'';position:absolute;bottom:0;left:-20%;width:70%;height:7%;border-radius:50%;border-bottom:2px solid #c2f6ef8a;box-shadow:0 5px 8px #82ecdf45;animation:navy-fleet-wake .65s linear infinite;pointer-events:none}
 .navy-fleet-all-full .navy-fleet-chains{opacity:0}
-.navy-fleet-spray{position:absolute;left:37%;right:28%;top:68%;height:20%;display:none}
+.navy-fleet-spray{position:absolute;left:37%;right:28%;top:78%;height:14%;display:none}
 .navy-fleet-ship.leaking .navy-fleet-spray{display:block}
-.navy-fleet-spray i{position:absolute;bottom:0;left:8%;width:9px;height:55px;border-radius:50% 50% 20% 20%;background:linear-gradient(#f0fffa,#79dce6 35%,#3fb8d2);box-shadow:-8px -7px 0 -2px #a4eef1,9px -4px 0 -2px #c7ffff;transform-origin:50% 100%;animation:navy-fleet-spout .6s ease-in-out infinite}
-.navy-fleet-spray i:nth-child(2){left:50%;animation-delay:-.2s;height:68px}.navy-fleet-spray i:nth-child(3){left:88%;animation-delay:-.4s;height:43px}
+.navy-fleet-spray i{position:absolute;bottom:0;left:8%;width:3px;height:12px;border-radius:50% 50% 20% 20%;background:linear-gradient(#f0fffa,#79dce6 35%,#3fb8d2);box-shadow:-3px -3px 0 -1px #a4eef1,3px -2px 0 -1px #c7ffff;transform-origin:50% 100%;animation:navy-fleet-spout .6s ease-in-out infinite}
+.navy-fleet-spray i:nth-child(2){left:50%;animation-delay:-.2s;height:17px}.navy-fleet-spray i:nth-child(3){left:88%;animation-delay:-.4s;height:10px}
 .river.paused .navy-fleet-motion,.river.paused .navy-fleet-motion:after,.river.paused .navy-fleet-spray i{animation-play-state:paused}
-.voyage-focus .river .fleet.navy-fleet-enabled{left:0;right:0;bottom:calc(77px + env(safe-area-inset-bottom));height:55%;width:auto;translate:none}
-@media(min-width:600px){.river .fleet.navy-fleet-enabled{height:61%;bottom:55px}.voyage-focus .river .fleet.navy-fleet-enabled{left:50%;right:auto;width:min(960px,100%);height:59%;translate:-50% 0;bottom:calc(82px + env(safe-area-inset-bottom))}.navy-fleet-front-badge{font-size:13px}}
-@media(max-width:359px),(max-height:570px) and (orientation:portrait){.river .fleet.navy-fleet-enabled{height:50%;bottom:45px}.voyage-focus .river .fleet.navy-fleet-enabled{height:48%;bottom:calc(64px + env(safe-area-inset-bottom))}.navy-fleet-front-badge{font-size:10px;padding:3px 8px}}
-@media(max-height:570px) and (orientation:portrait){.voyage-focus .navy-fleet-stage .question-cue{top:calc(105px + env(safe-area-inset-top));bottom:auto;left:12px;right:12px;font-size:10px}.voyage-focus .navy-fleet-stage .question-cue span{padding:6px 8px}.voyage-focus .navy-fleet-stage .feedback{top:calc(152px + env(safe-area-inset-top));font-size:10px}.voyage-focus .navy-fleet-stage .rain{top:calc(172px + env(safe-area-inset-top));bottom:39%}}
-@media(orientation:landscape) and (max-height:600px){.voyage-focus .river .fleet.navy-fleet-enabled{left:43%;right:1%;width:auto;height:62%;bottom:40px;translate:none}.navy-fleet-front-badge{font-size:10px}}
-@media(prefers-reduced-motion:reduce){.navy-fleet-motion,.navy-fleet-motion:after,.navy-fleet-spray i,.navy-fleet-sailing .navy-fleet-hero-dock:after{animation:none}.navy-fleet-motion{transition:none}.navy-fleet-hero-dock,.navy-fleet-ship{will-change:auto}}
-@keyframes navy-fleet-bob{50%{transform:translateY(-4px) rotate(-.7deg)}}
-@keyframes navy-fleet-wake{50%{opacity:.3;transform:scaleX(1.12)}}
+.navy-fleet-side-art .hero-boat{rotate:var(--fleet-heel,0deg)!important;translate:0 var(--fleet-flood,0px)!important}
+.navy-fleet-side-art .hero-boat:not(.sinking){animation:navy-fleet-bob 5.2s ease-in-out infinite}
+.navy-fleet-side-art .sail-word{top:30%;left:42%;width:38%;font-size:clamp(15px,3.8vw,21px);line-height:1.16;transform:rotate(2deg);max-height:29%;overflow:hidden;text-wrap:balance}
+.navy-fleet-side-art .kongming-body{left:12%;bottom:23%;width:10%;transform-origin:50% 94%}
+.navy-fleet-side-art .boat-flood{display:none}
+.navy-fleet-reversed .navy-fleet-motion>img{scale:-1 1}
+.navy-fleet-reversed .navy-fleet-motion:after{scale:-1 1}
+.navy-fleet-attachment{position:absolute;width:0;height:0;pointer-events:none;visibility:hidden}
+.navy-fleet-attachment.left{left:16%;top:80%}.navy-fleet-attachment.right{left:89.2%;top:78.5%}
+.navy-fleet-reversed .navy-fleet-attachment.left{left:10.8%;top:78.5%}.navy-fleet-reversed .navy-fleet-attachment.right{left:84%;top:80%}
+.navy-fleet-enabled[data-boats="1"] .navy-fleet-front-badge{font-size:12px;padding:5px 11px}
+.navy-fleet-enabled:not([data-boats="1"]) .sail-word{font-size:10px;line-height:1.1}
+.navy-fleet-enabled[data-formation="serpentine"] .navy-fleet-hero-dock:before{content:'';position:absolute;inset:-4px -3px -3px;border-radius:50%;background:radial-gradient(ellipse at 50% 95%,#bbe8df55,transparent 62%);pointer-events:none}
+.navy-fleet-enabled[data-formation="serpentine"] .navy-fleet-badge{left:19%;bottom:6%;background:#153b45ef;border-radius:5px;border-color:#c9d7b5bb}
+.voyage-focus .river .fleet.navy-fleet-enabled{left:0;right:0;bottom:calc(90px + env(safe-area-inset-bottom));height:33%;width:auto;translate:none}
+.voyage-focus .river .fleet.navy-fleet-enabled[data-formation="serpentine"]{height:37%;bottom:calc(98px + env(safe-area-inset-bottom))}
+.voyage-focus .river .fleet.navy-fleet-enabled:is([data-boats="7"],[data-boats="8"],[data-boats="9"],[data-boats="10"]){height:46%}
+.voyage-focus .navy-fleet-stage .question-cue{top:calc(125px + env(safe-area-inset-top));bottom:auto;left:12px;right:12px;align-items:center}
+.navy-fleet-clue-panel{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px;padding:7px 11px;border:1px solid #f4ddb080;border-radius:13px;background:#153b45dd;color:#fff3ce}
+#navy-fleet-clue{font:800 17px/1.25 'Songti SC','Microsoft YaHei',serif;overflow-wrap:anywhere;text-wrap:balance}
+.navy-fleet-stage .question-cue .navy-fleet-clue-panel #cue{flex:1;min-width:0;font-size:10px;line-height:1.3;padding:0;border:0;background:none;opacity:.85}
+.voyage-focus .navy-fleet-stage .rain{top:calc(195px + env(safe-area-inset-top));bottom:46%}
+.voyage-focus .navy-fleet-stage .rain-word{font-size:clamp(20px,5.5vw,26px)!important}
+.voyage-focus .navy-fleet-stage .previous-answer{font-size:11px;padding:7px 10px;bottom:calc(40px + env(safe-area-inset-bottom))}
+.voyage-focus .navy-fleet-stage .leak-label{bottom:calc(7px + env(safe-area-inset-bottom));font-size:10px;line-height:1.4}
+@media(min-width:600px){.river .fleet.navy-fleet-enabled{height:45%;bottom:55px}.voyage-focus .river .fleet.navy-fleet-enabled{left:50%;right:auto;width:min(960px,100%);height:35%;translate:-50% 0;bottom:calc(98px + env(safe-area-inset-bottom))}.voyage-focus .river .fleet.navy-fleet-enabled[data-formation="serpentine"]{height:38%}.navy-fleet-front-badge{font-size:11px}}
+@media(max-width:359px),(max-height:570px) and (orientation:portrait){.river .fleet.navy-fleet-enabled{height:35%;bottom:45px}.voyage-focus .river .fleet.navy-fleet-enabled{height:30%;bottom:calc(86px + env(safe-area-inset-bottom))}.voyage-focus .river .fleet.navy-fleet-enabled[data-formation="serpentine"]{height:33%;bottom:calc(92px + env(safe-area-inset-bottom))}.navy-fleet-front-badge{font-size:9px;padding:3px 5px}.voyage-focus .navy-fleet-stage .question-cue{top:calc(105px + env(safe-area-inset-top))}.voyage-focus .navy-fleet-stage .question-cue span{font-size:11px;padding:6px 8px}.voyage-focus .navy-fleet-stage .feedback{top:calc(151px + env(safe-area-inset-top));font-size:10px}.voyage-focus .navy-fleet-stage .rain{top:calc(178px + env(safe-area-inset-top));bottom:47%}}
+@media(orientation:landscape) and (max-height:600px){.voyage-focus .river .fleet.navy-fleet-enabled{left:15%;right:1%;width:auto;height:38%;bottom:64px;translate:none}.voyage-focus .river .fleet.navy-fleet-enabled[data-formation="serpentine"]{height:48%;bottom:64px}.voyage-focus .river .fleet.navy-fleet-enabled:is([data-boats="7"],[data-boats="8"],[data-boats="9"],[data-boats="10"]){height:48%;--fleet-ship-width:100px!important}.voyage-focus .navy-fleet-stage .question-cue{top:auto;bottom:14px;left:12px;right:43%;font-size:11px}.voyage-focus .navy-fleet-stage .question-cue span{font-size:10px}.voyage-focus .navy-fleet-stage .rain{top:96px;bottom:48%;left:0;right:0}.voyage-focus .navy-fleet-stage .previous-answer{left:60%;right:10px;bottom:6px;font-size:10px}.navy-fleet-front-badge{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.navy-fleet-motion,.navy-fleet-motion:after,.navy-fleet-spray i,.navy-fleet-sailing .navy-fleet-hero-dock:after,.navy-fleet-side-art .hero-boat:not(.sinking){animation:none}.navy-fleet-motion{transition:none}.navy-fleet-hero-dock,.navy-fleet-ship{will-change:auto}}
+@keyframes navy-fleet-bob{50%{transform:translateY(-2px) rotate(-.4deg)}}
+@keyframes navy-fleet-wake{50%{opacity:.3;transform:scaleX(1.08)}}
 @keyframes navy-fleet-spout{50%{transform:scaleY(.77) rotate(3deg);opacity:.75}}

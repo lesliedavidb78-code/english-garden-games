@@ -1,0 +1,132 @@
+{
+  "release": "10.4-05",
+  "cache": "english-games-offline-v30",
+  "localPassed": 302,
+  "reports": [
+    {
+      "name": "射击词库一万题",
+      "checks": 81,
+      "passed": 81,
+      "evidence": "outputs/词语射击_词库验证报告.json",
+      "at": "2026-10-04T11:17:37.484Z"
+    },
+    {
+      "name": "射击状态与奖励模型",
+      "checks": 24,
+      "passed": 24,
+      "evidence": "outputs/词语射击_模型审计报告.json",
+      "at": "2026-10-04T11:30:49.994Z"
+    },
+    {
+      "name": "新增本地发音文件",
+      "checks": 1,
+      "passed": 1,
+      "evidence": "outputs/词语射击_发音文件验证.json",
+      "at": "2026-10-04"
+    },
+    {
+      "name": "新版船队",
+      "checks": 26,
+      "passed": 26,
+      "evidence": "outputs/草船新版队列_验证.json",
+      "at": null
+    },
+    {
+      "name": "地图五入口",
+      "checks": 6,
+      "passed": 6,
+      "evidence": "outputs/地图五入口_验证.json",
+      "at": null
+    },
+    {
+      "name": "射击组件",
+      "checks": 25,
+      "passed": 25,
+      "evidence": "outputs/单词射击_组件验证.json",
+      "at": "2026-10-04T11:09:26.439Z"
+    },
+    {
+      "name": "射击正式点击",
+      "checks": 31,
+      "passed": 31,
+      "evidence": "outputs/单词射击_正式集成验证.json",
+      "at": "2026-10-04T11:23:57.930Z"
+    },
+    {
+      "name": "断网重开与真实发音",
+      "checks": 8,
+      "passed": 8,
+      "evidence": "outputs/词语射击_离线与发音验证.json",
+      "at": "2026-10-04T11:23:13.856Z"
+    },
+    {
+      "name": "草船模型回归",
+      "checks": 40,
+      "passed": 40,
+      "evidence": "work/草船旅程模型验证.json",
+      "at": "2026-10-04T11:16:41.577Z"
+    },
+    {
+      "name": "花园连续浇水回归",
+      "checks": 28,
+      "passed": 28,
+      "evidence": "work/garden-watering-verification.json",
+      "at": "2026-10-04T11:21:33.543Z"
+    },
+    {
+      "name": "草船三关正式点击",
+      "checks": 32,
+      "passed": 32,
+      "evidence": "work/navy-journey-e2e-verification.json",
+      "at": "2026-10-04T11:27:51.468Z"
+    }
+  ],
+  "syntaxPassed": 30,
+  "scripts": [
+    "adventure.js",
+    "battle-audio.js",
+    "battle-campaign.js",
+    "battle-film.js",
+    "battle-frames.js",
+    "battle-story.js",
+    "battle.js",
+    "common.js",
+    "map.js",
+    "navy-fleet.js",
+    "pep-vocabulary.js",
+    "progression-data.js",
+    "progression.js",
+    "quest-game.js",
+    "shooter-audio-manifest.js",
+    "shooter-audio.js",
+    "shooter-campaign.js",
+    "shooter-data.js",
+    "shooter-vocabulary.js",
+    "sw.js",
+    "training-data.js",
+    "training.js",
+    "victory-voice.js",
+    "voyage-audio.js",
+    "word-audio-manifest.js",
+    "word-audio.js",
+    "word-realm.js",
+    "word-shooter.js",
+    "garden\\garden.js",
+    "navy\\navy.js"
+  ],
+  "verified": "桌面Chrome隔离上下文、手机尺寸、真实鼠标/触摸/键盘与真正断网；模型测试和UI测试分别标注。",
+  "notVerified": [
+    "小米浏览器、微信和iPhone真机体验",
+    "三、四年级及五下参考库与孩子实际教材逐页匹配"
+  ],
+  "vocabulary": {
+    "unique": 626,
+    "referenceGrades": [
+      3,
+      4
+    ],
+    "photoVerified": "五年级上册120词",
+    "newLocalClips": 332,
+    "scope": "仅单词守卫"
+  }
+}
