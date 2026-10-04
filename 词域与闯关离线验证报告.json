@@ -1,0 +1,235 @@
+{
+  "site": "http://127.0.0.1:8086/",
+  "version": "10.4-02",
+  "at": "2026-10-04T02:02:36.356Z",
+  "fixture": "独立浏览器测试存档解锁第二关，用于检验离线资源和持久化；不作为真实通关证据。",
+  "checks": [
+    {
+      "name": "v27新模块与三张图集完整缓存",
+      "pass": true,
+      "evidence": {
+        "keys": [
+          "english-games-offline-v27"
+        ],
+        "count": 570,
+        "files": [
+          {
+            "path": "word-realm.js",
+            "found": true
+          },
+          {
+            "path": "word-realm.css",
+            "found": true
+          },
+          {
+            "path": "assets/realm-art/hero-v1.png",
+            "found": true
+          },
+          {
+            "path": "progression.js",
+            "found": true
+          },
+          {
+            "path": "progression.css",
+            "found": true
+          },
+          {
+            "path": "progression-data.js",
+            "found": true
+          },
+          {
+            "path": "battle-campaign.js",
+            "found": true
+          },
+          {
+            "path": "battle-campaign.css",
+            "found": true
+          },
+          {
+            "path": "assets/progression-levels.json",
+            "found": true
+          },
+          {
+            "path": "assets/progression-art/monsters-v1.png",
+            "found": true
+          },
+          {
+            "path": "assets/progression-art/scenes-v1.png",
+            "found": true
+          },
+          {
+            "path": "assets/progression-art/river-scenes-v1.png",
+            "found": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "断网重载使用新版并保留家长范围和解锁",
+      "pass": true,
+      "evidence": {
+        "valid": true,
+        "water": 17,
+        "suns": 2,
+        "parent": "pep5-photo-upper-u6",
+        "canBattle": true,
+        "canNavy": true
+      }
+    },
+    {
+      "name": "断网真实解码三张图集",
+      "pass": true,
+      "evidence": [
+        {
+          "url": "assets/progression-art/monsters-v1.png",
+          "width": 1983,
+          "height": 793
+        },
+        {
+          "url": "assets/progression-art/scenes-v1.png",
+          "width": 2115,
+          "height": 744
+        },
+        {
+          "url": "assets/progression-art/river-scenes-v1.png",
+          "width": 1983,
+          "height": 793
+        }
+      ]
+    },
+    {
+      "name": "断网英语示范实际播放",
+      "pass": true,
+      "evidence": {
+        "kind": "listening",
+        "word": {
+          "entries": 382,
+          "playing": true,
+          "transport": "mp3",
+          "position": 0.101738,
+          "lastText": "ask",
+          "lastError": "",
+          "unlocked": true,
+          "cached": 0,
+          "context": "running"
+        },
+        "media": {
+          "src": "",
+          "time": 0
+        }
+      }
+    },
+    {
+      "name": "新怪兽断网使用图层动作并停止首关旧影片",
+      "pass": true,
+      "evidence": {
+        "atlas": true,
+        "film": false,
+        "monster": "奥特曼10 / 10",
+        "kind": "listening"
+      }
+    },
+    {
+      "name": "断网实际点击错误答案锁卡并累计伤害",
+      "pass": true,
+      "evidence": {
+        "phase": "answered",
+        "wrong": 1,
+        "water": 17,
+        "locked": true,
+        "review": "✗ 答错 · 正确答案：ask = 问；询问"
+      }
+    },
+    {
+      "name": "断网双船闯关可答题并保存两倍水滴",
+      "pass": true,
+      "evidence": {
+        "water": 19,
+        "correct": 1,
+        "level": 2,
+        "valid": true,
+        "boats": 1
+      }
+    },
+    {
+      "name": "花园共享改范围不改独立闯关的词与计时",
+      "pass": true,
+      "evidence": {
+        "same": true,
+        "valid": true
+      }
+    },
+    {
+      "name": "再次断网重载不重发奖励或重置伤害",
+      "pass": true,
+      "evidence": {
+        "valid": true,
+        "water": 19,
+        "suns": 2,
+        "correct": 1,
+        "battleWrong": 1
+      }
+    },
+    {
+      "name": "断网新版词域角色真实解码并可开启普通探索",
+      "pass": true,
+      "evidence": {
+        "loaded": true,
+        "width": 1024,
+        "height": 1536,
+        "mode": "meaning",
+        "realm": true
+      }
+    },
+    {
+      "name": "断网词域英语单词实际播放",
+      "pass": true,
+      "evidence": {
+        "entries": 382,
+        "playing": true,
+        "transport": "mp3",
+        "position": 0.18112,
+        "lastText": "easy",
+        "lastError": "",
+        "unlocked": true,
+        "cached": 0,
+        "context": "running"
+      }
+    },
+    {
+      "name": "断网真实词义弹锁定判题与统一奖励/伤害保存",
+      "pass": true,
+      "evidence": {
+        "phase": "answered",
+        "correct": 1,
+        "marks": [
+          {
+            "index": 0,
+            "ok": true,
+            "shielded": false
+          }
+        ],
+        "water": 20,
+        "before": 19,
+        "feedback": "✓ 命中词语结晶词义：easy = 容易的；轻易的",
+        "frames": 0,
+        "valid": true
+      }
+    },
+    {
+      "name": "再次断网恢复词域不重复演出/发奖且锁卡",
+      "pass": true,
+      "evidence": {
+        "water": 20,
+        "expected": 20,
+        "marks": 1,
+        "shotSaved": true,
+        "busy": false,
+        "locked": true,
+        "release": "10.4-02",
+        "valid": true
+      }
+    }
+  ],
+  "allPassed": true
+}

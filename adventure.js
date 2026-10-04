@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.4-01';
+  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.4-02';
   const fingerprint=text=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return `${text.length}:${h>>>0}`};
   const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-photo-upper-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
   const freshNavy=()=>({totalArrows:0,history:[],legacyHistory:[],active:null});
@@ -165,8 +165,8 @@
   $('offline-status').textContent=`版本 ${RELEASE} · 离线资源准备中…`;
   if('serviceWorker'in navigator){
    const showOfflineState=async()=>{try{
-    const cache=await caches.open('english-games-offline-v26');
-    const essential=['progression.js','progression-data.js','battle-campaign.js','assets/progression-art/monsters-v1.png','assets/progression-art/scenes-v1.png','assets/progression-art/river-scenes-v1.png','assets/battle-media/manifest.js','assets/battle-media/video/portrait/victory_shield.mp4','assets/battle-media/video/landscape/victory_shield.mp4','assets/battle-media/audio/voice/vo_intro_monster.mp3','assets/word-audio/words/w0381.mp3'];
+    const cache=await caches.open('english-games-offline-v27');
+    const essential=['assets/realm-art/hero-v1.png','word-realm.js','word-realm.css','progression.js','progression-data.js','battle-campaign.js','assets/progression-art/monsters-v1.png','assets/progression-art/scenes-v1.png','assets/progression-art/river-scenes-v1.png','assets/battle-media/manifest.js','assets/battle-media/video/portrait/victory_shield.mp4','assets/battle-media/video/landscape/victory_shield.mp4','assets/battle-media/audio/voice/vo_intro_monster.mp3','assets/word-audio/words/w0381.mp3'];
     const ready=(await Promise.all(essential.map(f=>cache.match(new URL(f,location.href),{ignoreSearch:true})))).every(Boolean);
     $('offline-status').textContent=`版本 ${RELEASE} · ${ready?'离线已准备 · 动画和内置词库可离线使用':'正在下载离线动画，请保持联网…'}`
    }catch{$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，请联网重新打开`}};
