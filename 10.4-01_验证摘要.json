@@ -1,0 +1,85 @@
+{
+  "version": "10.4-01",
+  "date": "2026-10-04",
+  "cache": "english-games-offline-v26",
+  "environment": "Chrome 独立浏览器上下文、手机横竖尺寸模拟、真实指针与音频、断网重载；未代替手机真机验收。",
+  "checks": [
+    {
+      "area": "关卡和兑换边界",
+      "checks": 14,
+      "allPassed": true,
+      "evidenceFile": "progression-module-check.json"
+    },
+    {
+      "area": "导入解锁边界",
+      "checks": 5,
+      "allPassed": true,
+      "evidenceFile": "progression-import-boundary-check.json"
+    },
+    {
+      "area": "地图和兑换界面",
+      "checks": 36,
+      "allPassed": true,
+      "evidenceFile": "progression-ui-verification.json"
+    },
+    {
+      "area": "草船入口和终局布局",
+      "checks": 40,
+      "allPassed": true,
+      "evidenceFile": "harbour-progression-regression.json"
+    },
+    {
+      "area": "草船闯关",
+      "checks": 25,
+      "allPassed": true,
+      "evidenceFile": "草船闯关验证-本地.json"
+    },
+    {
+      "area": "自由对话",
+      "checks": 19,
+      "allPassed": true,
+      "evidenceFile": "对话题库复习验证-本地.json"
+    },
+    {
+      "area": "守护战闯关",
+      "checks": 37,
+      "allPassed": true,
+      "evidenceFile": "奥特曼闯关本地验证报告.json"
+    },
+    {
+      "area": "离线闯关",
+      "checks": 9,
+      "allPassed": true,
+      "evidenceFile": "进阶闯关离线验证-本地.json"
+    }
+  ],
+  "art": [
+    {
+      "file": "monsters-v1.png",
+      "width": 1983,
+      "height": 793,
+      "sha256": "676baac1812db451610a5f753a5cf8d2015a1efce2278efd87a7e38d746fbe05",
+      "bytes": 2871760
+    },
+    {
+      "file": "river-scenes-v1.png",
+      "width": 1983,
+      "height": 793,
+      "sha256": "4d3fa93903c3a3e3b5865d07206ef0e06ec007539fc308479e592cb608c4769b",
+      "bytes": 2876420
+    },
+    {
+      "file": "scenes-v1.png",
+      "width": 2115,
+      "height": 744,
+      "sha256": "bacde4e75720dbf3a1e3205f8d3da88977bc04f448c9dd919bc35ef27a4667a0",
+      "bytes": 3094375
+    }
+  ],
+  "scope": "自由练习遵守家长范围；两条独立十关路线按课本单元，90%达标解锁；花朵兑换由家长兑现。",
+  "remaining": [
+    "第二至十关为网页图层动画，尚无九套独立新影片与专属角色配音。",
+    "iPhone、微信和小米浏览器真机触摸与声音仍需验收。",
+    "外部 vocab-roguelike 尚未直接接入；无明确许可证，不复制源码或素材。"
+  ]
+}
