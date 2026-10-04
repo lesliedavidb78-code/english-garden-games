@@ -1,0 +1,67 @@
+/* 航线结果采用完整单屏：收获与三个动作始终在同一视野。 */
+.navy-route{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 18px}
+.navy-route small{color:#526f72;flex:1 0 100%;font-size:13px}
+.voyage-focus .navy-route{display:none}
+#kongming-body[hidden],#start[hidden],.navy-stage-actions[hidden],.navy-journey-rewards[hidden],.navy-end-journey[hidden]{display:none!important}
+.navy-campaign #progression-navy-back{display:none}
+.stage-overlay.navy-result{display:flex!important;flex-direction:column;justify-content:center;gap:clamp(8px,2vh,18px);padding:clamp(14px,4vw,30px);overflow:hidden;background:linear-gradient(160deg,#f6efdd,#dbe8dd);color:#183c43;z-index:25}
+.stage-overlay.navy-result[hidden]{display:none!important}
+.stage-overlay.navy-result .eyebrow{margin:0;font-size:12px;letter-spacing:.15em;color:#637448}
+.stage-overlay.navy-result h2{margin:0;font-size:clamp(24px,5vw,40px);line-height:1.22}
+.stage-overlay.navy-result p{margin:0;font-size:clamp(13px,3.3vw,17px);line-height:1.55;max-width:40em;color:#38564e}
+.stage-overlay.navy-result .victory-portrait{height:clamp(70px,16vh,145px);width:auto;object-fit:contain;margin:0}
+.stage-overlay.navy-result #victory-replay{padding:7px 14px;min-height:34px;font-size:12px}
+.navy-stage-actions{width:min(100%,510px);display:grid;grid-template-columns:1fr 1fr;gap:9px;flex-shrink:0}
+.navy-stage-actions button:first-child{grid-column:1/-1}
+.navy-stage-actions button{min-height:44px;padding:11px 8px;font-size:clamp(14px,3.5vw,17px);line-height:1.15;margin:0}
+.navy-journey-rewards{width:min(100%,510px);padding:12px 14px;border:1px solid #d6b66b66;background:#082d36aa;border-radius:18px;flex-shrink:0}
+.navy-journey-rewards>small{font-size:11px;color:#e5d9b8;letter-spacing:.04em}
+.navy-journey-rewards>div{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:7px}
+.navy-journey-rewards span{font-size:19px;color:#f7e8c3}
+.navy-journey-rewards strong{font-size:clamp(22px,5vw,32px);font-variant-numeric:tabular-nums}
+.navy-journey-rewards span small{display:block;font-size:11px;margin-top:2px;color:#dbe7df}
+.navy-summary .navy-journey-rewards{padding:20px 14px}
+.navy-end-journey{border:0;background:transparent;color:#576e54;text-decoration:underline;text-underline-offset:4px;font:inherit;font-size:12px;padding:8px;min-height:32px;flex-shrink:0}
+.stage-overlay.navy-result #navy-replay-level{font-size:13px}
+@media(max-width:600px){
+  .navy-route{gap:8px;margin:8px 0 12px}
+  .navy-route button{padding:11px 15px;font-size:15px;min-height:44px}
+  .navy-campaign-info{height:auto!important;min-height:38px;font-size:12px!important;line-height:1.5;padding:6px 12px!important}
+  body[data-adventure-view=voyage]:not(.voyage-focus) .river{height:calc(var(--play-height,100dvh) - var(--harbour-header) - var(--harbour-meta) - var(--harbour-options) - var(--harbour-nav) - 84px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+}
+@media(max-height:660px) and (orientation:portrait){
+  .stage-overlay.navy-result{gap:7px;padding:14px}
+  .stage-overlay.navy-result .victory-portrait{height:70px}
+  .stage-overlay.navy-result h2{font-size:23px}
+  .stage-overlay.navy-result p{font-size:12px;line-height:1.4}
+  .stage-overlay.navy-result #victory-replay{display:none}
+  .navy-journey-rewards{padding:7px 12px}
+  .navy-journey-rewards strong{font-size:24px}
+  .navy-stage-actions{gap:7px}
+  .navy-stage-actions button{padding:9px 6px;min-height:42px;font-size:14px}
+  .navy-end-journey{padding:5px;min-height:28px}
+}
+@media(max-height:450px) and (orientation:landscape){
+  body[data-adventure-view=voyage]:not(.voyage-focus) #answer-totals,body[data-adventure-view=voyage]:not(.voyage-focus) #vocabulary-summary{display:none}
+  body[data-adventure-view=voyage]:not(.voyage-focus) .navy-route{grid-column:1;grid-row:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0}
+  body[data-adventure-view=voyage]:not(.voyage-focus) .navy-route button{min-height:44px;font-size:12px;padding:7px 4px}
+  body[data-adventure-view=voyage]:not(.voyage-focus) .navy-route small{display:none}
+  body[data-adventure-view=voyage]:not(.voyage-focus) .voyage-options{grid-row:2;margin-top:10px}
+  body[data-adventure-view=voyage]:not(.voyage-focus) .river{grid-row:1/4}
+  .stage-overlay.navy-result{display:grid!important;grid-template-columns:minmax(150px,.65fr) minmax(280px,1.5fr);grid-template-rows:auto auto auto auto;align-content:center;justify-items:center;column-gap:18px;row-gap:7px;padding:12px 20px}
+  .stage-overlay.navy-result .eyebrow{grid-column:2;grid-row:1}
+  .stage-overlay.navy-result h2{grid-column:2;grid-row:2;font-size:22px}
+  .stage-overlay.navy-result p{grid-column:2;grid-row:3;font-size:11px;line-height:1.35}
+  .stage-overlay.navy-result .victory-portrait{grid-column:1;grid-row:1/4;height:125px}
+  .stage-overlay.navy-result #victory-replay{display:none}
+  .stage-overlay.navy-result .navy-journey-rewards{grid-column:1;grid-row:4;align-self:start;padding:6px 8px;width:100%}
+  .stage-overlay.navy-result .navy-journey-rewards>small{font-size:9px}
+  .stage-overlay.navy-result .navy-journey-rewards strong{font-size:22px}
+  .stage-overlay.navy-result .navy-stage-actions{grid-column:2;grid-row:4;grid-template-columns:1.4fr 1fr 1fr;gap:6px;align-self:start}
+  .stage-overlay.navy-result .navy-stage-actions button:first-child{grid-column:auto}
+  .stage-overlay.navy-result .navy-stage-actions button{font-size:12px;padding:10px 5px}
+  .stage-overlay.navy-result .navy-end-journey{grid-column:2;grid-row:5;min-height:24px;padding:3px}
+  .stage-overlay.navy-summary{grid-template-columns:1fr;grid-template-rows:auto auto auto auto}
+  .stage-overlay.navy-summary .eyebrow,.stage-overlay.navy-summary h2,.stage-overlay.navy-summary p,.stage-overlay.navy-summary .navy-stage-actions,.stage-overlay.navy-summary .navy-journey-rewards{grid-column:1;grid-row:auto;max-width:550px}
+}
+@media(prefers-reduced-motion:reduce){.navy-stage-actions button{transition:none}}

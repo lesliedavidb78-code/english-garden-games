@@ -1,0 +1,71 @@
+{
+  "release": "10.4-04",
+  "date": "2026-10-04",
+  "cache": "english-games-offline-v29",
+  "localChecks": [
+    {
+      "name": "旅程模型",
+      "count": 40,
+      "allPassed": true,
+      "evidence": "C:\\Users\\49502\\Documents\\Codex\\2026-09-30\\new-chat\\work\\草船旅程模型验证.json"
+    },
+    {
+      "name": "船队动画模块",
+      "count": 19,
+      "allPassed": true,
+      "evidence": "C:\\Users\\49502\\Documents\\Codex\\2026-09-30\\new-chat\\outputs\\草船船队_模块验证.json"
+    },
+    {
+      "name": "连续浇水",
+      "count": 28,
+      "allPassed": true,
+      "evidence": "C:\\Users\\49502\\Documents\\Codex\\2026-09-30\\new-chat\\work\\garden-watering-verification.json"
+    },
+    {
+      "name": "草船三关真实点击",
+      "count": 31,
+      "allPassed": true,
+      "evidence": "C:\\Users\\49502\\Documents\\Codex\\2026-09-30\\new-chat\\work\\navy-journey-e2e-verification.json"
+    },
+    {
+      "name": "手机结果与换船生命周期",
+      "count": 17,
+      "allPassed": true,
+      "evidence": "C:\\Users\\49502\\Documents\\Codex\\2026-09-30\\new-chat\\outputs\\草船集成_手机与换船验证.json"
+    },
+    {
+      "name": "离线旧档损坏档恢复",
+      "count": 12,
+      "allPassed": true,
+      "evidence": "C:\\Users\\49502\\Documents\\Codex\\2026-09-30\\new-chat\\work\\navy-recovery-verification.json"
+    },
+    {
+      "name": "初始港口同屏布局",
+      "count": 4,
+      "allPassed": true,
+      "evidence": "C:\\Users\\49502\\Documents\\Codex\\2026-09-30\\new-chat\\work\\navy-harbour-verification.json"
+    },
+    {
+      "name": "十关守护战回归",
+      "count": 37,
+      "allPassed": true,
+      "evidence": "work/test-battle-campaign-ui.mjs 实际执行输出 ALL 37 PASS"
+    }
+  ],
+  "totalLocalChecks": 188,
+  "syntaxCheckedJS": 24,
+  "rules": {
+    "boats": "N关N艘船",
+    "arrows": "每船10箭，总N×10",
+    "damage": "整段旅程累计10错；过关和重玩不恢复",
+    "sun": "本关首答正确率≥90%，独立结算；倍率1/2/3封顶",
+    "rewards": "关内暂存，旅程结束统一到账",
+    "watering": "点1滴、按住350ms后每180ms1滴、一次浇10滴"
+  },
+  "limits": [
+    "Chrome隔离上下文和手机视口，不等同小米/iPhone/微信真机验证",
+    "十船主要检验模块布局，十关全流程计算使用模型测试；正式页面真实点击覆盖连续三关",
+    "旧进行中的关卡保留旧目标；已发奖励不重复"
+  ],
+  "scope": "本地验证摘要；公网发布和复测记录另见手机试玩交付文件。"
+}

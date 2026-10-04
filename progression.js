@@ -13,28 +13,112 @@
  const catalog=kind=>KINDS.includes(kind)&&Array.isArray(window.ProgressionData?.[kind])?window.ProgressionData[kind]:[];
  function level(kind,id){const n=Number(id);return KINDS.includes(kind)&&integer(n,10)&&n>0?catalog(kind).find(item=>item.id===n)||null:null}
  const accuracy=r=>r.correct/r.total;
- const qualifies=r=>r.outcome==='won'&&r.correct*10>=r.total*9;
+ const requiresAccuracy=kind=>kind!=='navy'||window.ProgressionData?.progression?.navyUnlockPolicy!=='victory';
+ const qualifies=(r,kind)=>r.outcome==='won'&&(!requiresAccuracy(kind)||r.correct*10>=r.total*9);
  function validResult(r){return object(r)&&integer(r.correct,10000)&&integer(r.total,10000)&&r.total>0&&r.correct<=r.total&&OUTCOMES.includes(r.outcome)&&idOK(r.attemptId)&&dateOK(r.at)&&Number.isFinite(r.rate)&&Math.abs(r.rate-accuracy(r))<1e-9}
- function validCampaign(c){
+ function validCampaign(c,kind){
   if(!object(c)||!object(c.best)||!object(c.cleared)||!Array.isArray(c.completed)||c.completed.length>50000||new Set(c.completed).size!==c.completed.length||!c.completed.every(idOK))return false;
   const completed=new Set(c.completed);
   for(const key of Object.keys(c.best)){if(!/^(10|[1-9])$/.test(key)||!validResult(c.best[key])||!completed.has(c.best[key].attemptId))return false}
-  for(const key of Object.keys(c.cleared)){const clear=c.cleared[key];if(!/^(10|[1-9])$/.test(key)||!validResult(clear)||!qualifies(clear)||!completed.has(clear.attemptId)||!c.best[key])return false}
+  for(const key of Object.keys(c.cleared)){const clear=c.cleared[key];if(!/^(10|[1-9])$/.test(key)||!validResult(clear)||!qualifies(clear,kind)||!completed.has(clear.attemptId)||!c.best[key])return false}
   // 后续关卡必须有上一关的达标记录；奖励多少不会改变解锁条件。
   for(let n=2;n<=10;n++)if((c.best[n]||c.cleared[n])&&!c.cleared[n-1])return false;
   return true;
  }
+ const journeyStatuses=['active','between','sunk','complete','ended'],attemptOutcomes=[null,'won','sunk','abandoned'];
+ const legacyBoatCounts=[1,2,2,2,3,3,3,3,3,3];
+ const onlyKeys=(value,keys)=>Object.keys(value).every(key=>keys.includes(key));
+ function validNavyJourney(j){
+  if(j===undefined||j===null)return true;
+  if(!object(j)||!onlyKeys(j,['version','id','damage','status','levelId','attemptId','attempts','errors','credits','rewards','settlement'])||j.version!==2||!idOK(j.id)||!integer(j.damage,10)||!journeyStatuses.includes(j.status)||!Number.isInteger(j.levelId)||!level('navy',j.levelId)||!idOK(j.attemptId)||!Array.isArray(j.attempts)||j.attempts.length<1||j.attempts.length>50000||!Array.isArray(j.errors)||j.errors.length!==j.damage||!Array.isArray(j.credits)||j.credits.length>10000||!object(j.rewards)||!onlyKeys(j.rewards,['water','suns','paidWater','paidSuns'])||!Object.values(j.rewards).every(n=>integer(n,100000))||j.rewards.paidWater>j.rewards.water||j.rewards.paidSuns>j.rewards.suns)return false;
+  if(j.settlement!==null&&(!object(j.settlement)||!onlyKeys(j.settlement,['reason','at'])||!['sunk','complete','ended'].includes(j.settlement.reason)||!dateOK(j.settlement.at)||j.settlement.reason!==j.status||j.rewards.paidWater!==j.rewards.water||j.rewards.paidSuns!==j.rewards.suns))return false;
+  if(j.settlement===null&&(j.rewards.paidWater!==0||j.rewards.paidSuns!==0))return false;
+  const ids=new Set(),errorsPerAttempt=new Map(),creditsPerAttempt=new Map(),waterPerAttempt=new Map();let damage=0,water=0,suns=0;
+  for(const a of j.attempts){
+   if(!object(a)||!onlyKeys(a,['id','levelId','startDamage','damage','outcome','correct','water','suns','priorCorrect','priorWater','priorSuns','sunAwarded','result'])||!idOK(a.id)||ids.has(a.id)||!Number.isInteger(a.levelId)||!level('navy',a.levelId)||!integer(a.startDamage,10)||a.startDamage!==damage||!integer(a.damage,10)||!attemptOutcomes.includes(a.outcome)||!integer(a.correct,10000)||!integer(a.water,100000)||!integer(a.suns,10)||!integer(a.priorCorrect,a.correct)||!integer(a.priorWater,100000)||!integer(a.priorSuns,10)||typeof a.sunAwarded!=='boolean')return false;
+   if(a.result!==null&&(!object(a.result)||!onlyKeys(a.result,['correct','total','outcome'])||a.result.correct!==a.correct||a.result.total!==a.correct+a.damage||a.result.total<1||a.result.outcome!==a.outcome||!['won','sunk'].includes(a.result.outcome)))return false;
+   if(['won','sunk'].includes(a.outcome)!==(a.result!==null)||a.sunAwarded&&a.outcome!=='won'||a.suns>0&&(!a.sunAwarded||a.correct*10<(a.correct+a.damage)*9||a.suns!==level('navy',a.levelId).rewardMultiplier)||a.priorWater!==a.priorCorrect*level('navy',a.levelId).rewardMultiplier||a.priorSuns>0&&(!a.sunAwarded||a.suns>0||a.priorSuns!==level('navy',a.levelId).rewardMultiplier))return false;
+   ids.add(a.id);errorsPerAttempt.set(a.id,0);creditsPerAttempt.set(a.id,0);waterPerAttempt.set(a.id,0);damage+=a.damage;water+=a.water;suns+=a.suns;if(damage>10)return false;
+  }
+  const eventIds=new Set();for(const e of j.errors){if(!object(e)||!onlyKeys(e,['id','attemptId'])||!idOK(e.id)||eventIds.has(e.id)||!idOK(e.attemptId)||!ids.has(e.attemptId))return false;eventIds.add(e.id);errorsPerAttempt.set(e.attemptId,errorsPerAttempt.get(e.attemptId)+1)}
+  for(const e of j.credits){if(!object(e)||!onlyKeys(e,['id','attemptId','amount'])||!idOK(e.id)||eventIds.has(e.id)||!idOK(e.attemptId)||!ids.has(e.attemptId)||!integer(e.amount,10)||e.amount<1)return false;const a=j.attempts.find(a=>a.id===e.attemptId);if(e.amount!==level('navy',a.levelId).rewardMultiplier)return false;eventIds.add(e.id);creditsPerAttempt.set(e.attemptId,creditsPerAttempt.get(e.attemptId)+1);waterPerAttempt.set(e.attemptId,waterPerAttempt.get(e.attemptId)+e.amount)}
+  if(damage!==j.damage||water!==j.rewards.water||suns!==j.rewards.suns||j.attempts.some(a=>a.damage!==errorsPerAttempt.get(a.id)||a.correct!==a.priorCorrect+creditsPerAttempt.get(a.id)||a.water!==waterPerAttempt.get(a.id)))return false;
+  const last=j.attempts[j.attempts.length-1];if(last.id!==j.attemptId||last.levelId!==j.levelId||j.attempts.slice(0,-1).some(a=>a.outcome===null))return false;
+  if(j.status==='ended')return !!j.settlement&&last.outcome!==null;
+  if(j.status==='active')return !j.settlement&&j.damage<10&&last.outcome===null;
+  if(j.status==='sunk')return j.damage===10&&(last.outcome===null||last.outcome==='sunk');
+  if(j.damage>=10||last.outcome!=='won')return false;return j.status!=='complete'||j.levelId===10;
+ }
+ function newAttempt(id,levelId,startDamage){return {id,levelId,startDamage,damage:0,outcome:null,correct:0,water:0,suns:0,priorCorrect:0,priorWater:0,priorSuns:0,sunAwarded:false,result:null}}
+ function legacyNavyJourney(root){
+  const a=root?.navy?.active;if(!object(a)||!object(a.campaign)||a.campaign.kind!=='navy'||!Number.isInteger(a.campaign.levelId)||!level('navy',a.campaign.levelId)||!idOK(a.id)||!integer(a.holes,10)||!integer(a.correct,10000)||!['ready','correct','wrong','won','sunk'].includes(a.phase))return null;
+  if((a.phase==='sunk'&&a.holes!==10)||(a.phase==='won'&&a.holes===10))return null;
+  const id='journey_'+a.id.slice(0,80),outcome=['won','sunk'].includes(a.phase)?a.phase:null,attempt=newAttempt(a.id,a.campaign.levelId,0),multiplier=level('navy',a.campaign.levelId).rewardMultiplier;
+  Object.assign(attempt,{damage:a.holes,outcome,correct:a.correct,priorCorrect:a.correct,priorWater:a.correct*multiplier,priorSuns:outcome==='won'&&root.navy.history?.some(h=>h.id===a.id)&&a.correct*10>=(a.correct+a.holes)*9?multiplier:0,sunAwarded:outcome==='won',result:outcome?{correct:a.correct,total:a.correct+a.holes,outcome}:null});
+  return {version:2,id,damage:a.holes,status:a.holes===10?'sunk':outcome==='won'?(a.campaign.levelId===10?'complete':'between'):'active',levelId:a.campaign.levelId,attemptId:a.id,attempts:[attempt],errors:Array.from({length:a.holes},(_,i)=>({id:'migration_'+a.id.slice(0,70)+'_'+i,attemptId:a.id})),credits:[],rewards:{water:0,suns:0,paidWater:0,paidSuns:0},settlement:null};
+ }
+ // Legacy grants are already in garden. Count the current run for accuracy,
+ // preserve its old target, and never place those grants in the escrow again.
+ function migrateNavyJourney(root){
+  if(!object(root?.navy))return false;let j=root.navy.journey;
+  const legacy=j===undefined||j===null;if(!legacy){if(!validNavyJourney(j))return false}else{j=legacyNavyJourney(root);if(!j)return null}
+  const a=root.navy.active;if(a?.campaign){if(a.campaign.kind!=='navy'||a.id!==j.attemptId||a.campaign.levelId!==j.levelId||(a.campaign.journeyId!==undefined&&a.campaign.journeyId!==j.id))return false;a.campaign.journeyId=j.id;if(legacy){a.campaign.legacyBoats=legacyBoatCounts[a.campaign.levelId-1];a.campaign.legacyTargetArrows=a.campaign.legacyBoats*10}}
+  root.navy.journey=j;return j;
+ }
+ function navyJourney(root=getState()){const j=root?.navy?.journey;return j===undefined||j===null?legacyNavyJourney(root):j}
+ function journeySummary(j,duplicate=false){const correct=j.attempts.reduce((sum,a)=>sum+a.correct,0);return {journeyId:j.id,status:j.status,damage:j.damage,wrong:j.damage,remaining:10-j.damage,attemptId:j.attemptId,levelId:j.levelId,correct,total:correct+j.damage,water:j.rewards.water,suns:j.rewards.suns,paidWater:j.rewards.paidWater,paidSuns:j.rewards.paidSuns,pendingWater:j.rewards.water-j.rewards.paidWater,pendingSuns:j.rewards.suns-j.rewards.paidSuns,priorWater:j.attempts.reduce((sum,a)=>sum+a.priorWater,0),priorSuns:j.attempts.reduce((sum,a)=>sum+a.priorSuns,0),duplicate}}
+ function beginNavyAttempt(root,{id,levelId,journeyId,resetJourney=false}={}){
+  if(!validRoot(root)||!object(root.navy)||!idOK(id)||!Number.isInteger(levelId)||!level('navy',levelId)||!canStartState(root,'navy',levelId)||typeof resetJourney!=='boolean'||(journeyId!==undefined&&!idOK(journeyId)))return false;
+  const existing=navyJourney(root);if(existing&&!validNavyJourney(existing))return false;
+  if(!resetJourney&&existing){if(existing.attempts.some(a=>a.id===id))return existing.attemptId===id&&existing.levelId===levelId?journeySummary(existing,true):false;if(existing.damage===10||existing.settlement||existing.attempts.length>=50000)return false}
+  const freshJourney=!existing||resetJourney,newId=journeyId||'journey_'+id.slice(0,80);if(freshJourney&&existing&&newId===existing.id)return false;
+  let previousSummary=null;if(resetJourney&&existing){root.navy.journey=existing;previousSummary=finishNavyJourney(root,{reason:existing.status==='sunk'?'sunk':existing.status==='complete'?'complete':'ended'});if(!previousSummary)return false}
+  const j=freshJourney?{version:2,id:newId,damage:0,status:'active',levelId,attemptId:id,attempts:[],errors:[],credits:[],rewards:{water:0,suns:0,paidWater:0,paidSuns:0},settlement:null}:existing;
+  if(!freshJourney){const previous=j.attempts[j.attempts.length-1];if(previous.outcome===null)previous.outcome='abandoned'}j.attempts.push(newAttempt(id,levelId,j.damage));j.levelId=levelId;j.attemptId=id;j.status='active';root.navy.journey=j;
+  return {...journeySummary(j),...(previousSummary?{previousSummary}:{})};
+ }
+ function addNavyDamage(root,{attemptId,errorId}={}){
+  const j=root?.navy?.journey;if(!j||!validNavyJourney(j)||!idOK(attemptId)||!idOK(errorId))return false;
+  const prior=j.errors.find(e=>e.id===errorId);if(prior)return prior.attemptId===attemptId?journeySummary(j,true):false;
+  if(j.credits.some(e=>e.id===errorId)||j.attemptId!==attemptId||j.status!=='active'||j.settlement||j.damage>=10)return false;
+  j.errors.push({id:errorId,attemptId});j.damage++;j.attempts[j.attempts.length-1].damage++;if(j.damage===10)j.status='sunk';return journeySummary(j);
+ }
+ function creditNavyWater(root,{attemptId,answerId,amount}={}){
+  const j=root?.navy?.journey;if(!j||!validNavyJourney(j)||!idOK(attemptId)||!idOK(answerId)||!integer(amount,10)||amount<1)return false;
+  const prior=j.credits.find(e=>e.id===answerId);if(prior)return prior.attemptId===attemptId&&prior.amount===amount?journeySummary(j,true):false;
+  if(j.errors.some(e=>e.id===answerId)||j.attemptId!==attemptId||j.status!=='active'||j.settlement||j.credits.length>=10000||amount!==level('navy',j.levelId).rewardMultiplier)return false;
+  const a=j.attempts[j.attempts.length-1];if(a.correct>=10000||j.rewards.water+amount>100000)return false;j.credits.push({id:answerId,attemptId,amount});a.correct++;a.water+=amount;j.rewards.water+=amount;return journeySummary(j);
+ }
+ function settleNavyAttempt(root,{attemptId,outcome,correct,total}={}){
+  const j=root?.navy?.journey;if(!j||!validNavyJourney(j)||!idOK(attemptId)||j.attemptId!==attemptId||!['won','sunk'].includes(outcome))return false;
+  const a=j.attempts[j.attempts.length-1];if((correct!==undefined&&correct!==a.correct)||(total!==undefined&&total!==a.correct+a.damage))return false;if(a.outcome!==null)return a.outcome===outcome?journeySummary(j,true):false;
+  if((outcome==='sunk'&&j.damage!==10)||(outcome==='won'&&j.damage===10)||a.correct+a.damage<1)return false;a.outcome=outcome;a.result={correct:a.correct,total:a.correct+a.damage,outcome};j.status=outcome==='sunk'?'sunk':j.levelId===10?'complete':'between';return journeySummary(j);
+ }
+ function awardNavySun(root,{attemptId}={}){
+  const j=root?.navy?.journey;if(!j||!validNavyJourney(j)||!idOK(attemptId)||j.attemptId!==attemptId||j.settlement)return false;const a=j.attempts[j.attempts.length-1];if(a.outcome!=='won')return false;if(a.sunAwarded)return {...journeySummary(j,true),awarded:0};
+  const amount=a.correct*10>=(a.correct+a.damage)*9?level('navy',a.levelId).rewardMultiplier:0;if(j.rewards.suns+amount>100000)return false;a.sunAwarded=true;a.suns=amount;j.rewards.suns+=amount;return {...journeySummary(j),awarded:amount};
+ }
+ function finishNavyJourney(root,{reason}={}){
+  const j=root?.navy?.journey;if(!j||!validNavyJourney(j)||!['sunk','complete','ended'].includes(reason)||!object(root.garden)||!integer(root.garden.water,1000000)||!integer(root.garden.suns,1000000))return false;if(j.settlement)return journeySummary(j,true);
+  const last=j.attempts[j.attempts.length-1];if(reason==='sunk'&&j.damage!==10||reason==='complete'&&(j.levelId!==10||last.outcome!=='won'))return false;
+  const sunsToAward=j.attempts.reduce((sum,a)=>sum+(!a.sunAwarded&&a.outcome==='won'&&a.correct*10>=(a.correct+a.damage)*9?level('navy',a.levelId).rewardMultiplier:0),0),water=j.rewards.water-j.rewards.paidWater,suns=j.rewards.suns+sunsToAward-j.rewards.paidSuns;if(root.garden.water+water>1000000||root.garden.suns+suns>1000000)return false;
+  for(const a of j.attempts)if(a.outcome==='won'&&!a.sunAwarded){a.sunAwarded=true;a.suns=a.correct*10>=(a.correct+a.damage)*9?level('navy',a.levelId).rewardMultiplier:0;j.rewards.suns+=a.suns}
+  if(last.outcome===null){last.outcome=reason==='sunk'?'sunk':'abandoned';if(reason==='sunk')last.result={correct:last.correct,total:last.correct+last.damage,outcome:'sunk'}}
+  root.garden.water+=water;root.garden.suns+=suns;j.rewards.paidWater=j.rewards.water;j.rewards.paidSuns=j.rewards.suns;j.status=reason;j.settlement={reason,at:new Date().toISOString()};return journeySummary(j);
+ }
  function validRoot(root){
   if(!object(root))return false;
+  const j=root.navy?.journey;if(!validNavyJourney(j))return false;
   const current=root.progression||fresh();
   // 导入备份也不能把锁定关卡设为进行中，避免越关获得倍率奖励。
   for(const [key,kind]of [['navy','navy'],['training','battle']]){
    const ref=root[key]?.active?.campaign;
    if(ref!==undefined&&ref!==null&&(!object(ref)||ref.kind!==kind||!level(kind,ref.levelId)||!Number.isInteger(ref.levelId)||(ref.levelId>1&&!current[kind]?.cleared?.[ref.levelId-1])))return false;
+   if(key==='navy'&&ref){if(ref.journeyId!==undefined&&(!idOK(ref.journeyId)||!j||ref.journeyId!==j.id))return false;if(j&&(root.navy.active.id!==j.attemptId||ref.levelId!==j.levelId||root.navy.active.holes!==j.attempts[j.attempts.length-1].damage||root.navy.active.correct!==j.attempts[j.attempts.length-1].correct))return false;if(ref.legacyBoats!==undefined||ref.legacyTargetArrows!==undefined){if(ref.legacyBoats!==legacyBoatCounts[ref.levelId-1]||ref.legacyTargetArrows!==ref.legacyBoats*10)return false}}
   }
   if(root.progression===undefined)return true;
   const p=root.progression;
-  if(!object(p)||p.version!==1||!KINDS.every(kind=>validCampaign(p[kind]))||!Array.isArray(p.rewards)||p.rewards.length>100||!Array.isArray(p.transactions)||p.transactions.length>20000)return false;
+  if(!object(p)||p.version!==1||!KINDS.every(kind=>validCampaign(p[kind],kind))||!Array.isArray(p.rewards)||p.rewards.length>100||!Array.isArray(p.transactions)||p.transactions.length>20000)return false;
   const ids=new Set();
   for(const r of p.rewards){if(!object(r)||!idOK(r.id)||ids.has(r.id)||!titleOK(r.title)||!integer(r.cost,10000)||r.cost<1||typeof r.enabled!=='boolean')return false;ids.add(r.id)}
   const transactionIds=new Set();let pending=0;
@@ -56,7 +140,7 @@
   const before=data(root)[kind];
   if(before.completed.includes(result.id))return {duplicate:true,qualified:!!before.cleared[number],nextLevelId:number<10?number+1:null,newlyUnlocked:false};
   if(before.completed.length>=50000)return false;
-  const p=ensure(root),campaign=p[kind],r={correct:result.correct,total:result.total,rate:result.correct/result.total,outcome:result.outcome,attemptId:result.id,at:new Date().toISOString()},passed=qualifies(r),newlyUnlocked=passed&&!campaign.cleared[number]&&number<10;
+  const p=ensure(root),campaign=p[kind],r={correct:result.correct,total:result.total,rate:result.correct/result.total,outcome:result.outcome,attemptId:result.id,at:new Date().toISOString()},passed=qualifies(r,kind),newlyUnlocked=passed&&!campaign.cleared[number]&&number<10;
   campaign.completed.push(result.id);
   if(!campaign.best[number]||r.rate>campaign.best[number].rate||(r.rate===campaign.best[number].rate&&r.outcome==='won'))campaign.best[number]=r;
   if(passed&&(!campaign.cleared[number]||r.rate>campaign.cleared[number].rate))campaign.cleared[number]={...r};
@@ -104,17 +188,17 @@
    const card=button('',()=>startLevel(l),'progression-level');card.disabled=!unlocked;card.dataset.level=String(l.id);card.dataset.kind=kind;card.dataset.locked=String(!unlocked);card.dataset.cleared=String(cleared);card.setAttribute('aria-label',`第${l.id}关 ${l.title}，${cleared?'已达标':unlocked?'可挑战':'未解锁'}`);
    const cover=cardArt(l);cover.append(el('span','progression-level-number',`第 ${l.id} 关`));if(!unlocked)cover.append(el('span','progression-lock','未解锁'));if(cleared)cover.append(el('span','progression-cleared','达标通关'));
    const body=el('div','progression-level-body');body.append(el('h3','',l.title),el('p','progression-level-scenario',kind==='battle'?`${l.monster} · ${l.scene}`:l.scene));
-   body.append(el('p','progression-level-rule',kind==='battle'?`听力·词义·翻译·对话 · 反应题 ${l.seconds} 秒`:`${l.boats} 艘草船 · 收集 ${l.targetArrows} 支箭`));
+   body.append(el('p','progression-level-rule',kind==='battle'?`听力·词义·翻译·对话 · 反应题 ${l.seconds} 秒`:`${l.boats} 艘草船 · 每船10箭 · 共${l.targetArrows}箭`));
    body.append(el('p','progression-level-scope',`课本 U${l.units.join(' / U')} · 奖励 ${l.rewardMultiplier} 倍`));
    if(kind==='battle'&&l.scope?.dialogueCount===1)body.append(el('p','progression-level-scope','1组课本对话，搭配听力、词义与翻译'));
-   body.append(el('p','progression-level-best',best?`最佳正确率 ${Math.round(best.rate*1000)/10}%${cleared?l.id===10?' · 全路线已通关':' · 下一站已开启':best.outcome==='won'?' · 达到90%再解锁':''}`:unlocked?'准备好，一起出发！':'上一关获胜且正确率达到90%后开启'));
+   body.append(el('p','progression-level-best',best?`最佳正确率 ${Math.round(best.rate*1000)/10}%${cleared?l.id===10?' · 全路线已通关':' · 下一站已开启':best.outcome==='won'&&requiresAccuracy(kind)?' · 达到90%再解锁':''}`:unlocked?'准备好，一起出发！':requiresAccuracy(kind)?'上一关获胜且正确率达到90%后开启':'上一关每艘船收满10支箭后开启'));
    body.append(el('span','progression-level-go',cleared?'再次挑战 →':unlocked?'出发挑战 →':'等待开启'));
    card.append(cover,body);grid.append(card);
   }
-  $('progression-route-copy').textContent=kind==='battle'?'孩子担任英文通讯员，听单词、解词义、读句子、接对话，帮助英雄守护城市。累计答对十题获胜，累计答错十题失败。':'听英文，找出单词雨中的答案，帮诸葛亮满载归航。难度逐关提升，整局累计十次漏水会沉船。';
+  $('progression-route-copy').textContent=kind==='battle'?'孩子担任英文通讯员，听单词、解词义、读句子、接对话，帮助英雄守护城市。累计答对十题获胜，累计答错十题失败。':'听英文，找出单词雨中的答案。第几关就有几艘船，每船收齐十支箭即可晋级；整趟旅程累计十次漏水会沉船，过关和重玩不恢复。奖励在本趟旅程结束时一起送入花园。';
  }
  function startLevel(l){
-  if(!canStart(l.kind,l.id)){notice('先在上一关获胜，并达到90%正确率。');return}
+  if(!canStart(l.kind,l.id)){notice(requiresAccuracy(l.kind)?'先在上一关获胜，并达到90%正确率。':'先为上一关每艘船收满10支箭。');return}
   const api=l.kind==='battle'?window.EnglishTraining?.start:window.Adventure?.startCampaign;
   if(typeof api!=='function'){notice('关卡还在准备，请稍后再试。');return}
   closeDialog('progression-campaign');
@@ -168,7 +252,7 @@
  function show(which='campaign',selectedKind){if(KINDS.includes(selectedKind))kind=selectedKind;init();render();showDialog(which==='manage'?'progression-management':which==='rewards'?'progression-exchange':'progression-campaign')}
  function init(){
   if(initialized||!window.Adventure||!document.body)return;initialized=true;
-  const campaign=dialog('progression-campaign','闯关探险','两条冒险路线，各十关。获胜并达到90%正确率，才能开启下一站。');
+  const campaign=dialog('progression-campaign','闯关探险','两条路线，各十关。草船收满箭晋级；守护战获胜并达到90%正确率晋级。');
   const tabs=el('div','progression-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','选择冒险路线');
   for(const [value,label]of [['battle','地球守护战'],['navy','草船借箭']]){const b=button(label,()=>{kind=value;renderLevels()},'progression-tab');b.dataset.progressionTab=value;b.setAttribute('role','tab');tabs.append(b)}
   const route=el('p','progression-route-copy');route.id='progression-route-copy';const free=el('div','progression-free-route');free.append(el('span','','想按家长选择的词库练习？'),button('进入自由练习 →',startFree,'progression-secondary'));const grid=el('div','progression-levels');grid.id='progression-levels';const body=el('div','progression-body');body.append(route,free,grid);campaign.append(tabs,body);
@@ -187,5 +271,5 @@
   document.addEventListener('adventure-view',refresh);window.addEventListener('storage',event=>{if(event.key==='english-adventure-v2')refresh()});
   render();
  }
- window.Progression={level,canStart,record,validRoot,init,render,refresh,show,startFree,flowerBalance,redeem,setTransaction,configureReward};
+ window.Progression={level,canStart,record,validRoot,validNavyJourney,navyJourney,migrateNavyJourney,beginNavyAttempt,addNavyDamage,creditNavyWater,settleNavyAttempt,awardNavySun,finishNavyJourney,init,render,refresh,show,startFree,flowerBalance,redeem,setTransaction,configureReward};
 })();

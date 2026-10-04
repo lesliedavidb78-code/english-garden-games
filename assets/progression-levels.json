@@ -39,7 +39,9 @@
     "wrongIsCumulative": true,
     "retryKeepsEarnedRewards": true,
     "unlockIsPermanent": true,
-    "followRecordingExcludedFromAccuracy": true
+    "followRecordingExcludedFromAccuracy": true,
+    "navyUnlockPolicy": "victory",
+    "battleUnlockPolicy": "victory-and-90-percent"
   },
   "economy": {
     "flowerGrowthThreshold": 100,
@@ -593,8 +595,8 @@
       "id": 1,
       "kind": "navy",
       "title": "晨雾训练江面",
-      "subtitle": "1船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "1艘草船 · 每船10支箭",
+      "story": "诸葛亮带领1艘草船来到晨雾训练江面，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         1
       ],
@@ -624,20 +626,24 @@
         "waterCapPerRun": 10,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 1,
-        "totalGrowthEquivalentCapPerRun": 20
+        "totalGrowthEquivalentCapPerRun": 20,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 2,
       "kind": "navy",
       "title": "竹影江湾",
-      "subtitle": "2船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "2艘草船 · 每船10支箭",
+      "story": "诸葛亮带领2艘草船来到竹影江湾，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         2
       ],
@@ -667,29 +673,33 @@
         "waterCapPerRun": 40,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 2,
-        "totalGrowthEquivalentCapPerRun": 60
+        "totalGrowthEquivalentCapPerRun": 60,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 3,
       "kind": "navy",
-      "title": "双船渡口",
-      "subtitle": "2船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "title": "三船渡口",
+      "subtitle": "3艘草船 · 每船10支箭",
+      "story": "诸葛亮带领3艘草船来到三船渡口，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         3
       ],
       "seconds": 18,
       "rewardMultiplier": 3,
       "artIndex": 2,
-      "scene": "双船渡口",
-      "boats": 2,
-      "targetArrows": 20,
+      "scene": "三船渡口",
+      "boats": 3,
+      "targetArrows": 30,
       "rainSpeed": 1.2,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -707,23 +717,27 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 60,
+        "waterCapPerRun": 90,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 90
+        "totalGrowthEquivalentCapPerRun": 120,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 4,
       "kind": "navy",
       "title": "芦苇水道",
-      "subtitle": "2船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "4艘草船 · 每船10支箭",
+      "story": "诸葛亮带领4艘草船来到芦苇水道，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         4
       ],
@@ -731,8 +745,8 @@
       "rewardMultiplier": 3,
       "artIndex": 3,
       "scene": "芦苇水道",
-      "boats": 2,
-      "targetArrows": 20,
+      "boats": 4,
+      "targetArrows": 40,
       "rainSpeed": 1.3,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -750,23 +764,27 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 60,
+        "waterCapPerRun": 120,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 90
+        "totalGrowthEquivalentCapPerRun": 150,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 5,
       "kind": "navy",
       "title": "峡谷航道",
-      "subtitle": "3船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "5艘草船 · 每船10支箭",
+      "story": "诸葛亮带领5艘草船来到峡谷航道，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         5
       ],
@@ -774,8 +792,8 @@
       "rewardMultiplier": 3,
       "artIndex": 4,
       "scene": "峡谷航道",
-      "boats": 3,
-      "targetArrows": 30,
+      "boats": 5,
+      "targetArrows": 50,
       "rainSpeed": 1.4,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -793,32 +811,36 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 90,
+        "waterCapPerRun": 150,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 120
+        "totalGrowthEquivalentCapPerRun": 180,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 6,
       "kind": "navy",
-      "title": "三船连营",
-      "subtitle": "3船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "title": "六船连营",
+      "subtitle": "6艘草船 · 每船10支箭",
+      "story": "诸葛亮带领6艘草船来到六船连营，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         6
       ],
       "seconds": 16,
       "rewardMultiplier": 3,
       "artIndex": 5,
-      "scene": "三船连营",
-      "boats": 3,
-      "targetArrows": 30,
+      "scene": "六船连营",
+      "boats": 6,
+      "targetArrows": 60,
       "rainSpeed": 1.55,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -836,23 +858,27 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 90,
+        "waterCapPerRun": 180,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 120
+        "totalGrowthEquivalentCapPerRun": 210,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 7,
       "kind": "navy",
       "title": "星灯江口",
-      "subtitle": "3船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "7艘草船 · 每船10支箭",
+      "story": "诸葛亮带领7艘草船来到星灯江口，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         1,
         2
@@ -861,8 +887,8 @@
       "rewardMultiplier": 3,
       "artIndex": 6,
       "scene": "星灯江口",
-      "boats": 3,
-      "targetArrows": 30,
+      "boats": 7,
+      "targetArrows": 70,
       "rainSpeed": 1.7,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -881,23 +907,27 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 90,
+        "waterCapPerRun": 210,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 120
+        "totalGrowthEquivalentCapPerRun": 240,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 8,
       "kind": "navy",
       "title": "雾中连舟",
-      "subtitle": "3船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "8艘草船 · 每船10支箭",
+      "story": "诸葛亮带领8艘草船来到雾中连舟，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         3,
         4
@@ -906,8 +936,8 @@
       "rewardMultiplier": 3,
       "artIndex": 7,
       "scene": "雾中连舟",
-      "boats": 3,
-      "targetArrows": 30,
+      "boats": 8,
+      "targetArrows": 80,
       "rainSpeed": 1.85,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -926,23 +956,27 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 90,
+        "waterCapPerRun": 240,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 120
+        "totalGrowthEquivalentCapPerRun": 270,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 9,
       "kind": "navy",
       "title": "疾风江面",
-      "subtitle": "3船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "9艘草船 · 每船10支箭",
+      "story": "诸葛亮带领9艘草船来到疾风江面，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         5,
         6
@@ -951,8 +985,8 @@
       "rewardMultiplier": 3,
       "artIndex": 8,
       "scene": "疾风江面",
-      "boats": 3,
-      "targetArrows": 30,
+      "boats": 9,
+      "targetArrows": 90,
       "rainSpeed": 2,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -971,23 +1005,27 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 90,
+        "waterCapPerRun": 270,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 120
+        "totalGrowthEquivalentCapPerRun": 300,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     },
     {
       "id": 10,
       "kind": "navy",
       "title": "收箭大阵",
-      "subtitle": "3船收箭 · 每船10支",
-      "story": "雾江借箭行动：听清英文找到单词，为草船装满箭。",
+      "subtitle": "10艘草船 · 每船10支箭",
+      "story": "诸葛亮带领10艘草船来到收箭大阵，为每艘船收齐10支箭继续前进。船队的漏水会沿本趟旅程累积，不会在过关时修好。",
       "units": [
         1,
         2,
@@ -1000,8 +1038,8 @@
       "rewardMultiplier": 3,
       "artIndex": 9,
       "scene": "收箭大阵",
-      "boats": 3,
-      "targetArrows": 30,
+      "boats": 10,
+      "targetArrows": 100,
       "rainSpeed": 2.2,
       "scope": {
         "textbook": "PEP-2024-photo-upper",
@@ -1024,16 +1062,20 @@
       "unlockRequiresVictory": true,
       "rewards": {
         "waterPerCorrect": 3,
-        "waterCapPerRun": 90,
+        "waterCapPerRun": 300,
         "sunIfVictoryAndAccuracyAtLeast": 0.9,
         "sunCapPerRun": 3,
-        "totalGrowthEquivalentCapPerRun": 120
+        "totalGrowthEquivalentCapPerRun": 330,
+        "sunAccuracyScope": "current-stage-first-answers",
+        "delivery": "journey-escrow-until-ended"
       },
       "learningGoal": "听英文选词/词义，兼顾反应；仅使用该关课本范围",
       "media": {
         "boatArtReuseAllowed": true,
-        "newSceneArtStatus": "planned"
-      }
+        "newSceneArtStatus": "generated-local"
+      },
+      "wrongLimitScope": "whole-journey",
+      "unlockRequiresAccuracy": false
     }
   ],
   "redemption": {
@@ -1066,5 +1108,23 @@
     "cancelRefundOnce": true,
     "requestIdIdempotent": true,
     "legacyFlowersSpendability": "all-owned-history-minus-valid-redemption-debits"
+  },
+  "navyJourney": {
+    "schemaVersion": 2,
+    "wrongLimit": 10,
+    "damageScope": "whole-journey",
+    "correctAnswersNeverRepairDamage": true,
+    "nextLevelKeepsDamage": true,
+    "retryKeepsDamage": true,
+    "newJourneyResetsDamage": true,
+    "newJourneySettlesPreviousEscrowFirst": true,
+    "stageVictoryUnlocksNext": true,
+    "sunAccuracyScope": "current-stage-first-answers",
+    "sunAccuracyThreshold": 0.9,
+    "rewardDelivery": "atomic-on-journey-sunk-complete-or-explicit-ended",
+    "pauseOrReturnDoesNotSettle": true,
+    "legacyMigrationSource": "current-campaign-active-only",
+    "legacyExistingGardenGrantsExcludedFromEscrow": true,
+    "legacyCurrentTargetAndBoatsPreserved": true
   }
 }

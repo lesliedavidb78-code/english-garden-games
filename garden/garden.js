@@ -19,13 +19,55 @@
     if(kind===1)for(const [x,y] of [[51,50],[61,50],[56,57],[49,60],[63,60]])svg+=`<circle cx="${x}" cy="${y}" r="1.8" fill="#ad8550"/>`;
     return svg;
   }
-  function renderSeeds(){const s=store.state;$('seed-choices').innerHTML=seeds.map((seed,i)=>`<button type="button" class="seed-choice" data-seed="${i}" aria-pressed="${s.selectedSeed===i}" ${animating?'disabled':''}><span class="seed-preview">${plantSVG(100,i)}</span><strong>${seed.name}种子</strong><small>${seed.english}</small><span class="seed-progress">${s.seedGrowth[i]?`成长 ${s.seedGrowth[i]} / 100`:'等待种下'}</span></button>`).join('');document.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>chooseSeed(Number(b.dataset.seed)));$('seed-note').textContent=`正在养${seeds[s.selectedSeed].name}。切换种子会保留各自成长，不消耗水滴或太阳。`;}
-  function chooseSeed(id){if(animating||!int(id,5)||id===store.state.selectedSeed)return false;if(!store.update(s=>{s.seedGrowth[s.selectedSeed]=s.growth;s.selectedSeed=id;s.growth=s.seedGrowth[id]}))return false;renderHome();C.toast(`已选${seeds[id].name}种子，成长进度已保留。`);return true;}
+  function renderSeeds(){
+    const s=store.state,shelf=$('seed-choices');
+    // 保留按钮节点，连续浇水时只改进度，避免中断指针捕获。
+    if(shelf.children.length!==seeds.length){shelf.innerHTML=seeds.map((seed,i)=>`<button type="button" class="seed-choice" data-seed="${i}"><span class="seed-preview">${plantSVG(100,i)}</span><strong>${seed.name}种子</strong><small>${seed.english}</small><span class="seed-progress"></span></button>`).join('');shelf.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>chooseSeed(Number(b.dataset.seed)))}
+    shelf.querySelectorAll('[data-seed]').forEach(b=>{const i=Number(b.dataset.seed);b.disabled=animating;b.setAttribute('aria-pressed',String(s.selectedSeed===i));b.querySelector('.seed-progress').textContent=s.seedGrowth[i]?`成长 ${s.seedGrowth[i]} / 100`:'等待种下'});
+    $('seed-note').textContent=`正在养${seeds[s.selectedSeed].name}。切换种子会保留各自成长，不消耗水滴或太阳。`;
+  }
+  function chooseSeed(id){stopWaterHold();if(animating||!int(id,5)||id===store.state.selectedSeed)return false;if(!store.update(s=>{s.seedGrowth[s.selectedSeed]=s.growth;s.selectedSeed=id;s.growth=s.seedGrowth[id]}))return false;renderHome();C.toast(`已选${seeds[id].name}种子，成长进度已保留。`);return true;}
   function plantSVG(g,v=0){if(g===0)return '<svg width="160" height="72" viewBox="0 0 160 72"><ellipse cx="80" cy="62" rx="10" ry="6" fill="#d9ac6f" transform="rotate(-25 80 62)"/><path d="M74 60l12 4" stroke="#a17047" stroke-width="1.5"/></svg>';const height=g<30?60:g<60?108:g<100?157:178;const head=g<60?'':g<100?`<ellipse cx="56" cy="55" rx="13" ry="18" fill="${seeds[v%6].color}"/><path d="M47 66q9 -14 18 0" stroke="#58875b" fill="#58875b"/>`:flowerHead(v);return `<svg width="156" height="${height+36}" viewBox="0 0 112 220"><path d="M56 212Q64 156 56 ${g>=60?69:150}" fill="none" stroke="#527c46" stroke-width="5" stroke-linecap="round"/><path d="M57 184Q15 176 27 149Q50 150 57 184" fill="#8bb578"/><path d="M57 165Q99 153 84 131Q64 137 57 165" fill="#72a768"/>${g>=30?'<path d="M56 131Q25 123 31 105Q49 109 56 131" fill="#91bd7c"/>':''}${head}</svg>`}
-  let selected=[],locked=false,animating=false;
-  function show(id){document.body.classList.toggle('study-focus',id==='study');if(parent!==window)parent.postMessage({type:'garden-focus',active:id==='study'},location.origin);['home','study','result','history','collection'].forEach(x=>$(x).classList.toggle('hidden',x!==id));document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===id)));window.scrollTo(0,0)}
-  function renderHome(){migratePlanting();const old=store.state.active,allowed=new Set(C.words(store.state).map(w=>w[0]));if(old&&old.phase!=='done'&&old.words.some(w=>!allowed.has(w[0]))){if(store.update(s=>{s.active=null}))C.toast('旧练习超出当前范围，已按所选词库重新准备；奖励保留。')}const s=store.state;renderSeeds();$('plant').innerHTML=plantSVG(s.growth,s.selectedSeed);$('plant-label').textContent=`${seeds[s.selectedSeed].name} · 第 ${s.flowers.length+1} 朵花`;$('stage-name').textContent=s.growth===0?'种子正在等你':s.growth<30?'一颗嫩芽，探出脑袋':s.growth<60?'小苗正在长出叶子':'花苞正在准备绽放';$('growth-label').textContent=`成长值 ${s.growth} / 100`;$('growth-fill').style.width=s.growth+'%';const next=s.growth===0?1:s.growth<30?30:s.growth<60?60:100;$('next-stage').textContent=`${next-s.growth} 点后${next===1?'萌芽':next===30?'长成小苗':next===60?'长出花苞':'开花'}`;$('bloom-count').textContent=`已开 ${s.flowers.length} 朵花`;$('water-count').textContent=`${s.water} 个水滴`;$('sun-count').textContent=`${s.suns} 个太阳`;$('water').disabled=!s.water||animating;$('sun').disabled=!s.suns||animating;const active=s.active&&s.active.phase!=='done';$('resume').classList.toggle('hidden',!active);if(active)$('resume-info').textContent=`${s.active.mode==='spell'?'拼字搭桥':'听音找花'} · 已完成 ${s.active.index+(s.active.phase==='answered'?1:0)} / 10 题`;$('start-spell').disabled=!!active;$('start-listen').disabled=!!active}
-  function feed(resource){if(!['water','suns'].includes(resource)||animating||!store.state[resource])return;let bloomed=false;if(!store.update(s=>{s[resource]--;s.growth+=resource==='water'?1:10;if(s.growth>=100){s.growth-=100;s.flowers.push({variety:s.selectedSeed,at:new Date().toISOString()});bloomed=true}s.seedGrowth[s.selectedSeed]=s.growth}))return;animating=true;C.sound(bloomed?'win':'drop');const element=$(resource==='water'?'pour':'shine');element.classList.remove('hidden');renderHome();if(bloomed){$('plant').innerHTML=plantSVG(100,store.state.flowers.at(-1).variety);$('stage-name').textContent='开花啦！这朵花已留在收藏里';C.toast(`${seeds[store.state.selectedSeed].name}开花啦！已放进收藏，可以继续养或换种子。`)}setTimeout(()=>{element.classList.add('hidden');animating=false;renderHome()},bloomed?2400:900)}
+  let selected=[],locked=false,animating=false,bloomTimer=0,shineTimer=0;
+  const waterPress={pointerId:null,timer:0,seed:null};let ignorePointerClickUntil=0;
+  function stopWaterHold(){
+    clearTimeout(waterPress.timer);waterPress.timer=0;const pointerId=waterPress.pointerId;waterPress.pointerId=null;waterPress.seed=null;
+    $('water').classList.remove('is-watering');$('water').setAttribute('aria-pressed','false');$('garden-scene').classList.remove('watering-active');
+    if(pointerId!==null){ignorePointerClickUntil=performance.now()+1000;try{if($('water').hasPointerCapture(pointerId))$('water').releasePointerCapture(pointerId)}catch{}}
+    $('water-hold-status').textContent='轻点浇 1 滴，按住连续浇水，松手就停。';
+  }
+  function show(id){stopWaterHold();document.body.classList.toggle('study-focus',id==='study');if(parent!==window)parent.postMessage({type:'garden-focus',active:id==='study'},location.origin);['home','study','result','history','collection'].forEach(x=>$(x).classList.toggle('hidden',x!==id));document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===id)));window.scrollTo(0,0)}
+  function renderHome(){migratePlanting();const old=store.state.active,allowed=new Set(C.words(store.state).map(w=>w[0]));if(old&&old.phase!=='done'&&old.words.some(w=>!allowed.has(w[0]))){if(store.update(s=>{s.active=null}))C.toast('旧练习超出当前范围，已按所选词库重新准备；奖励保留。')}renderPlantResources();const s=store.state,active=s.active&&s.active.phase!=='done';$('resume').classList.toggle('hidden',!active);if(active)$('resume-info').textContent=`${s.active.mode==='spell'?'拼字搭桥':'听音找花'} · 已完成 ${s.active.index+(s.active.phase==='answered'?1:0)} / 10 题`;$('start-spell').disabled=!!active;$('start-listen').disabled=!!active}
+  function renderPlantResources(){
+    const s=store.state;renderSeeds();$('plant').innerHTML=plantSVG(animating?100:s.growth,animating?(s.flowers.at(-1)?.variety??s.selectedSeed):s.selectedSeed);$('plant-label').textContent=`${seeds[s.selectedSeed].name} · 第 ${s.flowers.length+1} 朵花`;$('stage-name').textContent=animating?'开花啦！这朵花已留在收藏里':s.growth===0?'种子正在等你':s.growth<30?'一颗嫩芽，探出脑袋':s.growth<60?'小苗正在长出叶子':'花苞正在准备绽放';$('growth-label').textContent=`成长值 ${s.growth} / 100`;$('growth-fill').style.width=s.growth+'%';const next=s.growth===0?1:s.growth<30?30:s.growth<60?60:100;$('next-stage').textContent=`${next-s.growth} 点后${next===1?'萌芽':next===30?'长成小苗':next===60?'长出花苞':'开花'}`;$('bloom-count').textContent=`已开 ${s.flowers.length} 朵花`;$('water-count').textContent=`${s.water} 个水滴`;$('sun-count').textContent=`${s.suns} 个太阳`;$('water').disabled=!s.water||animating;$('water-ten').disabled=!s.water||animating;$('sun').disabled=!s.suns||animating;
+  }
+  function resourceEffect(resource,consumed){
+    if(resource==='water'){
+      const pour=$('pour');pour.classList.remove('hidden');
+      for(let i=0;i<Math.min(consumed,5);i++){const drop=document.createElement('span');drop.className='watering-drop';drop.textContent='💧';drop.style.setProperty('--drop-x',`${(i%3-1)*13}px`);drop.style.animationDelay=`${i*45}ms`;pour.append(drop);setTimeout(()=>{drop.remove();if(!pour.children.length)pour.classList.add('hidden')},700+i*45)}
+    }else{clearTimeout(shineTimer);const shine=$('shine');shine.classList.remove('hidden');shine.style.animation='none';void shine.offsetWidth;shine.style.animation='';shineTimer=setTimeout(()=>shine.classList.add('hidden'),900)}
+  }
+  // 每次消耗先保存事务；普通浇水不锁 900ms，只有开花展示锁 2.4s。
+  function feed(resource,quantity=1){
+    if(!['water','suns'].includes(resource)||!Number.isInteger(quantity)||quantity<1||quantity>10||(resource==='suns'&&quantity!==1)||animating||!store.state[resource])return false;
+    let bloomed=false,consumed=0;
+    if(!store.update(s=>{consumed=Math.min(quantity,s[resource]);if(!consumed)return;s[resource]-=consumed;s.growth+=resource==='water'?consumed:10;if(s.growth>=100){s.growth-=100;s.flowers.push({variety:s.selectedSeed,at:new Date().toISOString()});bloomed=true}s.seedGrowth[s.selectedSeed]=s.growth})){stopWaterHold();return false}
+    if(!consumed){stopWaterHold();return false}
+    if(bloomed){animating=true;stopWaterHold()}
+    C.sound(bloomed?'win':'drop');resourceEffect(resource,consumed);renderPlantResources();
+    if(bloomed){$('plant').innerHTML=plantSVG(100,store.state.flowers.at(-1).variety);$('stage-name').textContent='开花啦！这朵花已留在收藏里';C.toast(`${seeds[store.state.selectedSeed].name}开花啦！已放进收藏，可以继续养或换种子。`);clearTimeout(bloomTimer);bloomTimer=setTimeout(()=>{animating=false;renderHome()},2400)}
+    if(resource==='water'&&!store.state.water)stopWaterHold();return true;
+  }
+  function repeatWater(){
+    waterPress.timer=0;if(waterPress.pointerId===null||animating||document.hidden||$('home').classList.contains('hidden')||store.state.selectedSeed!==waterPress.seed||!store.state.water){stopWaterHold();return}
+    if(!feed('water')||waterPress.pointerId===null){stopWaterHold();return}waterPress.timer=setTimeout(repeatWater,180);
+  }
+  function beginWaterHold(event){
+    if(event.button!==0||event.isPrimary===false||waterPress.pointerId!==null||animating||$('water').disabled)return;
+    ignorePointerClickUntil=performance.now()+1000;waterPress.pointerId=event.pointerId;waterPress.seed=store.state.selectedSeed;try{$('water').setPointerCapture(event.pointerId)}catch{}
+    if(!feed('water')||waterPress.pointerId===null){stopWaterHold();return}
+    $('water').classList.add('is-watering');$('water').setAttribute('aria-pressed','true');$('garden-scene').classList.add('watering-active');$('water-hold-status').textContent='正在连续浇水，松开就停止。';waterPress.timer=setTimeout(repeatWater,350);
+  }
   function start(mode,restarting=false){if(!restarting&&store.state.active&&store.state.active.phase!=='done'){C.toast('先继续上次的学习，奖励已经替你保存。');return}const words=C.deck(store.state,mode);if(words.length!==10){C.toast('当前词库没有适合拼字的单词，请选听音关练习短语。');return}if(store.update(s=>{s.active={id:C.uid(),words,index:0,correct:0,missed:[],mode,phase:'ready',lastOK:false}})){show('study');renderQuestion()}}
   function restart(){const a=store.state.active;if(!a||a.phase==='done')return;C.stopSpeech();start(a.mode,true)}
   function choices(word){return C.shuffle([word,...C.distractors(word,store.state,3)])}
@@ -59,4 +101,18 @@
   function renderCollection(){const s=store.state;$('collection-list').innerHTML=s.flowers.length?s.flowers.map((f,i)=>`<div class="flower-card">${plantSVG(100,f.variety)}<strong>${seeds[f.variety].name} · 第 ${i+1} 朵</strong><small>${E(new Date(f.at).toLocaleDateString('zh-CN'))}</small></div>`).join(''):'<div class="empty-collection"><span>🌱</span><h3>第一朵花正在路上</h3><p class="muted">成长值到 100，它就会留在这里。</p></div>'}
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{C.stopSpeech();if(b.dataset.tab==='home')renderHome();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='collection')renderCollection();show(b.dataset.tab)});
   $('water').onclick=()=>feed('water');$('sun').onclick=()=>feed('suns');$('start-spell').onclick=()=>start('spell');$('start-listen').onclick=()=>start('listen');$('continue').onclick=renderQuestion;$('restart').onclick=restart;$('listen-word').onclick=()=>C.speak(store.state.active.words[store.state.active.index][0],ok=>{if(!ok)C.toast('设备暂时没有完成发音，可重新点“听英文”。')});$('undo-letter').onclick=()=>{if(!locked){selected.pop();renderBridge()}};$('submit-spell').onclick=()=>answer(selected.map(x=>x.ch).join('')===store.state.active.words[store.state.active.index][0]);$('bridge').ondragover=e=>e.preventDefault();$('bridge').ondrop=e=>{e.preventDefault();const id=Number(e.dataTransfer.getData('text/plain'));const b=document.querySelector(`.letter[data-id="${id}"]`);if(b)takeLetter(id,b.textContent)};$('study-next').onclick=next;$('study-exit').onclick=()=>{C.stopSpeech();renderHome();show('home')};$('return-garden').onclick=()=>{renderHome();show('home')};C.parentSetup(store,renderHome);C.install();renderHome();window.Garden={store,start,restart,answer,next,feed,renderHome,validate,chooseSeed,seeds,plantSVG,renderCollection};
+  // 指针按下先浇一滴；350ms 后开始每 180ms 浇一滴，抬起产生的 click 不再重复扣水。
+  $('pour').replaceChildren();$('water').onpointerdown=beginWaterHold;
+  $('water').onclick=event=>{if(event.detail>0&&performance.now()<ignorePointerClickUntil)return;feed('water')};
+  $('water-ten').onclick=()=>{stopWaterHold();feed('water',10)};
+  for(const id of ['water','water-ten','sun'])$(id).addEventListener('keydown',event=>{if(event.repeat&&(event.key==='Enter'||event.key===' '))event.preventDefault()});
+  const endPointer=event=>{if(event.pointerId===waterPress.pointerId)stopWaterHold()};
+  window.addEventListener('pointerup',endPointer);window.addEventListener('pointercancel',endPointer);$('water').addEventListener('lostpointercapture',endPointer);
+  window.addEventListener('blur',stopWaterHold);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopWaterHold()});
+  const parentView=event=>{if(event.detail!=='garden')stopWaterHold()};let watchingParent=false;
+  function watchParent(){if(parent===window||watchingParent)return;try{parent.document.addEventListener('adventure-view',parentView);watchingParent=true}catch{}}
+  watchParent();window.addEventListener('pageshow',watchParent);window.addEventListener('pagehide',()=>{stopWaterHold();if(watchingParent){try{parent.document.removeEventListener('adventure-view',parentView)}catch{}watchingParent=false}});
+  Object.assign(window.Garden,{feedTen:()=>{stopWaterHold();return feed('water',10)},stopWaterHold});
+  Object.defineProperty(window.Garden,'waterStatus',{get:()=>({holding:waterPress.pointerId!==null,timerActive:!!waterPress.timer,blooming:animating})});
+  renderPlantResources();
 })();
