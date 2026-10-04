@@ -1,7 +1,7 @@
 {
   "release": "10.4-05",
-  "cache": "english-games-offline-v30",
-  "localPassed": 302,
+  "cache": "english-games-offline-v31",
+  "localPassed": 331,
   "reports": [
     {
       "name": "射击词库一万题",
@@ -57,7 +57,7 @@
       "checks": 8,
       "passed": 8,
       "evidence": "outputs/词语射击_离线与发音验证.json",
-      "at": "2026-10-04T11:23:13.856Z"
+      "at": "2026-10-04T14:46:41.029Z"
     },
     {
       "name": "草船模型回归",
@@ -79,6 +79,20 @@
       "passed": 32,
       "evidence": "work/navy-journey-e2e-verification.json",
       "at": "2026-10-04T11:27:51.468Z"
+    },
+    {
+      "name": "离线下载故障恢复",
+      "checks": 10,
+      "passed": 10,
+      "evidence": "outputs/离线分批下载_故障恢复验证.json",
+      "at": "2026-10-04T14:54:25.469Z"
+    },
+    {
+      "name": "ServiceWorker续传与标记",
+      "checks": 19,
+      "passed": 19,
+      "evidence": "outputs/离线分批下载_模型验证.json",
+      "at": "2026-10-04T14:51:54.349Z"
     }
   ],
   "syntaxPassed": 30,

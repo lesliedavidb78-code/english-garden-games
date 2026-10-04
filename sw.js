@@ -1,5 +1,5 @@
 /* Keep local progress untouched; refresh code online and use the current app cache offline. */
-const CACHE='english-games-offline-v30';
+const CACHE='english-games-offline-v31';
 const FILES=['./map.js','./map.css','./assets/map-art/adventure-island-v1.png','./battle-story.js','./battle-audio.js','./assets/battle-art/hero-v3.png','./assets/battle-art/monster-v3.png','./assets/battle-art/battlefield-v3.png','./battle.js','./battle.css','./quest-game.js','./quest-game.css','./assets/battle-audio/hero-hit.wav','./assets/battle-audio/monster-hit.wav','./assets/battle-audio/hero-special.wav','./assets/battle-audio/hero-win.wav','./assets/battle-audio/monster-win.wav','./training.js','./training.css','./training-data.js','./assets/training-sentences.json','./assets/sentence-audio/s00.wav','./assets/sentence-audio/s01.wav','./assets/sentence-audio/s02.wav','./assets/sentence-audio/s03.wav','./assets/sentence-audio/s04.wav','./assets/sentence-audio/s05.wav','./assets/sentence-audio/s06.wav','./assets/sentence-audio/s07.wav','./assets/sentence-audio/s08.wav','./assets/sentence-audio/s09.wav','./assets/sentence-audio/s10.wav','./assets/sentence-audio/s11.wav','./assets/sentence-audio/s12.wav','./assets/sentence-audio/s13.wav','./assets/sentence-audio/s14.wav','./assets/sentence-audio/s15.wav','./assets/sentence-audio/s16.wav','./assets/sentence-audio/s17.wav','./assets/sentence-audio/s18.wav','./assets/sentence-audio/s19.wav','./assets/sentence-audio/s20.wav','./assets/sentence-audio/s21.wav','./assets/sentence-audio/s22.wav','./assets/sentence-audio/s23.wav','./assets/sentence-audio/s24.wav','./assets/sentence-audio/s25.wav','./assets/sentence-audio/s26.wav','./assets/sentence-audio/s27.wav','./assets/sentence-audio/s28.wav','./assets/sentence-audio/s29.wav','./assets/sentence-audio/s30.wav','./assets/sentence-audio/s31.wav','./assets/sentence-audio/s32.wav','./assets/sentence-audio/s33.wav','./assets/sentence-audio/s34.wav','./assets/sentence-audio/s35.wav','./assets/sentence-audio/s36.wav','./assets/sentence-audio/s37.wav',...Array.from({length:382},(_,i)=>'./assets/word-audio/words/w'+String(i).padStart(4,'0')+'.mp3'),'./assets/textbook-pep5-upper-2024.json','./assets/word-audio/pack-12.mp3','./assets/word-audio/pack-13.mp3','./assets/word-audio/pack-14.mp3','./word-audio.js','./word-audio-manifest.js','./assets/word-audio/pack-01.mp3','./assets/word-audio/pack-02.mp3','./assets/word-audio/pack-03.mp3','./assets/word-audio/pack-04.mp3','./assets/word-audio/pack-05.mp3','./assets/word-audio/pack-06.mp3','./assets/word-audio/pack-07.mp3','./assets/word-audio/pack-08.mp3','./assets/word-audio/pack-09.mp3','./assets/word-audio/pack-10.mp3','./assets/word-audio/pack-11.mp3','./assets/straw-soldier-boat-clean.png','./assets/kongming-poses.png','./voyage-audio.js','./assets/audio/ambience/amb_river_mist_loop.mp3','./assets/audio/dialogue/vo_five_leaks_01.mp3','./assets/audio/dialogue/vo_sink_01.mp3','./assets/audio/music/bgm_river_adventure_loop_adventurous.mp3','./assets/audio/music/bgm_river_adventure_loop_quiet.mp3','./assets/audio/sfx/sfx_arrow_straw_hit.mp3','./assets/audio/sfx/sfx_arrow_whoosh.mp3','./assets/audio/sfx/sfx_boat_sink.mp3','./assets/audio/sfx/sfx_hull_crack.mp3','./assets/audio/sfx/sfx_victory_sting.mp3','./assets/audio/sfx/sfx_water_leak_loop.mp3','./','./index.html','./adventure.js','./victory-voice.js','./assets/victory-thanks-kongming.wav','./adventure.css','./manifest.webmanifest','./assets/mist-river.png','./assets/straw-boat.png','./assets/straw-soldier-boat.png','./assets/zhuge-liang-victory.png','./base.css','./common.js','./pep-vocabulary.js','./THIRD_PARTY_NOTICES.md','./garden/','./garden/index.html','./garden/garden.css','./garden/garden-map-theme.css','./garden/garden.js','./garden/manifest.webmanifest','./garden/icon.svg','./garden/icon-192.png','./garden/icon-512.png','./navy/','./navy/index.html','./navy/navy.css','./navy/navy.js','./navy/manifest.webmanifest','./navy/icon.svg','./navy/icon-192.png','./navy/icon-512.png'];
 
 FILES.push(...["./battle-film.js", "./battle-film.css", "./assets/battle-media/manifest.js", "./assets/battle-media/manifest.json", "./assets/battle-media/video/portrait/defeat_retry.mp4", "./assets/battle-media/video/portrait/hero_attack.mp4", "./assets/battle-media/video/portrait/idle_loop.mp4", "./assets/battle-media/video/portrait/intro_city.mp4", "./assets/battle-media/video/portrait/monster_attack.mp4", "./assets/battle-media/video/portrait/victory_shield.mp4", "./assets/battle-media/video/portrait/special_light.mp4", "./assets/battle-media/video/landscape/hero_attack.mp4", "./assets/battle-media/video/landscape/defeat_retry.mp4", "./assets/battle-media/video/landscape/idle_loop.mp4", "./assets/battle-media/video/landscape/monster_attack.mp4", "./assets/battle-media/video/landscape/intro_city.mp4", "./assets/battle-media/video/landscape/special_light.mp4", "./assets/battle-media/video/landscape/victory_shield.mp4", "./assets/battle-media/audio/ambience/amb_city_wind_loop.mp3", "./assets/battle-media/audio/music/bgm_crisis_loop.mp3", "./assets/battle-media/audio/music/music_retry.mp3", "./assets/battle-media/audio/music/bgm_guardian_loop.mp3", "./assets/battle-media/audio/sfx/sfx_danger.mp3", "./assets/battle-media/audio/music/music_victory.mp3", "./assets/battle-media/audio/music/bgm_invasion_loop.mp3", "./assets/battle-media/audio/sfx/sfx_dialogue_tick.mp3", "./assets/battle-media/audio/sfx/sfx_defeat_retreat.mp3", "./assets/battle-media/audio/sfx/sfx_hero_charge.mp3", "./assets/battle-media/audio/sfx/sfx_hero_dash.mp3", "./assets/battle-media/audio/sfx/sfx_hero_impact.mp3", "./assets/battle-media/audio/sfx/sfx_monster_attack.mp3", "./assets/battle-media/audio/sfx/sfx_shield_crack.mp3", "./assets/battle-media/audio/sfx/sfx_shield_restored.mp3", "./assets/battle-media/audio/sfx/sfx_signal_connected.mp3", "./assets/battle-media/audio/sfx/sfx_special_beam.mp3", "./assets/battle-media/audio/sfx/sfx_special_charge.mp3", "./assets/battle-media/audio/sfx/sfx_special_finish.mp3", "./assets/battle-media/audio/sfx/sfx_ui_select.mp3", "./assets/battle-media/audio/voice/vo_combo_five.mp3", "./assets/battle-media/audio/voice/vo_damage_seven.mp3", "./assets/battle-media/audio/voice/vo_damage_five.mp3", "./assets/battle-media/audio/voice/vo_first_retry.mp3", "./assets/battle-media/audio/voice/vo_first_signal.mp3", "./assets/battle-media/audio/voice/vo_intro_command.mp3", "./assets/battle-media/audio/voice/vo_intro_monster.mp3", "./assets/battle-media/audio/voice/vo_intro_hero.mp3", "./assets/battle-media/audio/voice/vo_loss_monster.mp3", "./assets/battle-media/audio/voice/vo_monster_taunt.mp3", "./assets/battle-media/audio/voice/vo_retry_hero.mp3", "./assets/battle-media/audio/voice/vo_stage_evacuation.mp3", "./assets/battle-media/audio/voice/vo_stage_shield.mp3", "./assets/battle-media/audio/voice/vo_win_hero.mp3"]);
@@ -11,13 +11,132 @@ FILES.push(...["./battle-campaign.js", "./battle-campaign.css", "./progression.j
 // Animated compatibility assets cache on demand, without adding 49MB to
 // the install gate for browsers that already play inline MP4 correctly.
 FILES.push('./battle-frames.js','./battle-frames.css','./navy-fleet.js','./navy-fleet.css','./navy-campaign-ui.css');
-self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES.map(f=>new Request(new URL(f,self.location.href),{cache:'reload'})))).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',e=>{e.waitUntil((async()=>{
-  const keys=await caches.keys(),older=keys.filter(k=>k.startsWith('english-games-offline-')&&k!==CACHE);
-  await Promise.all(older.map(k=>caches.delete(k)));await self.clients.claim();
-  // Do not navigate open clients: activating an update must not interrupt a live round.
-  // New code loads on the next navigation or the explicit check-update action.
-})())});
+const CACHE_PREFIX='english-games-offline-';
+const FILE_URLS=[...new Set(FILES.map(f=>new URL(f,self.location.href).href))];
+const CORE_URLS=FILE_URLS.filter(f=>! /\.(?:mp3|wav|mp4)$/i.test(new URL(f).pathname));
+const READY_URL=new URL('./__offline-ready-v31',self.location.href).href;
+const MAX_DOWNLOADS=4,REQUEST_TIMEOUT=30000,MAX_ATTEMPTS=3;
+let coreJob=null,offlineJob=null;
+let offlineProgress={type:'OFFLINE_PROGRESS',cache:CACHE,completed:0,total:FILE_URLS.length,state:'preparing'};
+
+// Bound both downloads and cache checks. Await in-flight workers before reporting
+// failure so a later retry cannot overlap a previous preparation job.
+async function runPool(items,task){
+  let next=0,failure=null;
+  await Promise.all(Array.from({length:Math.min(MAX_DOWNLOADS,items.length)},async()=>{
+    while(!failure&&next<items.length){
+      const item=items[next++];
+      try{await task(item)}catch(error){if(!failure)failure=error}
+    }
+  }));
+  if(failure)throw failure;
+}
+async function presentFiles(cache){
+  const present=new Set();
+  await runPool(FILE_URLS,async url=>{if(await cache.match(url))present.add(url)});
+  return present;
+}
+async function cacheFile(cache,url){
+  if(await cache.match(url))return;
+  let lastError;
+  for(let attempt=1;attempt<=MAX_ATTEMPTS;attempt++){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),REQUEST_TIMEOUT);
+    try{
+      const request=new Request(url,{cache:'reload',signal:controller.signal});
+      const response=await fetch(request);
+      if(!response.ok||response.status===206)throw new Error(`HTTP ${response.status}`);
+      // Keep the timeout active while Cache.put consumes the response body.
+      await cache.put(url,response);
+      return;
+    }catch(error){lastError=controller.signal.aborted?'请求超过 30 秒':String(error.message||error)}
+    finally{clearTimeout(timer)}
+  }
+  const path=new URL(url).pathname;
+  throw new Error(`${path}：${lastError}（已尝试 ${MAX_ATTEMPTS} 次）`);
+}
+async function publishProgress(source){
+  const message={...offlineProgress};
+  if(source&&source.postMessage){try{source.postMessage(message)}catch{}}
+  try{
+    const scope=new URL('./',self.location.href),clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    for(const client of clients){
+      const url=new URL(client.url);
+      if(url.origin===scope.origin&&url.pathname.startsWith(scope.pathname)&&(!source||client.id!==source.id)){
+        try{client.postMessage(message)}catch{}
+      }
+    }
+  }catch{}
+}
+async function prepareOffline(){
+  let cache,present;
+  try{
+    if(coreJob)await coreJob;
+    cache=await caches.open(CACHE);
+    present=await presentFiles(cache);
+    offlineProgress={...offlineProgress,completed:present.size,state:'preparing'};
+    delete offlineProgress.error;
+    if(present.size!==FILE_URLS.length)await cache.delete(READY_URL);
+    await publishProgress();
+    await runPool(FILE_URLS.filter(url=>!present.has(url)),async url=>{
+      await cacheFile(cache,url);
+      present.add(url);
+      offlineProgress.completed=present.size;
+      await publishProgress();
+    });
+    // Verify every required URL again before claiming offline readiness.
+    present=await presentFiles(cache);
+    offlineProgress.completed=present.size;
+    if(present.size!==FILE_URLS.length)throw new Error(`离线资源不完整：${present.size}/${FILE_URLS.length}`);
+    await cache.put(READY_URL,new Response(JSON.stringify({cache:CACHE,completed:present.size,total:FILE_URLS.length}),{headers:{'Content-Type':'application/json'}}));
+    offlineProgress.state='ready';
+    await publishProgress();
+    // Preserve the previous complete version until this version is complete.
+    // Cleanup failure does not invalidate an already verified ready cache.
+    try{
+      const keys=await caches.keys();
+      await Promise.all(keys.filter(key=>key.startsWith(CACHE_PREFIX)&&key!==CACHE).map(key=>caches.delete(key)));
+    }catch{}
+  }catch(error){
+    if(cache){
+      try{offlineProgress.completed=(await presentFiles(cache)).size;await cache.delete(READY_URL)}catch{}
+    }
+    offlineProgress.state='failed';
+    offlineProgress.error=String(error.message||error);
+    await publishProgress();
+  }
+}
+self.addEventListener('install',e=>{
+  coreJob=(async()=>{
+    const cache=await caches.open(CACHE);
+    await runPool(CORE_URLS,url=>cacheFile(cache,url));
+    offlineProgress.completed=(await presentFiles(cache)).size;
+    await self.skipWaiting();
+  })();
+  e.waitUntil(coreJob);
+});
+self.addEventListener('activate',e=>{
+  // Do not navigate open clients or delete their offline fallback on activation.
+  e.waitUntil(self.clients.claim());
+});
+self.addEventListener('message',e=>{
+  if(!e.data||e.data.type!=='PREPARE_OFFLINE')return;
+  if(!offlineJob){
+    offlineProgress.state='preparing';delete offlineProgress.error;
+    offlineJob=prepareOffline().finally(()=>{offlineJob=null});
+  }
+  const job=offlineJob;
+  // Further messages publish current progress and share the running job.
+  e.waitUntil((async()=>{await publishProgress(e.source);await job})());
+});
+async function olderHit(request){
+  const keys=(await caches.keys()).filter(key=>key.startsWith(CACHE_PREFIX)&&key!==CACHE);
+  keys.sort((a,b)=>Number(b.match(/\d+$/)?.[0]||0)-Number(a.match(/\d+$/)?.[0]||0));
+  for(const key of keys){
+    const hit=await (await caches.open(key)).match(request,{ignoreSearch:true});
+    if(hit)return hit;
+  }
+}
 self.addEventListener('fetch',e=>{
   const u=new URL(e.request.url),scope=new URL('./',self.location.href).pathname;
   if(e.request.method!=='GET'||u.origin!==self.location.origin||!u.pathname.startsWith(scope))return;
@@ -26,7 +145,18 @@ self.addEventListener('fetch',e=>{
     const range=e.request.headers.get('range');
     if(range&&hit)return mediaRange(hit,range);
     if(!fresh&&hit)return hit;
-    try{const response=await fetch(new Request(e.request,{cache:fresh?'no-cache':'default'}));if(response.ok&&response.status!==206){await cache.put(e.request,response.clone());return response}return hit||response}catch{return hit||Response.error()}
+    const fallback=async()=>{
+      const saved=hit||await olderHit(e.request);
+      return saved?(range?mediaRange(saved,range):saved):null;
+    };
+    try{
+      const response=await fetch(new Request(e.request,{cache:fresh?'no-cache':'default'}));
+      if(response.ok){
+        if(response.status!==206){try{await cache.put(e.request,response.clone())}catch{}}
+        return response;
+      }
+      return await fallback()||response;
+    }catch{return await fallback()||Response.error()}
   })());
 });
 

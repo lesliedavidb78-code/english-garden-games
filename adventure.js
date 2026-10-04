@@ -311,7 +311,10 @@
   NavyFleet.init({stage:$('river'),heroBoat:$('hero-boat')});fillSettings();renderBoat();renderRecords();renderLanding();if(location.hash==='#garden')switchView('garden');
   $('offline-status').textContent=`版本 ${RELEASE} · 离线资源准备中…`;
   if('serviceWorker'in navigator){
-   let framesPreparation=null;
+   const offlineCache='english-games-offline-v31';
+   let framesPreparation=null,offlinePoll=null,offlineRegistration=null;
+   const offlineFailure=()=>{clearInterval(offlinePoll);offlinePoll=null;$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，联网点“检查更新”重试`};
+   const requestOffline=()=>{const worker=offlineRegistration?.active||navigator.serviceWorker.controller;worker?.postMessage({type:'PREPARE_OFFLINE'})};
    const prepareFrames=cache=>{
     if(framesPreparation)return framesPreparation;
     framesPreparation=(async()=>{
@@ -328,19 +331,34 @@
     // Wait for that renderer before deciding which offline assets are required.
     if(document.readyState==='loading')await new Promise(resolve=>document.addEventListener('DOMContentLoaded',resolve,{once:true}));
     if(!window.BattleFilm)throw Error('battle-renderer-unavailable');
-    const cache=await caches.open('english-games-offline-v30');
+    const cache=await caches.open(offlineCache),marker=await cache.match(new URL('__offline-ready-v31',location.href));
+    const complete=marker?await marker.json():null;
+    if(complete?.cache!==offlineCache||complete.completed!==919||complete.total!==919){requestOffline();return}
+    clearInterval(offlinePoll);offlinePoll=null;
     const essential=['assets/realm-art/hero-v1.png','word-realm.js','word-realm.css','progression.js','progression-data.js','battle-campaign.js','assets/progression-art/monsters-v1.png','assets/progression-art/scenes-v1.png','assets/progression-art/river-scenes-v1.png','assets/battle-media/manifest.js','assets/battle-media/video/portrait/victory_shield.mp4','assets/battle-media/video/landscape/victory_shield.mp4','assets/battle-media/audio/voice/vo_intro_monster.mp3','assets/word-audio/words/w0381.mp3'];
-    essential.push('battle-frames.js','battle-frames.css','navy-fleet.js','navy-fleet.css','navy-campaign-ui.css');
+    essential.push('battle-frames.js','battle-frames.css','navy-fleet.js','navy-fleet.css','navy-campaign-ui.css','word-shooter.js','word-shooter.css','shooter-campaign.js','shooter-campaign.css','shooter-data.js','shooter-vocabulary.js','shooter-audio.js','shooter-audio-manifest.js','assets/shooter-art/room-v1.png','assets/shooter-art/sprites-v1.png','assets/straw-fleet-side-v2.png',...Object.values(window.SHOOTER_WORD_CLIPS||{}));
     if(window.BattleFilm?.usesFrames){
      $('offline-status').textContent=`版本 ${RELEASE} · 正在下载离线动画，请保持联网…`;
      await prepareFrames(cache);
      essential.push(...Object.values(window.BattleMediaData.frames).flatMap(group=>Object.values(group).map(entry=>entry.src)));
     }
     const ready=(await Promise.all(essential.map(f=>cache.match(new URL(f,location.href),{ignoreSearch:true})))).every(Boolean);
-    $('offline-status').textContent=`版本 ${RELEASE} · ${ready?'离线已准备 · 动画和内置词库可离线使用':'正在下载离线动画，请保持联网…'}`
-   }catch{$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，请联网重新打开`}};
-   navigator.serviceWorker.addEventListener('controllerchange',showOfflineState);
-   navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(showOfflineState).catch(()=>{$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，请联网重新打开`})
+    if(!ready)throw Error('offline-assets-incomplete');
+    $('offline-status').textContent=`版本 ${RELEASE} · 离线已准备 · 动画和内置词库可离线使用`;
+   }catch{offlineFailure()}};
+   const beginOffline=()=>{clearInterval(offlinePoll);offlinePoll=setInterval(requestOffline,10000);showOfflineState()};
+   navigator.serviceWorker.addEventListener('message',event=>{
+    const data=event.data;if(data?.type!=='OFFLINE_PROGRESS'||data.cache!==offlineCache)return;
+    if(data.state==='failed'){offlineFailure();return}
+    if(data.state==='ready'){showOfflineState();return}
+    $('offline-status').textContent=`版本 ${RELEASE} · 离线资源 ${data.completed}/${data.total}，请保持联网…`;
+   });
+   navigator.serviceWorker.addEventListener('controllerchange',beginOffline);
+   navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+    offlineRegistration=reg;
+    const watch=()=>{const worker=reg.installing;if(worker)worker.addEventListener('statechange',()=>{if(worker.state==='redundant')offlineFailure()})};watch();reg.addEventListener('updatefound',watch);
+    return navigator.serviceWorker.ready;
+   }).then(beginOffline).catch(offlineFailure)
   }
   $('check-update').onclick=async()=>{pause(false);$('check-update').disabled=true;try{const reg=await navigator.serviceWorker?.getRegistration();await reg?.update();const r=await fetch(`index.html?update=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw Error('network');location.reload()}catch{$('check-update').disabled=false;C.toast('暂时无法联网更新，存档已保留。')}};
   window.Adventure={release:RELEASE,get state(){return state},update,validate,validGarden,validNavy,start,startCampaign,startFree,endJourney,showJourneySummary,resume,pause,answer,deadline,finish,switchView,restore,spawn,fire,selectAnswer,questionKey,answerTotals,get waterStats(){return {particles:waterParticles.length,active:!!waterRaf,sinking:sinkingUntil>performance.now()}},get fleetTransition(){return fleetTransition},voyageDamage,get running(){return running},get drops(){return drops}};
