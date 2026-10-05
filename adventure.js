@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.4-05';
+  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.4-06';
   const fingerprint=text=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return `${text.length}:${h>>>0}`};
   const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-photo-upper-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
   const freshNavy=()=>({totalArrows:0,history:[],legacyHistory:[],active:null});
@@ -311,7 +311,7 @@
   NavyFleet.init({stage:$('river'),heroBoat:$('hero-boat')});fillSettings();renderBoat();renderRecords();renderLanding();if(location.hash==='#garden')switchView('garden');
   $('offline-status').textContent=`版本 ${RELEASE} · 离线资源准备中…`;
   if('serviceWorker'in navigator){
-   const offlineCache='english-games-offline-v31';
+   const offlineCache='english-games-offline-v32';
    let framesPreparation=null,offlinePoll=null,offlineRegistration=null;
    const offlineFailure=()=>{clearInterval(offlinePoll);offlinePoll=null;$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，联网点“检查更新”重试`};
    const requestOffline=()=>{const worker=offlineRegistration?.active||navigator.serviceWorker.controller;worker?.postMessage({type:'PREPARE_OFFLINE'})};
@@ -331,7 +331,7 @@
     // Wait for that renderer before deciding which offline assets are required.
     if(document.readyState==='loading')await new Promise(resolve=>document.addEventListener('DOMContentLoaded',resolve,{once:true}));
     if(!window.BattleFilm)throw Error('battle-renderer-unavailable');
-    const cache=await caches.open(offlineCache),marker=await cache.match(new URL('__offline-ready-v31',location.href));
+    const cache=await caches.open(offlineCache),marker=await cache.match(new URL('__offline-ready-v32',location.href));
     const complete=marker?await marker.json():null;
     if(complete?.cache!==offlineCache||complete.completed!==919||complete.total!==919){requestOffline();return}
     clearInterval(offlinePoll);offlinePoll=null;

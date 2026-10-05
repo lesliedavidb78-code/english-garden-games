@@ -1,0 +1,50 @@
+{
+  "release": "10.4-06",
+  "cache": "english-games-offline-v32",
+  "localPassed": 170,
+  "checks": [
+    {
+      "file": "词语射击_词库验证报告.json",
+      "passed": 81,
+      "failed": 0
+    },
+    {
+      "file": "词语射击_重试机制模型审计.json",
+      "passed": 34,
+      "failed": 0
+    },
+    {
+      "file": "拾词射击_离线模型验证.json",
+      "passed": 19,
+      "failed": 0
+    },
+    {
+      "file": "场景拾词射击_手机交互验证.json",
+      "passed": 28,
+      "failed": 0
+    },
+    {
+      "file": "拾词射击_离线验证.json",
+      "passed": 8,
+      "failed": 0
+    }
+  ],
+  "syntaxFiles": 31,
+  "sourceHashes": {
+    "word-shooter.js": "7d8050e67292b9dd8600dcf64557654bf985677ca19414e2e6f21ddcc9bdcc53",
+    "word-shooter.css": "afc68b02f82cb9e66f94bf1874f88c09bc0f3ab520992b0a89adbcc5778ee1a7",
+    "shooter-campaign.js": "2c7a0d90027f40936c71bdc6d419537175a519b441004563712ea4516a20179a",
+    "adventure.js": "2c1d481a5a49bbdcd40e6918cdb0cfc51a1ab630490ad988a5e1868d0dafa5b8",
+    "sw.js": "7a259a78f61c4ce1bb70130f3ecf2d51c380f6593d259b0c0cd95509a62aafeb",
+    "index.html": "26cb0561fc2c9143e189f61c7735d15be897771ae32e2038a96628b39ea913b4"
+  },
+  "acceptance": [
+    "中文词义是地面拾取物，无底部选题按钮；走近后拾取装弹。",
+    "按住拖角度瞄准，正常抬手发射；取消触摸/暂停不发射。",
+    "真实角度弹道：射空/工作台阻挡不记词义错，词块与目标异地重生。",
+    "有效打错词可同题重试；首答成绩锁定，成功完成只发一次水滴。",
+    "每房首答9/10发一次太阳；生命、宝箱、存档迁移与统一结算保留。",
+    "626词及其他游戏学习范围隔离；919资源离线就绪后实际断网可玩。"
+  ],
+  "boundary": "模型包含事务/旧档/损坏档夹具；浏览器交互来自隔离Chrome手机视口、真实CDP触摸与真正断网。未获得小米/微信/iPhone真机验收。"
+}
