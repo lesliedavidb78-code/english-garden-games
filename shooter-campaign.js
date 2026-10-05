@@ -11,6 +11,7 @@
   const pool=D.pool(a.scope),byKey=new Map(pool.map(x=>[x.key,x])),eligible=D.eligible(pool,a.scope,a.level),allowed=new Set(eligible.map(x=>x.key)),meanings=new Set(eligible.map(x=>x.zh));
   if(new Set(a.items.map(w=>w.key)).size!==10||!a.items.every(w=>allowed.has(w.key)&&byKey.get(w.key).en===w.en&&byKey.get(w.key).zh===w.zh&&w.options.every(x=>meanings.has(x))&&w.targets.every(x=>allowed.has(D.normalize(x)))))return false;
   const retryRules=a.rulesVersion===2;
+  if(!integer(a.contactTotal??0)||!Number.isFinite(a.lastContactAt??0)||(a.lastContactAt??0)<0)return false;
   if(a.rulesVersion!==undefined&&!retryRules||!retryRules&&a.phase==='retry')return false;
   if(!['correctTotal','wrongTotal','answeredTotal','roomCorrect','roomWrong','water','suns','paidWater','paidSuns','cycle'].every(k=>integer(a[k]))||a.cycle<1||a.correctTotal+a.wrongTotal!==a.answeredTotal||!retryRules&&a.water!==a.correctTotal||a.paidWater>a.water||a.paidSuns>a.suns||a.suns>Math.floor(a.answeredTotal/10)||a.suns*9>a.correctTotal||a.roomCorrect+a.roomWrong>10||a.correctTotal<a.roomCorrect||a.wrongTotal<a.roomWrong)return false;
   const submitted=retryRules?(a.questionAttempts>0?1:0):a.phase==='ready'||a.phase==='done'&&!a.submitted?0:1;
@@ -23,7 +24,7 @@
   if(!Array.isArray(a.seen)||a.seen.length>pool.length||new Set(a.seen).size!==a.seen.length||!a.seen.every(k=>byKey.has(k))||!byKey.has(a.lastWord))return false;
   const s=a.shooter,l=s?.loadout;
   if(!s||s.version!==1||s.level!==a.level||!integer(s.health,10)||!integer(s.streak,retryRules?a.water:a.correctTotal)||!l||!['boots','prism','shield'].every(k=>integer(l[k],3))||!integer(s.shieldCharge,1)||s.shieldCharge>0&&l.shield===0||!integer(s.lastHitIndex+1)||s.lastHitIndex!==(retryRules?a.attemptsTotal:a.answeredTotal)-1||!integer(s.lastChestLevel,a.level)||!integer(s.pendingChest,a.level)||typeof s.ended!=='boolean'||s.ended!==(s.health===0)||typeof s.lastAnswerShielded!=='boolean')return false;
-  if(s.health<10-(retryRules?a.mistakesTotal:a.wrongTotal)||a.phase==='between'&&(s.health===0||s.pendingChest!==a.level&&s.lastChestLevel!==a.level)||a.phase!=='between'&&s.pendingChest!==0||a.phase!=='done'&&(s.health===0||a.settled||a.paidWater!==0||a.paidSuns!==0||a.outcome!=='active')||a.phase==='done'&&(!a.settled||a.outcome==='active'||a.paidWater!==a.water||a.paidSuns!==a.suns||(a.outcome==='lost')!==(s.health===0)))return false;
+  if(s.health<10-(retryRules?a.mistakesTotal:a.wrongTotal)-(a.contactTotal??0)||a.phase==='between'&&(s.health===0||s.pendingChest!==a.level&&s.lastChestLevel!==a.level)||a.phase!=='between'&&s.pendingChest!==0||a.phase!=='done'&&(s.health===0||a.settled||a.paidWater!==0||a.paidSuns!==0||a.outcome!=='active')||a.phase==='done'&&(!a.settled||a.outcome==='active'||a.paidWater!==a.water||a.paidSuns!==a.suns||(a.outcome==='lost')!==(s.health===0)))return false;
   if(retryRules){
    if(!['completedTotal','recoveredTotal','attemptsTotal','mistakesTotal','questionAttempts'].every(k=>integer(a[k]))||typeof a.questionComplete!=='boolean'||![null,true,false].includes(a.firstOk))return false;
    if(a.completedTotal!==(a.level-1)*10+a.index+(a.questionComplete?1:0)||a.completedTotal>a.answeredTotal||a.water!==a.correctTotal+a.recoveredTotal||a.water>a.completedTotal||a.recoveredTotal>a.wrongTotal||a.mistakesTotal<a.wrongTotal||a.attemptsTotal!==a.water+a.mistakesTotal||a.attemptsTotal<a.answeredTotal||a.questionAttempts>a.attemptsTotal||a.attemptsTotal-a.answeredTotal<a.questionAttempts-(submitted?1:0)||a.suns>Math.floor(a.completedTotal/10))return false;
@@ -35,6 +36,7 @@
  }
  function validHistory(h){
   if(!h||typeof h.id!=='string'||!Number.isFinite(Date.parse(h.at))||!scopeValid(h.scope)||!modes.includes(h.mode)||!integer(h.level)||h.level<1||!integer(h.total)||!integer(h.correct,h.total)||!integer(h.wrong,h.total)||h.correct+h.wrong!==h.total||!integer(h.water)||!integer(h.suns,h.level)||!['ended','lost'].includes(h.outcome))return false;
+  if(!integer(h.contactTotal??0))return false;
   if(h.rulesVersion===undefined)return h.water===h.correct;
   return h.rulesVersion===2&&integer(h.completedTotal,h.total)&&integer(h.recoveredTotal,h.wrong)&&integer(h.attemptsTotal)&&integer(h.mistakesTotal)&&h.water===h.correct+h.recoveredTotal&&h.water<=h.completedTotal&&h.mistakesTotal>=h.wrong&&h.attemptsTotal===h.water+h.mistakesTotal&&h.attemptsTotal>=h.total&&h.suns<=Math.floor(h.completedTotal/10)&&h.suns*9<=h.correct;
  }
@@ -47,14 +49,14 @@
   if(a.settled)return false;
   a.phase='done';a.outcome=outcome;a.shooter.pendingChest=0;
   root.garden.water+=a.water-a.paidWater;root.garden.suns+=a.suns-a.paidSuns;a.paidWater=a.water;a.paidSuns=a.suns;a.settled=true;
-  if(!s.history.some(h=>h.id===a.id)){s.history.push({id:a.id,at:new Date().toISOString(),scope:a.scope,mode:a.mode,level:a.level,total:a.answeredTotal,correct:a.correctTotal,wrong:a.wrongTotal,water:a.water,suns:a.suns,outcome,...(a.rulesVersion===2?{rulesVersion:2,completedTotal:a.completedTotal,recoveredTotal:a.recoveredTotal,attemptsTotal:a.attemptsTotal,mistakesTotal:a.mistakesTotal}:{})});s.history=s.history.slice(-20000)}
+  if(!s.history.some(h=>h.id===a.id)){s.history.push({id:a.id,at:new Date().toISOString(),scope:a.scope,mode:a.mode,level:a.level,total:a.answeredTotal,correct:a.correctTotal,wrong:a.wrongTotal,water:a.water,suns:a.suns,outcome,...(a.rulesVersion===2?{rulesVersion:2,completedTotal:a.completedTotal,recoveredTotal:a.recoveredTotal,attemptsTotal:a.attemptsTotal,mistakesTotal:a.mistakesTotal,contactTotal:a.contactTotal??0}:{})});s.history=s.history.slice(-20000)}
   return true;
  }
  function start(scope,mode){
   scope??=$('shooter-scope')?.value||A().state.shooting?.settings.scope||'all';mode??=$('shooter-mode')?.value||'meaning';
   if(!scopeValid(scope)||!modes.includes(mode))return false;
   const first=D.drawRoom(scope,1);if(!first)return false;
-  if(!save((s,root)=>{if(s.active&&!s.active.settled)settle(s,root,s.active,'ended');s.settings={scope,mode};s.active={id:C.uid(),rulesVersion:2,scope,mode,level:1,items:first.items,index:0,phase:'ready',correctTotal:0,wrongTotal:0,answeredTotal:0,roomCorrect:0,roomWrong:0,completedTotal:0,recoveredTotal:0,attemptsTotal:0,mistakesTotal:0,questionAttempts:0,firstOk:null,questionComplete:false,submitted:'',targetSubmitted:'',ok:false,water:0,suns:0,paidWater:0,paidSuns:0,settled:false,outcome:'active',startedAt:new Date().toISOString(),seen:first.seen,cycle:first.cycle,lastWord:first.lastWord,shooter:WordShooter.fresh()}}))return false;
+  if(!save((s,root)=>{if(s.active&&!s.active.settled)settle(s,root,s.active,'ended');s.settings={scope,mode};s.active={id:C.uid(),rulesVersion:2,contactTotal:0,lastContactAt:0,scope,mode,level:1,items:first.items,index:0,phase:'ready',correctTotal:0,wrongTotal:0,answeredTotal:0,roomCorrect:0,roomWrong:0,completedTotal:0,recoveredTotal:0,attemptsTotal:0,mistakesTotal:0,questionAttempts:0,firstOk:null,questionComplete:false,submitted:'',targetSubmitted:'',ok:false,water:0,suns:0,paidWater:0,paidSuns:0,settled:false,outcome:'active',startedAt:new Date().toISOString(),seen:first.seen,cycle:first.cycle,lastWord:first.lastWord,shooter:WordShooter.fresh()}}))return false;
   render();if(mode==='listening')hear();return true;
  }
  function answer(value,metadata={}){
@@ -63,6 +65,15 @@
   const ok=value===w.expected&&metadata.targetWord===w.en;
   if(!save((s,root)=>{const a=s.active;if(!a||a.id!==id||a.index!==index||a.level!==level||!['ready','retry'].includes(a.phase)||(a.attemptsTotal??a.answeredTotal)!==attempt)return false;migrateRun(a);const hit=WordShooter.recordAnswer(a.shooter,a.attemptsTotal,ok);if(!hit.applied)return false;if(a.questionAttempts===0){a.firstOk=ok;a.answeredTotal++;if(ok){a.correctTotal++;a.roomCorrect++}else{a.wrongTotal++;a.roomWrong++}}a.questionAttempts++;a.attemptsTotal++;a.submitted=value;a.targetSubmitted=metadata.targetWord;a.ok=ok;if(ok){a.completedTotal++;a.questionComplete=true;a.water++;if(!a.firstOk)a.recoveredTotal++;a.phase='answered';if(index===9){if(a.roomCorrect>=9)a.suns++;a.phase='between';a.shooter.pendingChest=a.level}}else{a.mistakesTotal++;a.phase='retry'}if(a.shooter.health===0)settle(s,root,a,'lost')}))return false;
   sync();return true;
+ }
+ function contact(metadata={}){
+  const current=active(),now=Date.now();
+  if(!current||!['ready','retry'].includes(current.phase)||metadata.questionKey!==`${current.id}:${current.level}:${current.index}`||metadata.contactToken!==(current.contactTotal??0)||now-(current.lastContactAt??0)<1500)return false;
+  const id=current.id,key=metadata.questionKey,token=metadata.contactToken;
+  if(!save((s,root)=>{const a=s.active;if(!a||a.id!==id||`${a.id}:${a.level}:${a.index}`!==key||!['ready','retry'].includes(a.phase)||(a.contactTotal??0)!==token||now-(a.lastContactAt??0)<1500)return false;
+   migrateRun(a);a.contactTotal=token+1;a.lastContactAt=now;const shielded=a.shooter.shieldCharge>0;if(shielded)a.shooter.shieldCharge--;else a.shooter.health=Math.max(0,a.shooter.health-1);a.shooter.streak=0;a.shooter.ended=a.shooter.health===0;if(a.shooter.ended)settle(s,root,a,'lost');
+  }))return false;
+  if(active().phase==='done')render();else sync();return true;
  }
  function upgrade(key){const current=active();if(!current||current.phase!=='between')return false;if(!save(s=>{const a=s.active;if(a?.id!==current.id||a.phase!=='between')return false;return WordShooter.grantUpgrade(a.shooter,a.level,key)}))return false;sync();return true}
  function next(){
@@ -78,8 +89,8 @@
  function sync(){const a=active();if(a)WordShooter.sync(a,D.pool(a.scope))}
  function render(){
   const a=active();if(!a)return home();$('shooter-home').hidden=true;$('shooter-play').hidden=false;$('shooter-summary').hidden=true;document.body.classList.add('shooting-focus');
-  WordShooter.mount({host:$('shooter-host'),active:a,wordPool:D.pool(a.scope),getActive:active,onAnswer:answer,onNext:()=>active()?.phase==='done'?render():next(),onLeave:leave,onUpgrade:upgrade,onHear:hear,onFinish:finish});
-  if(a.phase==='done'){WordShooter.unmount();$('shooter-play').hidden=true;$('shooter-summary').hidden=false;$('shooter-summary-title').textContent=a.outcome==='lost'?'守卫需要休息，再来挑战！':'本次探索，满载而归！';$('shooter-summary-copy').textContent=`到达第 ${a.level} 关 · 首答正确 ${a.correctTotal}/${a.answeredTotal} · 已完成 ${a.completedTotal??a.answeredTotal} 题 · 有效打错 ${a.mistakesTotal??a.wrongTotal} 次${a.recoveredTotal?` · 重试学会 ${a.recoveredTotal} 题`:''}`;$('shooter-earned-water').textContent=a.water;$('shooter-earned-suns').textContent=a.suns}
+  WordShooter.mount({host:$('shooter-host'),active:a,wordPool:D.pool(a.scope),getActive:active,onAnswer:answer,onContact:contact,onNext:()=>active()?.phase==='done'?render():next(),onLeave:leave,onUpgrade:upgrade,onHear:hear,onFinish:finish});
+  if(a.phase==='done'){WordShooter.unmount();$('shooter-play').hidden=true;$('shooter-summary').hidden=false;$('shooter-summary-title').textContent=a.outcome==='lost'?'守卫需要休息，再来挑战！':'本次探索，满载而归！';$('shooter-summary-copy').textContent=`到达第 ${a.level} 关 · 首答正确 ${a.correctTotal}/${a.answeredTotal} · 已完成 ${a.completedTotal??a.answeredTotal} 题 · 配对失误 ${a.mistakesTotal??a.wrongTotal} 次 · 碰撞 ${a.contactTotal??0} 次${a.recoveredTotal?` · 重试学会 ${a.recoveredTotal} 题`:''}`;$('shooter-earned-water').textContent=a.water;$('shooter-earned-suns').textContent=a.suns}
  }
  function resume(){const a=active();if(!a||a.settled)return false;render();if(a.mode==='listening')hear();return true}
  function scopeInfo(){const scope=$('shooter-scope').value,words=D.pool(scope);$('shooter-pool-count').textContent=`${words.length} 个去重词条 · 每个房间 10 题 · 房间持续开放`;$('shooter-editions').textContent=D.books().filter(b=>scope==='all'||String(b.grade)===scope||b.id===scope).map(b=>b.name).join('；')}
@@ -90,5 +101,5 @@
   $('shooter-scope').onchange=scopeInfo;$('shooter-start').onclick=()=>start();$('shooter-continue').onclick=resume;$('shooter-new').onclick=()=>{if(finish())home()};$('shooter-home-map').onclick=leave;$('shooter-again').onclick=()=>start(active()?.scope,active()?.mode);$('shooter-choose').onclick=home;$('shooter-summary-map').onclick=leave;
   document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('pagehide',pause);
  }
- window.ShooterCampaign={fresh,validRun,validState,start,answer,upgrade,next,finish,hear,pause,leave,sync,render,resume,home,open,init,get active(){return active()}};
+ window.ShooterCampaign={fresh,validRun,validState,start,answer,contact,upgrade,next,finish,hear,pause,leave,sync,render,resume,home,open,init,get active(){return active()}};
 })();

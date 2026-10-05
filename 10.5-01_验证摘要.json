@@ -1,0 +1,33 @@
+{
+  "release": "10.5-01",
+  "cache": "english-games-offline-v33",
+  "localPassed": 84,
+  "syntaxFiles": 31,
+  "checks": [
+    {
+      "file": "扩大地图_碰撞模型验证.json",
+      "passed": 45
+    },
+    {
+      "file": "扩大地图_手机触摸验证.json",
+      "passed": 12
+    },
+    {
+      "file": "扩大地图_离线模型验证.json",
+      "passed": 19
+    },
+    {
+      "file": "扩大地图_离线验证.json",
+      "passed": 8
+    }
+  ],
+  "sourceHashes": {
+    "word-shooter.js": "13163a25d32d1222769934da3fdcabf21136592222cebeed2af78bb9308349af",
+    "word-shooter.css": "3c3313ffe6c283ab23af8904f24b8788c008249f819bae9edaf5898d7b6e0b55",
+    "shooter-campaign.js": "0663f0ac4a90ce0cb14965bdbcf28a77257173df9c35a4d7c820238e93c588c5",
+    "adventure.js": "e3578df41ac2aa2bdc4003483cb4e9c1af75319d465ae8c744de53b719091d9b",
+    "sw.js": "39f0479ccd137f94ceba90b37a49dad5b543f9b59a6b702caf0720a006673be7",
+    "index.html": "53b77416dd0dc100e8190f666818354da68102f5b34deb5fba100d28938320b7"
+  },
+  "boundaries": "Chrome手机视口真实触摸，非小米/微信真机；626词与其他游戏范围不变。"
+}
