@@ -98,11 +98,11 @@
  function completeFollow(){const a=active();if(a?.mode!=='follow'||a.phase!=='ready')return;answer('__skipped__')}
  function battleStats(a=active()){return {correct:a?.correct||0,wrong:a?.battle?.wrong||0,streak:a?.battle?.streak||0,terminal:a?.battle?(a.correct>=10?'won':a.battle.wrong>=10?'lost':null):null}}
  function next(){const a=active();if(!a||a.phase==='ready')return;if(a.realm&&!WordRealm.beforeNext(a))return;if(a.phase==='done'){if(a.campaign){home();window.Progression?.show('campaign');return}return home()}
- if(!save((t,g,root)=>{const r=t.active,terminal=r.battle?(r.correct>=10||r.battle.wrong>=10):r.index===9,l=campaignLevel(r);if(terminal){r.phase='done';if(!t.history.some(h=>h.id===r.id)){
+ let stale=false;if(!save((t,g,root)=>{const r=t.active;if(!r||r.id!==a.id||r.index!==a.index||r.phase!=='answered'){stale=true;return false}const terminal=r.battle?(r.correct>=10||r.battle.wrong>=10):r.index===9,l=campaignLevel(r);if(terminal){r.phase='done';if(!t.history.some(h=>h.id===r.id)){
   if(l&&!window.Progression.record(root,{kind:'battle',levelId:l.id,id:r.id,correct:r.correct,total:r.index+1,outcome:r.correct>=10?'won':'lost'}))return false;
   t.history.push({id:r.id,mode:r.mode,at:new Date().toISOString(),correct:r.correct,total:r.index+1,...(r.campaign?{campaign:{...r.campaign}}:{}),...(r.followLocal?{localOnly:true}:{})});
   if(r.mode!=='follow'){if(r.correct/(r.index+1)>=.9&&(!l||r.correct>=10))g.suns+=l?.rewardMultiplier||1;if(!r.battle)g.history.push({id:r.id,mode:names[r.mode],at:new Date().toISOString(),correct:r.correct,total:10})}
- }}else{r.index++;r.phase='ready';r.remaining=timeLimit(r);r.submitted='';r.ok=false;r.recorded=false;if(r.realm){r.realm.questionIndex=r.index;r.realm.room=r.index<3?1:r.index<6?2:3;r.realm.selected='';r.realm.pendingChest=0;r.realm.shotIndex=-1}if(r.mode==='follow')r.followLocal=true}}))return;render(true)
+ }}else{r.index++;r.phase='ready';r.remaining=timeLimit(r);r.submitted='';r.ok=false;r.recorded=false;if(r.realm){r.realm.questionIndex=r.index;r.realm.room=r.index<3?1:r.index<6?2:3;r.realm.selected='';r.realm.pendingChest=0;r.realm.shotIndex=-1}if(r.mode==='follow')r.followLocal=true}})){if(stale){render();C.toast('另一页面已更新进度，已同步当前题目。')}return}render(true)
  }
  function chooseAnother(){pause();if(!save(t=>{t.active=null}))return;home();$('training-modes').scrollIntoView({block:'start',behavior:'smooth'});C.toast('请选择新的游戏，已经获得的奖励和完整记录都保留。')}
  async function microphone(){

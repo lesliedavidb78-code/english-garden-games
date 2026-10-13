@@ -1,0 +1,62 @@
+{
+  "release": "10.13-01",
+  "date": "2026-10-13",
+  "cache": "english-games-offline-v34",
+  "fixed": [
+    "F01旧答案误计",
+    "F02旧下一题跳题",
+    "F03花园离线误报",
+    "F04桌边寻路卡住"
+  ],
+  "localPassed": 213,
+  "checks": [
+    {
+      "file": "contact-controls.json",
+      "passed": 45
+    },
+    {
+      "file": "navy-controls.json",
+      "passed": 40
+    },
+    {
+      "file": "vocabulary-controls.json",
+      "passed": 81
+    },
+    {
+      "file": "offline-controls.json",
+      "passed": 19
+    },
+    {
+      "file": "browser-evidence.json",
+      "passed": 5
+    },
+    {
+      "file": "training-backup-evidence.json",
+      "passed": 1
+    },
+    {
+      "file": "complete-offline.json",
+      "passed": 9
+    },
+    {
+      "file": "shooter-path-evidence.json",
+      "passed": 1
+    },
+    {
+      "file": "shooter-touch.json",
+      "passed": 12
+    }
+  ],
+  "sourceHashes": {
+    "common.js": "a1a1b6d3f412420619d8bfc80240eaf363c91dc9388a784bac0ebae0f3fb6ec7",
+    "garden/garden.js": "b5918b0a2e8513bd3aba2882f1bbf33491ce67a1ad3ac7e407843e0feaf4faf4",
+    "training.js": "8fe7d980b8a4b834c48de8b1fd3295172122f5837810158aa48d91eaa5639e67",
+    "word-shooter.js": "677ae1870fa370e9ea64574a2f6f3320b2a6265704425c0a15eba693b6260245",
+    "adventure.js": "cdd017e73870c4920e4e7b19298053a02aa25015a4ea682f789177acba7319ba",
+    "sw.js": "bbeb64ddc0f4dc34b8e2c1ed187523f7dad5d4c09eb0078a7e289717938ddbee",
+    "index.html": "c6f8ed63f7f4677f72f145a591579605f30d19e26ac8b4311316938e005b9610",
+    "garden/index.html": "9a618e717a0ff5bfa6a0cd2e3a678d8513015c94c6bf5b15fcc40e7378494c0a"
+  },
+  "boundary": "Chrome隔离页面、媒体故障及存储失败注入、原函数VM；非用户小米/微信真机。",
+  "syntaxFiles": 31
+}

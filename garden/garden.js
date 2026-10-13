@@ -88,14 +88,20 @@
       document.querySelectorAll('#listen-choices .choice').forEach(b=>{b.disabled=true;if(b.dataset.answer===w[1])b.classList.add('correct');if(b.dataset.answer===submitted){b.classList.add('submitted');if(!ok)b.classList.add('incorrect');b.setAttribute('aria-label',`${b.textContent}，你的选择，${ok?'答对':'答错'}`)}});
     }
   }
+  function syncStaleQuestion(){C.stopSpeech();if(store.reload()){if(store.state.active)renderQuestion();else{renderHome();show('home')}}C.toast('另一页面已更新进度，已同步当前题目。');}
   function answer(ok,submitted){
     const a=store.state.active;if(!a||a.phase!=='ready')return;
     const value=submitted===undefined?(a.mode==='spell'?selected.map(x=>x.ch).join(''):undefined):submitted;
-    const lastChoices=a.mode==='listen'?[...document.querySelectorAll('#listen-choices .choice')].map(b=>b.dataset.answer):null;
-    if(!store.update(s=>{s.active.phase='answered';s.active.lastOK=ok;if(value!==undefined)s.active.lastAnswer=value;if(lastChoices)s.active.lastChoices=lastChoices;if(ok){s.active.correct++;s.water++}else s.active.missed.push(s.active.words[s.active.index])}))return;
-    C.sound(ok?'drop':'miss');showAnswer(ok);
+    if(typeof value!=='string')return;
+    const lastChoices=a.mode==='listen'?[...document.querySelectorAll('#listen-choices .choice')].map(b=>b.dataset.answer):null;let stale=false,actualOK=false;
+    if(!store.update(s=>{const r=s.active;if(!r||r.id!==a.id||r.index!==a.index||r.phase!=='ready'){stale=true;return false}const word=r.words[r.index];actualOK=value===(r.mode==='spell'?word[0]:word[1]);r.phase='answered';r.lastOK=actualOK;r.lastAnswer=value;if(lastChoices)r.lastChoices=lastChoices;if(actualOK){r.correct++;s.water++}else r.missed.push(word)})){if(stale)syncStaleQuestion();return}
+    C.sound(actualOK?'drop':'miss');showAnswer(actualOK);
   }
-  function next(){const a=store.state.active;if(!a||a.phase!=='answered')return;C.stopSpeech();if(a.index===9){if(!store.update(s=>{const r=s.active;r.phase='done';if(!s.history.some(h=>h.id===r.id)){if(r.correct>=9)s.suns++;s.history.push({id:r.id,at:new Date().toISOString(),correct:r.correct,total:10,mode:r.mode==='spell'?'拼字搭桥':'听音找花'})}}))return;renderResult()}else if(store.update(s=>{s.active.index++;s.active.phase='ready';delete s.active.lastAnswer;delete s.active.lastChoices}))renderQuestion()}
+  function next(){
+    const a=store.state.active;if(!a||a.phase!=='answered')return;C.stopSpeech();let stale=false;
+    if(!store.update(s=>{const r=s.active;if(!r||r.id!==a.id||r.index!==a.index||r.phase!=='answered'){stale=true;return false}if(r.index===9){r.phase='done';if(!s.history.some(h=>h.id===r.id)){if(r.correct>=9)s.suns++;s.history.push({id:r.id,at:new Date().toISOString(),correct:r.correct,total:10,mode:r.mode==='spell'?'拼字搭桥':'听音找花'})}}else{r.index++;r.phase='ready';delete r.lastAnswer;delete r.lastChoices}})){if(stale)syncStaleQuestion();return}
+    if(store.state.active.phase==='done')renderResult();else renderQuestion();
+  }
   function renderResult(){const a=store.state.active;if(!a)return;show('result');$('result-title').textContent=a.correct>=9?'太阳也来为你加油了！':'每滴水，都能让花长大';$('result-score').textContent=`${a.correct*10}%`;$('result-reward').textContent=`收获 ${a.correct} 个水滴${a.correct>=9?' + 1 个太阳':''} · 可增加 ${a.correct+(a.correct>=9?10:0)} 点成长`;$('review').classList.toggle('hidden',!a.missed.length);$('review').innerHTML='<strong>下次再认识它们</strong>'+a.missed.map(w=>`<p>${E(w[0])} · ${E(w[1])}</p>`).join('')}
   function renderHistory(){$('stats').innerHTML=`<div><strong>${store.state.history.length}</strong><small>已保存的完整关卡</small></div><div><strong>${store.state.history.reduce((n,h)=>n+h.correct,0)}</strong><small>记录内答对单词</small></div><div><strong>${store.state.flowers.length}</strong><small>养出的花</small></div>`;$('history-list').innerHTML=C.historyRows(store.state)}
   function renderCollection(){const s=store.state;$('collection-list').innerHTML=s.flowers.length?s.flowers.map((f,i)=>`<div class="flower-card">${plantSVG(100,f.variety)}<strong>${seeds[f.variety].name} · 第 ${i+1} 朵</strong><small>${E(new Date(f.at).toLocaleDateString('zh-CN'))}</small></div>`).join(''):'<div class="empty-collection"><span>🌱</span><h3>第一朵花正在路上</h3><p class="muted">成长值到 100，它就会留在这里。</p></div>'}
