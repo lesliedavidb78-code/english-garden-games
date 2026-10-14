@@ -1,0 +1,22 @@
+name: 改进建议
+description: 完善现有玩法、教材内容或素材
+title: "[建议] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想改善哪个学习或游戏体验？
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: 建议方案
+      description: "说明如何改善或合并现有入口，以及适合的年龄/教材范围。"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收目标与来源
+      description: "怎样判断改善成功？教材/素材请注明版本、来源与授权依据。"

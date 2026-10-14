@@ -1,0 +1,32 @@
+name: 问题反馈
+description: 提供可复现步骤，帮助修复游戏
+title: "[Bug] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: "请遮住个人信息，不要上传儿童录音、真实存档或密钥。"
+  - type: input
+    id: environment
+    attributes:
+      label: 游戏版本、设备与浏览器
+      placeholder: "10.13-01；手机型号/系统；微信或浏览器版本"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 游戏、模式及复现步骤
+      description: "说明学习范围、操作顺序，是否暂停或切换页面。"
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: 实际结果与预期结果
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 匿名截图或补充证据

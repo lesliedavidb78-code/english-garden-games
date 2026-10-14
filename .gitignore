@@ -6,3 +6,10 @@
 
 # User-supplied editable source media stays local; publish processed runtime assets.
 /地球守护战素材包/
+
+# Local regression output and credentials
+/tests/.results/
+.env
+.env.*
+!.env.example
+/node_modules/

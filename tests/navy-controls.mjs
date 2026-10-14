@@ -1,0 +1,74 @@
+import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
+fs.mkdirSync(new URL('./.results/',import.meta.url),{recursive:true});
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const catalog=JSON.parse(fs.readFileSync(new URL('../assets/progression-levels.json',import.meta.url),'utf8'));
+const checks=[],clone=value=>JSON.parse(JSON.stringify(value));let state=null;
+const sandbox={window:{ProgressionData:catalog,GameCommon:{uid:()=>`id_${Math.random().toString(36).slice(2)}`,toast:()=>{}},Adventure:{get state(){return state},update(fn){const next=clone(state);if(fn(next)===false||!sandbox.window.Progression.validRoot(next))return false;state=next;return true}}},document:{getElementById:()=>null},Date,Number,Set,Map};
+vm.runInNewContext(fs.readFileSync(new URL('../progression.js',import.meta.url),'utf8'),sandbox);const P=sandbox.window.Progression;
+const fresh=()=>({garden:{water:5,suns:1,flowers:[]},navy:{active:null,history:[],legacyHistory:[],totalArrows:0}});
+const check=(name,fn)=>{try{fn();checks.push({name,result:'PASS'});console.log('PASS',name)}catch(error){checks.push({name,result:'FAIL',error:error.message});throw error}};
+function begin(root,id,levelId=1,options={}){const value=P.beginNavyAttempt(root,{id,levelId,journeyId:'j_'+id,...options});if(!value)return value;root.navy.active={id,correct:0,holes:0,index:0,phase:'ready',campaign:{kind:'navy',levelId,journeyId:value.journeyId}};assert.equal(P.validRoot(root),true);return value}
+function correct(root,id){const a=root.navy.active;a.correct++;const value=P.creditNavyWater(root,{attemptId:a.id,answerId:id,amount:catalog.navy[a.campaign.levelId-1].rewardMultiplier});assert.ok(value);a.index++;assert.equal(P.validRoot(root),true);return value}
+function wrong(root,id){const a=root.navy.active;a.holes++;const value=P.addNavyDamage(root,{attemptId:a.id,errorId:id});assert.ok(value);a.index++;assert.equal(P.validRoot(root),true);return value}
+function settle(root,outcome){const a=root.navy.active;a.phase=outcome;const result={kind:'navy',levelId:a.campaign.levelId,id:a.id,correct:a.correct,total:a.correct+a.holes,outcome};const recorded=P.record(root,result);assert.ok(recorded);assert.ok(P.settleNavyAttempt(root,{attemptId:a.id,outcome,correct:a.correct,total:a.correct+a.holes}));if(outcome==='won')assert.ok(P.awardNavySun(root,{attemptId:a.id}));assert.equal(P.validRoot(root),true);return recorded}
+function seedUnlocked(root,n){for(let id=1;id<n;id++)assert.ok(P.record(root,{kind:'navy',levelId:id,id:'seed_'+id,correct:id*10,total:id*10,outcome:'won'}))}
+let failure=null;
+try{
+ check('最终目录每关N艘船、N乘10箭、每船10箭、奖励1/2/3封顶',()=>{assert.equal(catalog.navy.length,10);catalog.navy.forEach(l=>{assert.equal(l.boats,l.id);assert.equal(l.targetArrows,l.id*10);assert.equal(l.arrowsPerBoat,10);assert.equal(l.rewards.waterCapPerRun,l.targetArrows*l.rewardMultiplier);assert.ok(l.rewardMultiplier>=1&&l.rewardMultiplier<=3)});assert.equal(catalog.progression.navyUnlockPolicy,'victory')});
+ check('两份正式目录一致，故事船数和关卡场景名称一致',()=>{const browser={window:{}};vm.runInNewContext(fs.readFileSync(new URL('../progression-data.js',import.meta.url),'utf8'),browser);assert.equal(JSON.stringify(browser.window.ProgressionData),JSON.stringify(catalog));catalog.navy.forEach(l=>{assert.equal(l.title,l.scene);assert.ok(l.story.includes(`带领${l.id}艘草船来到${l.scene}`));assert.ok(l.subtitle.includes(`${l.id}艘草船`));assert.ok(l.subtitle.includes('每船10支箭'))})});
+ check('没有旅程的旧档和自由练习保持有效',()=>{const r=fresh();assert.equal(P.validRoot(r),true);assert.equal(P.migrateNavyJourney(r),null);assert.equal(r.navy.journey,undefined);r.navy.active={id:'free',holes:3,correct:2};assert.equal(P.validRoot(r),true);assert.equal(P.migrateNavyJourney(r),null)});
+ const r=fresh();begin(r,'stage1');for(let i=0;i<10;i++)correct(r,'stage1_c'+i);for(let i=0;i<5;i++)wrong(r,'stage1_e'+i);
+ check('每次答对只记待结算奖励、不提前写入garden',()=>{assert.equal(r.garden.water,5);assert.equal(r.garden.suns,1);assert.equal(r.navy.journey.rewards.water,10);assert.equal(r.navy.journey.damage,5)});
+ check('同题正确事件幂等且不能改倍率重领',()=>{assert.equal(P.creditNavyWater(r,{attemptId:'stage1',answerId:'stage1_c0',amount:1}).duplicate,true);assert.equal(P.creditNavyWater(r,{attemptId:'stage1',answerId:'stage1_c0',amount:2}),false);assert.equal(r.navy.journey.rewards.water,10)});
+ check('同题错误事件幂等、已答对的题不能再记错',()=>{assert.equal(P.addNavyDamage(r,{attemptId:'stage1',errorId:'stage1_e0'}).duplicate,true);assert.equal(P.addNavyDamage(r,{attemptId:'stage1',errorId:'stage1_c0'}),false);assert.equal(P.creditNavyWater(r,{attemptId:'stage1',answerId:'stage1_e0',amount:1}),false);assert.equal(r.navy.journey.damage,5)});
+ check('第一关10对5错仍晋级，但不授太阳',()=>{const result=settle(r,'won');assert.equal(result.qualified,true);assert.ok(r.progression.navy.cleared[1]);assert.equal(r.navy.journey.rewards.suns,0);assert.equal(r.navy.journey.attempts[0].result.total,15)});
+ check('重复阶段结算/太阳封账不会重复奖励',()=>{assert.equal(P.settleNavyAttempt(r,{attemptId:'stage1',outcome:'won'}).duplicate,true);assert.equal(P.awardNavySun(r,{attemptId:'stage1'}).duplicate,true);assert.equal(P.record(r,{kind:'navy',levelId:1,id:'stage1',correct:10,total:15,outcome:'won'}).duplicate,true);assert.equal(r.navy.journey.rewards.suns,0)});
+ check('下一关保留5次漏水，但本关错误从0开始',()=>{begin(r,'stage2',2);assert.equal(r.navy.journey.damage,5);assert.equal(r.navy.active.holes,0);assert.equal(r.navy.journey.attempts[1].startDamage,5)});
+ check('旧关回调不能给新关添加正确或错误',()=>{assert.equal(P.addNavyDamage(r,{attemptId:'stage1',errorId:'late_e'}),false);assert.equal(P.creditNavyWater(r,{attemptId:'stage1',answerId:'late_c',amount:1}),false)});
+ for(let i=0;i<20;i++)correct(r,'stage2_c'+i);settle(r,'won');
+ check('第二关太阳只按本关20对0错计算，不受前关5错影响',()=>{assert.equal(r.navy.journey.rewards.suns,2);assert.equal(r.navy.journey.rewards.water,50);assert.equal(r.navy.journey.damage,5);assert.equal(r.garden.water,5);assert.equal(r.garden.suns,1)});
+ check('保存并重载保持旅程损伤、待结算奖励和题目归属',()=>{const restored=clone(r);assert.equal(P.validRoot(restored),true);assert.equal(restored.navy.journey.damage,5);assert.equal(restored.navy.journey.rewards.water,50);assert.equal(restored.navy.active.campaign.journeyId,r.navy.journey.id)});
+ check('重玩当前关也保留累计损伤和已存奖励',()=>{begin(r,'retry2',2);assert.equal(r.navy.journey.damage,5);assert.equal(r.navy.active.holes,0);assert.equal(r.navy.journey.rewards.water,50);assert.equal(r.navy.journey.rewards.suns,2)});
+ for(let i=0;i<3;i++)correct(r,'retry2_c'+i);for(let i=0;i<5;i++)wrong(r,'retry2_e'+i);settle(r,'sunk');
+ check('第2关新增5错令旅程累计10错沉船，非每关重置10机会',()=>{assert.equal(r.navy.journey.damage,10);assert.equal(r.navy.active.holes,5);assert.equal(r.navy.journey.status,'sunk');assert.equal(P.beginNavyAttempt(r,{id:'blocked',levelId:2}),false);assert.equal(P.addNavyDamage(r,{attemptId:'retry2',errorId:'eleventh'}),false)});
+ const sunk=P.finishNavyJourney(r,{reason:'sunk'});
+ check('旅程沉船原子统一发放已赚水滴/太阳和总成绩',()=>{assert.equal(sunk.correct,33);assert.equal(sunk.total,43);assert.equal(sunk.wrong,10);assert.equal(sunk.water,56);assert.equal(sunk.suns,2);assert.equal(sunk.pendingWater,0);assert.equal(r.garden.water,61);assert.equal(r.garden.suns,3);assert.equal(P.validRoot(r),true)});
+ check('重复结束或重载结算不会二次发奖',()=>{assert.equal(P.finishNavyJourney(r,{reason:'sunk'}).duplicate,true);const rr=clone(r);assert.equal(P.finishNavyJourney(rr,{reason:'ended'}).duplicate,true);assert.equal(rr.garden.water,61);assert.equal(rr.garden.suns,3)});
+ check('重新旅程清零损伤，保留已入garden奖励与永久解锁',()=>{begin(r,'restart1',1,{resetJourney:true});assert.equal(r.navy.journey.damage,0);assert.equal(r.navy.journey.rewards.water,0);assert.equal(r.garden.water,61);assert.ok(r.progression.navy.cleared[2]);assert.equal(P.validRoot(r),true)});
+ const mid=fresh();begin(mid,'mid');correct(mid,'mid_c0');wrong(mid,'mid_e1');
+ check('暂停/保存没有结算副作用',()=>{const copy=clone(mid);assert.equal(P.validRoot(copy),true);assert.equal(copy.navy.journey.settlement,null);assert.equal(copy.garden.water,5);assert.equal(copy.navy.journey.rewards.water,1)});
+ check('主动结束只发真实已赚水滴、不伪造通关或太阳',()=>{const sum=P.finishNavyJourney(mid,{reason:'ended'});assert.equal(sum.water,1);assert.equal(sum.suns,0);assert.equal(mid.garden.water,6);assert.equal(mid.navy.journey.status,'ended');assert.equal(mid.navy.journey.attempts[0].outcome,'abandoned');assert.equal(mid.progression,undefined);assert.equal(P.validRoot(mid),true)});
+ const reset=fresh();begin(reset,'old_pending');for(let i=0;i<4;i++)correct(reset,'old_pending_c'+i);wrong(reset,'old_pending_e');
+ check('新旅程先结算旧pending，再创建新记录，不丢旧奖励',()=>{const result=begin(reset,'new_pending',1,{resetJourney:true});assert.equal(result.previousSummary.water,4);assert.equal(result.previousSummary.wrong,1);assert.equal(reset.garden.water,9);assert.equal(reset.navy.journey.damage,0);assert.equal(reset.navy.journey.rewards.water,0)});
+ const legacy=fresh();seedUnlocked(legacy,3);legacy.garden.water=100;legacy.navy.history=[{id:'historical',correct:1,total:10}];legacy.navy.active={id:'legacy3',correct:7,holes:3,index:10,phase:'ready',campaign:{kind:'navy',levelId:3}};
+ check('旧进行中存档迁移保留本关3漏水，不计历史9错',()=>{const j=P.migrateNavyJourney(legacy);assert.equal(j.damage,3);assert.equal(j.attempts[0].priorCorrect,7);assert.equal(j.attempts[0].priorWater,21);assert.equal(j.rewards.water,0);assert.equal(legacy.navy.active.holes,3);assert.equal(legacy.garden.water,100);assert.equal(P.validRoot(legacy),true)});
+ check('旧第3关仍保留两船20箭快照，新第3关为三船30箭',()=>{assert.equal(legacy.navy.active.campaign.legacyBoats,2);assert.equal(legacy.navy.active.campaign.legacyTargetArrows,20);assert.equal(P.level('navy',3).boats,3);assert.equal(P.level('navy',3).targetArrows,30)});
+ check('重复迁移不重复旧漏水或旧已发水滴',()=>{const before=JSON.stringify(legacy);assert.ok(P.migrateNavyJourney(legacy));assert.equal(JSON.stringify(legacy),before)});
+ for(let i=0;i<13;i++)correct(legacy,'legacy3_new_c'+i);settle(legacy,'won');const legacySummary=P.finishNavyJourney(legacy,{reason:'ended'});
+ check('旧局继续只结算新版之后的奖励，旧21水滴不重发',()=>{assert.equal(legacySummary.correct,20);assert.equal(legacySummary.total,23);assert.equal(legacySummary.water,39);assert.equal(legacySummary.priorWater,21);assert.equal(legacy.garden.water,139);assert.equal(legacySummary.suns,0);assert.equal(P.validRoot(legacy),true)});
+ const oldWon=fresh();seedUnlocked(oldWon,2);oldWon.garden.water=100;oldWon.garden.suns=8;oldWon.navy.history=[{id:'old_won',correct:20,total:21}];oldWon.navy.active={id:'old_won',correct:20,holes:1,phase:'won',campaign:{kind:'navy',levelId:2}};
+ check('已结束旧关的水滴与太阳均标记已发，不二次结算',()=>{P.migrateNavyJourney(oldWon);const value=P.finishNavyJourney(oldWon,{reason:'ended'});assert.equal(value.water,0);assert.equal(value.suns,0);assert.equal(value.priorWater,40);assert.equal(value.priorSuns,2);assert.equal(oldWon.garden.water,100);assert.equal(oldWon.garden.suns,8);assert.equal(P.validRoot(oldWon),true)});
+ const full=fresh();for(let id=1;id<=10;id++){begin(full,'full_'+id,id);for(let i=0;i<id*10;i++)correct(full,'full_'+id+'_c'+i);settle(full,'won')}
+ check('十关550次真实正确答案：待结算1610水滴/27太阳，尚未写garden',()=>{assert.equal(full.navy.journey.credits.length,550);assert.equal(full.navy.journey.rewards.water,1610);assert.equal(full.navy.journey.rewards.suns,27);assert.equal(full.garden.water,5);assert.equal(full.garden.suns,1);assert.equal(full.navy.journey.status,'complete')});
+ check('第十关结束统一入账，全旅程状态/逐关解锁有效',()=>{const sum=P.finishNavyJourney(full,{reason:'complete'});assert.equal(sum.total,550);assert.equal(sum.wrong,0);assert.equal(full.garden.water,1615);assert.equal(full.garden.suns,28);assert.ok(full.progression.navy.cleared[10]);assert.equal(P.validRoot(full),true)});
+ const invalidBase=clone(reset);
+ for(const [name,mutate]of [
+  ['拒绝错误累计被改小',r=>r.navy.journey.damage=1],
+  ['拒绝未结算提前标记已支付',r=>r.navy.journey.rewards.paidWater=1],
+  ['拒绝虚构新水滴',r=>r.navy.journey.rewards.water=999],
+  ['拒绝当前关本地错误与旅程ledger不一致',r=>r.navy.active.holes=1],
+  ['拒绝当前关正确数与credit ledger不一致',r=>r.navy.active.correct=1],
+  ['拒绝campaign指向其他旅程',r=>r.navy.active.campaign.journeyId='another'],
+  ['拒绝未知journey字段',r=>r.navy.journey.secretMultiplier=999],
+  ['拒绝旧目标伪造为其他值',r=>{r.navy.active.campaign.legacyBoats=9;r.navy.active.campaign.legacyTargetArrows=90}]
+ ])check(name,()=>{const r=clone(invalidBase);mutate(r);assert.equal(P.validRoot(r),false)});
+ check('损坏新journey不通过迁移或新旅程按钮抹掉',()=>{const r=clone(invalidBase);r.navy.journey.damage=999;const before=JSON.stringify(r);assert.equal(P.migrateNavyJourney(r),false);assert.equal(P.beginNavyAttempt(r,{id:'invalid_reset',levelId:1,resetJourney:true}),false);assert.equal(JSON.stringify(r),before)});
+ check('积分提交失败时整次事务回滚，garden和答题数保持',()=>{state=clone(reset);const before=JSON.stringify(state);assert.equal(sandbox.window.Adventure.update(r=>{r.navy.active.correct++;return P.creditNavyWater(r,{attemptId:r.navy.active.id,answerId:'wrong_multiplier',amount:9})}),false);assert.equal(JSON.stringify(state),before)});
+ check('存储容量不足不能把pending改成已支付或丢失奖励',()=>{const r=fresh();begin(r,'capacity');correct(r,'capacity_c');r.garden.water=1000000;const before=JSON.stringify(r);assert.equal(P.finishNavyJourney(r,{reason:'ended'}),false);assert.equal(JSON.stringify(r),before)});
+ check('battle仍须胜利且90%以上才解锁，不受navy规则影响',()=>{const r=fresh();let result=P.record(r,{kind:'battle',levelId:1,id:'battle_low',correct:10,total:15,outcome:'won'});assert.equal(result.qualified,false);assert.equal(r.progression.battle.cleared[1],undefined);result=P.record(r,{kind:'battle',levelId:1,id:'battle_high',correct:10,total:11,outcome:'won'});assert.equal(result.qualified,true);assert.equal(P.validRoot(r),true);const bad=clone(r);bad.progression.battle.cleared[1]=clone(bad.progression.battle.best[1]);Object.assign(bad.progression.battle.cleared[1],{correct:8,total:10,rate:.8});assert.equal(P.validRoot(bad),false)});
+ check('现有花朵兑换扣款/取消返还幂等，与navy escrow互不影响',()=>{state=fresh();state.garden.flowers=Array.from({length:3},()=>({}));assert.equal(P.configureReward({id:undefined,title:'一起去公园',cost:2}),true);const reward=state.progression.rewards[0];assert.equal(P.redeem(reward.id,'redemption1'),true);assert.equal(P.flowerBalance(state).available,1);assert.equal(P.redeem(reward.id,'redemption1'),false);assert.equal(P.setTransaction('redemption1','cancelled'),true);assert.equal(P.setTransaction('redemption1','cancelled'),false);assert.equal(P.flowerBalance(state).available,3);assert.equal(P.validRoot(state),true)});
+ console.log('ALL',checks.length,'PASS');
+}catch(error){failure=error.stack;console.error(failure);process.exitCode=1}
+fs.writeFileSync(new URL('./.results/navy-controls.json',import.meta.url),JSON.stringify({at:new Date().toISOString(),environment:'Node VM载入正式progression.js与实际关卡JSON；检验同事务状态、旧档迁移、逐关太阳、奖励暂存与原子统一入账、导入边界、battle及花朵兑换回归。浏览器互动由根另行验证。',allPassed:!failure,checks,failure},null,2));
