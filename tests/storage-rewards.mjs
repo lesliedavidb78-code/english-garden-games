@@ -1,0 +1,23 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const values=new Map();
+let fail=false;
+const localStorage={getItem:k=>values.get(k)??null,setItem(k,v){if(fail)throw Error('quota');values.set(k,String(v))}};
+const window={postMessage(){}};window.parent=window;
+const context={window,localStorage,document:{getElementById:()=>null},location:{origin:'http://localhost'},Date,Set,Map,Number,JSON,crypto:{randomUUID:()=> 'id'},setTimeout,clearTimeout};
+vm.runInNewContext(fs.readFileSync(new URL('../common.js',import.meta.url),'utf8'),context);
+const C=window.GameCommon,clone=x=>JSON.parse(JSON.stringify(x));
+const fresh=()=>({water:0,suns:0,flowers:[],active:null,settings:{pack:'nature'},custom:[]});
+let count=0;function check(name,fn){fn();console.log('PASS '+name);count++}
+check('每游戏每天前两局发奖，第三局不发',()=>{const g=fresh();for(let i=0;i<3;i++)C.grant(g,'spell','s'+i,10,1);assert.equal(g.water,20);assert.equal(g.suns,2);assert.equal(C.rewardAllowed(g,'spell','s2'),false);C.grant(g,'shooter','x',5,1);assert.equal(g.water,25)});
+check('重复打开同局不占新名额；重载保留限制',()=>{const g=fresh();C.beginReward(g,'navy','n');C.beginReward(g,'navy','n');assert.equal(g.rewardLedger.runs.length,1);const h=clone(g);C.beginReward(h,'navy','n2');assert.equal(C.beginReward(h,'navy','n3').eligible,false)});
+check('连续关卡沿用原局；跨日继续不刷新资格，新局按北京时间',()=>{const g=fresh(),d=new Date('2026-10-15T15:59:00Z'),e=new Date('2026-10-15T16:01:00Z');C.beginReward(g,'dialogue','a','a',d);C.beginReward(g,'dialogue','b','b',d);assert.equal(C.beginReward(g,'dialogue','c','c',d).eligible,false);assert.equal(C.beginReward(g,'dialogue','next','c',e).eligible,false);assert.equal(C.beginReward(g,'dialogue','new','new',e).eligible,true);assert.equal(C.rewardDay(e),'2026-10-16')});
+check('词义与反应共用名额，跟读不占奖励名额',()=>{const g=fresh();C.beginReward(g,'meaning','a');C.beginReward(g,'reaction','b');assert.equal(C.beginReward(g,'meaning','c').eligible,false);assert.equal(C.beginReward(g,'follow','f'),null);assert.equal(g.rewardLedger.runs.length,3)});
+check('闯关换船与射击换房间仍为同局',()=>{const r={garden:fresh(),navy:{active:{id:'a',campaign:{},phase:'ready'},journey:{id:'j'}},shooting:{active:{id:'s',settled:false}}};C.registerRuns(clone(r),r);r.navy.active.id='b';C.registerRuns(clone(r),r);assert.equal(r.garden.rewardLedger.runs.length,2)});
+check('对战下一关归同组',()=>{const b={garden:fresh(),training:{active:{id:'a',mode:'dialogue',phase:'done',correct:10,campaign:{levelId:1}}}};C.beginReward(b.garden,'dialogue','a');const n=clone(b);n.training.active={id:'b',mode:'dialogue',phase:'ready',campaign:{levelId:2}};C.registerRuns(b,n);assert.equal(C.rewardInfo(n.garden,'dialogue','b').group,'a')});
+check('两个旧页面依次保存不覆盖花和资源',()=>{values.clear();const a=new C.Store('garden',fresh,()=>true),b=new C.Store('garden',fresh,()=>true);assert.equal(a.update(s=>{s.flowers.push({variety:1,at:'2026-10-15T00:00:00Z'});s.water=3}),true);assert.equal(b.update(s=>{s.water--}),true);assert.equal(b.state.flowers.length,1);assert.equal(b.state.water,2)});
+check('旧独立花园遇到共享档后写入共享档',()=>{values.clear();const old=new C.Store('garden',fresh,()=>true);const root={garden:{...fresh(),flowers:[{variety:0,at:'2026-10-15T00:00:00Z'}]},progression:{transactions:[{id:'keep'}]}};localStorage.setItem('english-adventure-v2',JSON.stringify(root));assert.equal(old.update(s=>{s.water=2}),true);const r=JSON.parse(localStorage.getItem('english-adventure-v2'));assert.equal(r.garden.flowers.length,1);assert.equal(r.progression.transactions[0].id,'keep');assert.equal(r.garden.water,2)});
+check('自动备份保留前后版本，写入失败不改主档',()=>{values.clear();C.persist('test',{flowers:1});C.persist('test',{flowers:2});assert.equal(JSON.parse(values.get('test:previous')).flowers,1);assert.equal(JSON.parse(values.get('test:last-good')).flowers,2);fail=true;assert.throws(()=>C.persist('test',{flowers:0}));fail=false;assert.equal(JSON.parse(values.get('test')).flowers,2)});
+check('旧档无奖励账本兼容，合并收藏幂等且保留同时间多朵',()=>{const g=fresh();assert.equal(C.validRewardLedger(g),true);const f={variety:1,at:'2026-10-15T00:00:00Z'};const merged=C.mergeFlowers([f],[f,f]);assert.equal(merged.length,2);assert.equal(C.mergeFlowers(merged,[f,f]).length,2);C.beginReward(g,'spell','a');assert.equal(g.flowers.length,0)});
+console.log(`PASS ${count} 项存档与每日奖励专项检查`);

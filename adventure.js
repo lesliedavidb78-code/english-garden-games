@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.13-01';
+  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.16-01';
   const fingerprint=text=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return `${text.length}:${h>>>0}`};
   const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-photo-upper-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
   const freshNavy=()=>({totalArrows:0,history:[],legacyHistory:[],active:null});
@@ -10,9 +10,9 @@
   const validate=s=>s&&s.version===2&&s.app==='adventure'&&validGarden(s.garden)&&validNavy(s.navy)&&TrainingData.validState(s.training)&&(!window.ShooterCampaign||ShooterCampaign.validState(s.shooting))&&(!window.Progression||Progression.validRoot(s))&&s.settings&&['audio','sail'].includes(s.settings.mode)&&['word','meaning'].includes(s.settings.language)&&[10,15,20,105].includes(s.settings.seconds)&&Array.isArray(s.imported)&&s.imported.every(x=>typeof x==='string');
   let state,blocked=false;
   function convertLegacy(n){if(!C.validBase(n,'navy')||!C.int(n.totalArrows))throw Error('旧借箭备份不正确');const out=freshNavy();out.totalArrows=n.totalArrows;out.legacyHistory=C.copy(n.history);if(n.active&&Array.isArray(n.active.words)&&n.active.words.every(C.validWord)&&!['done','victory'].includes(n.active.phase)) {const a=n.active;out.active={id:a.id,word:a.words[Math.min(a.index,9)],index:a.index,correct:a.correct||0,streak:0,holes:0,batchCorrect:0,mode:'audio',language:a.mode==='meaning'?'meaning':'word',seconds:20,remaining:20000,phase:a.phase==='answered'?(a.lastOK?'correct':'wrong'):'ready',paused:true,legacy:true}}return out}
-  try{const raw=localStorage.getItem(KEY);if(raw){state=JSON.parse(raw);const before=JSON.stringify(state);if(Progression.migrateNavyJourney(state)===false||!validate(state))throw Error('invalid');if(JSON.stringify(state)!==before)localStorage.setItem(KEY,JSON.stringify(state))}else{state={version:2,app:'adventure',settings:{mode:'audio',language:'word',seconds:20},garden:freshGarden(),navy:freshNavy(),imported:[]};const g=localStorage.getItem('english-garden-v1'),n=localStorage.getItem('english-navy-v1');if(g){const old=JSON.parse(g);if(!validGarden(old))throw Error('garden');state.garden=old;state.imported.push(fingerprint(g))}if(n){const old=JSON.parse(n);state.navy=convertLegacy(old);state.imported.push(fingerprint(n))}if(!validate(state))throw Error('invalid');localStorage.setItem(KEY,JSON.stringify(state))}}catch(e){blocked=true;state={version:2,app:'adventure',settings:{mode:'audio',language:'word',seconds:20},garden:freshGarden(),navy:freshNavy(),imported:[]};C.toast('旧存档无法读取，原数据已保留。请先导出原始备份，或导入有效备份。')}
+  try{const raw=localStorage.getItem(KEY);if(raw){state=JSON.parse(raw);const before=JSON.stringify(state);if(Progression.migrateNavyJourney(state)===false||!validate(state))throw Error('invalid');if(JSON.stringify(state)!==before)C.persist(KEY,state)}else{state={version:2,app:'adventure',settings:{mode:'audio',language:'word',seconds:20},garden:freshGarden(),navy:freshNavy(),imported:[]};const g=localStorage.getItem('english-garden-v1'),n=localStorage.getItem('english-navy-v1');if(g){const old=JSON.parse(g);if(!validGarden(old))throw Error('garden');state.garden=old;state.imported.push(fingerprint(g))}if(n){const old=JSON.parse(n);state.navy=convertLegacy(old);state.imported.push(fingerprint(n))}if(!validate(state))throw Error('invalid');C.persist(KEY,state)}}catch(e){blocked=true;state={version:2,app:'adventure',settings:{mode:'audio',language:'word',seconds:20},garden:freshGarden(),navy:freshNavy(),imported:[]};try{const preserved=JSON.parse(localStorage.getItem(KEY)||'null');if(validGarden(preserved?.garden))state.garden=C.copy(preserved.garden)}catch{}C.toast('旧存档无法读取，原数据已保留。请先导出原始备份，或导入有效备份。')}
   function reloadState(){if(blocked)return;try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(Progression.migrateNavyJourney(s)===false||!validate(s))throw Error('invalid');state=s}}catch(e){blocked=true;C.toast('存档无法读取，已停止保存并保留原始数据。')}}
-  function update(fn){reloadState();if(blocked){C.toast('原存档已保留，请在家长设置备份或恢复。');return false}const next=C.copy(state);if(fn(next)===false)return false;if(!validate(next)){C.toast('进度未保存，数据校验未通过。');return false}try{localStorage.setItem(KEY,JSON.stringify(next));state=next;return true}catch(e){C.toast('储存空间不足，进度未保存。');return false}}
+  function update(fn){reloadState();if(blocked){C.toast('原存档已保留，请在家长设置备份或恢复。');return false}const next=C.copy(state);if(fn(next)===false)return false;C.registerRuns(state,next);if(!validate(next)){C.toast('进度未保存，数据校验未通过。');return false}try{C.persist(KEY,next);state=next;return true}catch(e){C.toast('储存空间不足，进度未保存。');return false}}
   // Expand the old demo preset once, preserving custom vocabulary and current questions.
   if(!blocked&&!state.vocabularyRevision)update(s=>{if(['nature','life','action'].includes(s.garden.settings.pack))s.garden.settings.pack='pep5-all';s.vocabularyRevision=1});
   if(!blocked&&!state.garden.photoVocabularyRevision)update(s=>{if(C.migratePhotoPack(s.garden))C.retargetNavy(s)});
@@ -67,7 +67,7 @@
   }
   const ended=a=>!a||['won','sunk'].includes(a.phase);
 
-  function renderInventory(){renderVocabulary();$('inventory').textContent=`💧 ${state.garden.water}　☀ ${state.garden.suns}　🌸 ${state.garden.flowers.length}`}
+  function renderInventory(){renderVocabulary();$('inventory').textContent=`💧 ${state.garden.water}　☀ ${state.garden.suns}　🌸 ${window.Progression?Progression.flowerBalance(state).available:state.garden.flowers.length}（可用）`}
   function answerTotals(){
     const a=active(),saved=state.navy.history.some(h=>h.id===a?.id);
     const wrong=[...state.navy.legacyHistory,...state.navy.history].reduce((sum,h)=>sum+h.total-h.correct,0)+(a&&!saved?a.holes:0);
@@ -133,11 +133,12 @@
     $('navy-end-journey').hidden=false;return true;
   }
   function showRewardNumbers(water,suns,wrong,label){
+    const j=Progression.navyJourney();if(j&&!C.rewardAllowed(state.garden,'navy',j.id)){water=j.attempts.reduce((v,t)=>v+t.priorWater,0);suns=j.attempts.reduce((v,t)=>v+t.priorSuns,0);label='今日该游戏奖励次数已用完 · 本局练习无新增奖励'}
     $('navy-summary-water').textContent=String(water);$('navy-summary-suns').textContent=String(suns);$('navy-summary-wrong').textContent=String(wrong);$('navy-summary-label').textContent=label;$('navy-journey-rewards').hidden=false;
   }
   function showJourneySummary(){
     const j=Progression.navyJourney();if(!j?.settlement)return false;
-    overlay(j.status==='sunk'?'草船沉没 · 本次收获':j.status==='complete'?'十关通航 · 本次收获':'旅程结束 · 本次收获','水滴和太阳已一次性送进花园。重新打开不会重复领取。','');
+    overlay(j.status==='sunk'?'草船沉没 · 本次收获':j.status==='complete'?'十关通航 · 本次收获':'旅程结束 · 本次收获',C.rewardAllowed(state.garden,'navy',j.id)?'水滴和太阳已一次性送进花园。重新打开不会重复领取。':'今日该游戏奖励次数已用完。本次仍记录闯关成绩，不发新增水滴和太阳。','');
     $('overlay').classList.add('navy-result','navy-summary');
     showRewardNumbers(j.rewards.water+j.attempts.reduce((v,t)=>v+t.priorWater,0),j.rewards.suns+j.attempts.reduce((v,t)=>v+t.priorSuns,0),j.damage,'整段旅程 · 已结算');
     const legacy=j.attempts.reduce((v,t)=>v+t.priorWater+t.priorSuns,0);if(legacy)$('overlay-copy').textContent+=' 包含更新前已经到账的奖励，不会再次发放。';
@@ -207,7 +208,7 @@
       $('boat-image').classList.remove('impact-jolt');void $('boat-image').offsetWidth;$('boat-image').classList.add('impact-jolt');
       const ring=document.createElement('span');ring.className='impact-ring';ring.style.left=target.x+'px';ring.style.top=target.y+'px';$('effects').append(ring);
       for(let i=0;i<10;i++){const spark=document.createElement('i');spark.className='straw-spark';spark.style.left=target.x+'px';spark.style.top=target.y+'px';spark.style.setProperty('--dx',`${Math.cos(i*Math.PI/5)*(22+Math.random()*18)}px`);spark.style.setProperty('--dy',`${Math.sin(i*Math.PI/5)*25-12}px`);$('effects').append(spark);setTimeout(()=>spark.remove(),800)}
-      const reward=document.createElement('span');reward.className='impact-reward';reward.textContent=`${shotWord} 中箭！+1 箭 · +${multiplier} 水滴`;$('effects').append(reward);setTimeout(()=>{ring.remove();reward.remove()},1400);
+      const reward=document.createElement('span');reward.className='impact-reward';reward.textContent=`${shotWord} 中箭！+1 箭 · +${C.rewardAllowed(state.garden,'navy',active()?.campaign?state.navy.journey?.id:active()?.id)?multiplier:0} 水滴`;$('effects').append(reward);setTimeout(()=>{ring.remove();reward.remove()},1400);
       if(view==='voyage'&&!document.hidden&&(running||fleetTransition||active()?.phase==='won'))effectSound('impact');
       onImpact?.();
     };
@@ -222,14 +223,14 @@
     if(!update(s=>{
       const r=s.navy.active;if(questionKey(r)!==questionKey(a)||r.phase!=='ready')return false;
       r.phase=ok?'correct':'wrong';r.lastReview={word:oldWord,outcome};
-      if(ok){r.correct++;r.batchCorrect++;r.streak=0;s.navy.totalArrows++;if(r.campaign){if(!Progression.creditNavyWater(s,{attemptId:r.id,answerId:eventId,amount:rewardMultiplier(r)}))return false}else s.garden.water++}
+      if(ok){r.correct++;r.batchCorrect++;r.streak=0;s.navy.totalArrows++;if(r.campaign){if(!Progression.creditNavyWater(s,{attemptId:r.id,answerId:eventId,amount:rewardMultiplier(r)}))return false}else C.grant(s.garden,'navy',r.id,1)}
       else{r.streak++;r.holes++;if(r.campaign&&!Progression.addNavyDamage(s,{attemptId:r.id,errorId:eventId}))return false}
       if(r.correct<arrowTarget(r)&&voyageDamage(r,s)<10){assessBatch(s);r.index++;r.word=nextDraw.word;r.seenWords=nextDraw.seenWords;r.phase='ready';r.remaining=r.seconds*1000}
     })){pause();return false}
     const current=active(),crossing=ok&&!!current.campaign&&current.correct<arrowTarget(current)&&current.correct%10===0;
     resetSelection();clearRain();renderBoat({holdHandoff:crossing});
     if(ok){
-      $('feedback').textContent=`收箭 +1 · 水滴 +${rewardMultiplier()}${current.campaign?'（旅程待结算）':''}`;
+      $('feedback').textContent=`收箭 +1 · 水滴 +${C.rewardAllowed(state.garden,'navy',current.campaign?state.navy.journey?.id:current.id)?rewardMultiplier():0}${current.campaign?'（旅程待结算）':''}`;
       if(crossing){fleetTransition=true;running=false;cancelAnimationFrame(raf);C.stopSpeech();$('feedback').textContent='这艘船收满了！下一艘正在驶来…';const epoch=voyageEpoch,id=current.id;
         shoot(sourcePoint,async()=>{const moved=await NavyFleet.depart({...active(),fleetDamage:voyageDamage()},navyLevel(active()),{onHandoff:()=>renderHeroBoat()});
           if(!moved||epoch!==voyageEpoch||active()?.id!==id)return;
@@ -242,7 +243,7 @@
     lastFrame=performance.now();announce();if(!ok&&voyageDamage()===5)VoyageAudio.queueFive();spawn(true);spawn(false);return ok;
   }
   function continueOldAnswer(){const a=active();if(!a)return;if(voyageDamage(a)>=10)return finish('sunk');if(a.correct>=arrowTarget(a))return finish('won');const word=C.copy(a.word),next=chooseWord(a.word[0],a.seenWords);update(s=>{const r=s.navy.active;assessBatch(s);r.lastReview={word,outcome:r.phase==='correct'?'correct':'wrong'};r.index++;r.word=next.word;r.seenWords=next.seenWords;r.phase='ready';r.remaining=r.seconds*1000})}
-  function assessBatch(s){const a=s.navy.active;if((a.index+1)%10===0){if(!a.campaign&&a.batchCorrect>=9)s.garden.suns++;a.batchCorrect=0}}
+  function assessBatch(s){const a=s.navy.active;if((a.index+1)%10===0){if(!a.campaign&&a.batchCorrect>=9)C.grant(s.garden,'navy',a.id,0,1);a.batchCorrect=0}}
   function deadline(){if(!running||ended(active())||pendingEnd)return;pendingEnd=true;try{answer(null,undefined,questionKey())}finally{pendingEnd=false}}
   function finish(outcome){
     running=false;cancelAnimationFrame(raf);C.stopSpeech();setLeakSound(0);resetSelection();
@@ -300,7 +301,7 @@
   function fillSettings(){const g=state.garden;$('pack').replaceChildren();[...C.PACKS,{id:'custom',name:'我的课本词汇'}].forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=`${p.name} · ${p.words?.length??g.custom.length}词条`;o.disabled=p.id==='custom'&&g.custom.length<4;$('pack').append(o)});$('pack').value=g.settings.pack;$('custom').value=g.custom.map(w=>`${w[0]}=${w[1]}`).join('\n')}
   function setVocabulary(pack,custom){pause(false);if(!update(s=>{const changed=s.garden.settings.pack!==pack||custom!==undefined;if(custom!==undefined)s.garden.custom=custom;s.garden.settings.pack=pack;if(changed){s.garden.active=null;if(!s.navy.active?.campaign)C.retargetNavy(s)}}))return false;fillSettings();renderBoat();renderVocabulary();if(view==='garden')$('garden-frame').src='garden/?embed=1';else renderLanding();C.toast('词库已切换：题目和干扰项都按新范围准备，已得奖励保留。');return true}
   function download(data,name){const url=URL.createObjectURL(new Blob([data],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-  async function restore(file){if(!file||file.size>5000000){C.toast('请选择不超过5MB的备份。');return false}try{const text=await file.text(),s=JSON.parse(text);pause(false);if(s.app==='adventure'){if(Progression.migrateNavyJourney(s)===false||!validate(s))throw Error('invalid');if(!confirm('恢复全部进度会替换当前存档。请先导出当前备份。是否继续？'))return false;localStorage.setItem(KEY,JSON.stringify(s));state=s;blocked=false}else{if(!['garden','navy'].includes(s.app))throw Error('invalid');if(s.app==='garden'&&!validGarden(s))throw Error('invalid');const navy=s.app==='navy'?convertLegacy(s):null;if(blocked)throw Error('blocked');if(state.imported.includes(fingerprint(text))){C.toast('这份旧版备份已导入，不会重复计算奖励。');return false}if(!confirm(`导入旧版${s.app==='garden'?'花园':'借箭'}存档？将替换对应部分的进度，另一个游戏的进度保留。建议先导出全部备份。`))return false;if(!update(n=>{if(s.app==='garden')n.garden=s;else n.navy=navy;n.imported.push(fingerprint(text))}))return false}fillSettings();renderBoat();renderRecords();renderLanding();if(view==='garden')$('garden-frame').src='garden/?embed=1';C.toast('备份已恢复。');return true}catch(e){C.toast('未导入：备份格式不正确，原进度没有改动。');return false}}
+  async function restore(file){if(!file||file.size>5000000){C.toast('请选择不超过5MB的备份。');return false}try{const text=await file.text(),s=JSON.parse(text);pause(false);if(s.app==='adventure'){if(Progression.migrateNavyJourney(s)===false||!validate(s))throw Error('invalid');if(!confirm('恢复全部进度会替换当前存档。请先导出当前备份。是否继续？'))return false;C.persist(KEY,s);state=s;blocked=false}else{if(!['garden','navy'].includes(s.app))throw Error('invalid');if(s.app==='garden'&&!validGarden(s))throw Error('invalid');const navy=s.app==='navy'?convertLegacy(s):null;if(blocked)throw Error('blocked');if(state.imported.includes(fingerprint(text))){C.toast('这份旧版备份已导入，不会重复计算奖励。');return false}if(!confirm(`导入旧版${s.app==='garden'?'花园':'借箭'}存档？将替换对应部分的进度，另一个游戏的进度保留。建议先导出全部备份。`))return false;if(!update(n=>{if(s.app==='garden')n.garden=s;else n.navy=navy;n.imported.push(fingerprint(text))}))return false}fillSettings();renderBoat();renderRecords();renderLanding();if(view==='garden')$('garden-frame').src='garden/?embed=1';C.toast('备份已恢复。');return true}catch(e){C.toast('未导入：备份格式不正确，原进度没有改动。');return false}}
   $('navy-route-campaign').onclick=()=>{pause(false);Progression.show('campaign','navy')};$('navy-route-free').onclick=startFree;$('navy-end-journey').onclick=endJourney;
   $('nav-training').onclick=()=>switchView('training');
   $('exit-stage').onclick=()=>switchView('map');
@@ -311,7 +312,7 @@
   NavyFleet.init({stage:$('river'),heroBoat:$('hero-boat')});fillSettings();renderBoat();renderRecords();renderLanding();if(location.hash==='#garden')switchView('garden');
   $('offline-status').textContent=`版本 ${RELEASE} · 离线资源准备中…`;
   if('serviceWorker'in navigator){
-   const offlineCache='english-games-offline-v34';
+   const offlineCache='english-games-offline-v35';
    let framesPreparation=null,offlinePoll=null,offlineRegistration=null;
    const offlineFailure=()=>{clearInterval(offlinePoll);offlinePoll=null;$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，联网点“检查更新”重试`};
    const requestOffline=()=>{const worker=offlineRegistration?.active||navigator.serviceWorker.controller;worker?.postMessage({type:'PREPARE_OFFLINE'})};
@@ -331,7 +332,7 @@
     // Wait for that renderer before deciding which offline assets are required.
     if(document.readyState==='loading')await new Promise(resolve=>document.addEventListener('DOMContentLoaded',resolve,{once:true}));
     if(!window.BattleFilm)throw Error('battle-renderer-unavailable');
-    const cache=await caches.open(offlineCache),marker=await cache.match(new URL('__offline-ready-v34',location.href));
+    const cache=await caches.open(offlineCache),marker=await cache.match(new URL('__offline-ready-v35',location.href));
     const complete=marker?await marker.json():null;
     if(complete?.cache!==offlineCache||complete.completed!==919||complete.total!==919){requestOffline();return}
     clearInterval(offlinePoll);offlinePoll=null;
@@ -361,5 +362,20 @@
    }).then(beginOffline).catch(offlineFailure)
   }
   $('check-update').onclick=async()=>{pause(false);$('check-update').disabled=true;try{const reg=await navigator.serviceWorker?.getRegistration();await reg?.update();const r=await fetch(`index.html?update=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw Error('network');location.reload()}catch{$('check-update').disabled=false;C.toast('暂时无法联网更新，存档已保留。')}};
-  window.Adventure={release:RELEASE,get state(){return state},update,validate,validGarden,validNavy,start,startCampaign,startFree,endJourney,showJourneySummary,resume,pause,answer,deadline,finish,switchView,restore,spawn,fire,selectAnswer,questionKey,answerTotals,get waterStats(){return {particles:waterParticles.length,active:!!waterRaf,sinking:sinkingUntil>performance.now()}},get fleetTransition(){return fleetTransition},voyageDamage,get running(){return running},get drops(){return drops}};
+  function recoverFlowers(){
+    reloadState();
+    if(blocked){C.toast('原档其他部分无法通过校验。请先导出原始备份，保留兑换和花朵信息，暂不覆盖。');return false}
+    const keys=[KEY+':previous',KEY+':last-good','english-garden-v1','english-garden-v1:previous','english-garden-v1:last-good'];
+    let flowers=C.copy(state.garden.flowers);
+    for(const key of keys){try{const data=JSON.parse(localStorage.getItem(key)||'null'),g=data?.garden||data;if(validGarden(g))flowers=C.mergeFlowers(flowers,g.flowers)}catch{}}
+    const extra=flowers.length-state.garden.flowers.length;
+    if(!extra){C.toast('本机可读取的旧档中没有找到更多花朵。请保留现有数据，可再导出备份排查。');return false}
+    if(flowers.length>10000){C.toast('收藏数量超出存档上限，请先导出备份。');return false}
+    if(!confirm(`找到 ${extra} 朵当前收藏没有的花。补回收藏吗？\n兑换记录继续保留，水滴、太阳和成长值保持当前值。`))return false;
+    if(!update(root=>{root.garden.flowers=C.mergeFlowers(root.garden.flowers,flowers)}))return false;
+    renderInventory();window.AdventureMap?.refresh();if(view==='garden')$('garden-frame').src='garden/?embed=1';C.toast(`已补回 ${extra} 朵花，原兑换扣款继续有效。`);return true;
+  }
+  const recoveryButton=document.createElement('button');recoveryButton.className='quiet';recoveryButton.textContent='检查本机旧档，找回花朵';recoveryButton.id='recover-flowers';recoveryButton.onclick=recoverFlowers;$('export').after(recoveryButton);
+  if(blocked){const warning=document.createElement('p');warning.className='note';warning.setAttribute('role','alert');warning.textContent='原存档读取异常，已停止保存；已能读取的花朵仍展示。请在家长设置导出原始备份，暂勿清除浏览器数据。';$('settings-open').parentElement.after(warning)}
+  window.Adventure={release:RELEASE,get state(){return state},update,validate,validGarden,validNavy,start,startCampaign,startFree,endJourney,showJourneySummary,resume,pause,answer,deadline,finish,switchView,restore,recoverFlowers,spawn,fire,selectAnswer,questionKey,answerTotals,get waterStats(){return {particles:waterParticles.length,active:!!waterRaf,sinking:sinkingUntil>performance.now()}},get fleetTransition(){return fleetTransition},voyageDamage,get running(){return running},get drops(){return drops}};
 })();

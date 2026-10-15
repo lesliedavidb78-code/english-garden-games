@@ -48,7 +48,7 @@
  function settle(s,root,a,outcome){
   if(a.settled)return false;
   a.phase='done';a.outcome=outcome;a.shooter.pendingChest=0;
-  root.garden.water+=a.water-a.paidWater;root.garden.suns+=a.suns-a.paidSuns;a.paidWater=a.water;a.paidSuns=a.suns;a.settled=true;
+  C.grant(root.garden,'shooter',a.id,a.water-a.paidWater,a.suns-a.paidSuns);a.paidWater=a.water;a.paidSuns=a.suns;a.settled=true;
   if(!s.history.some(h=>h.id===a.id)){s.history.push({id:a.id,at:new Date().toISOString(),scope:a.scope,mode:a.mode,level:a.level,total:a.answeredTotal,correct:a.correctTotal,wrong:a.wrongTotal,water:a.water,suns:a.suns,outcome,...(a.rulesVersion===2?{rulesVersion:2,completedTotal:a.completedTotal,recoveredTotal:a.recoveredTotal,attemptsTotal:a.attemptsTotal,mistakesTotal:a.mistakesTotal,contactTotal:a.contactTotal??0}:{})});s.history=s.history.slice(-20000)}
   return true;
  }
@@ -90,7 +90,7 @@
  function render(){
   const a=active();if(!a)return home();$('shooter-home').hidden=true;$('shooter-play').hidden=false;$('shooter-summary').hidden=true;document.body.classList.add('shooting-focus');
   WordShooter.mount({host:$('shooter-host'),active:a,wordPool:D.pool(a.scope),getActive:active,onAnswer:answer,onContact:contact,onNext:()=>active()?.phase==='done'?render():next(),onLeave:leave,onUpgrade:upgrade,onHear:hear,onFinish:finish});
-  if(a.phase==='done'){WordShooter.unmount();$('shooter-play').hidden=true;$('shooter-summary').hidden=false;$('shooter-summary-title').textContent=a.outcome==='lost'?'守卫需要休息，再来挑战！':'本次探索，满载而归！';$('shooter-summary-copy').textContent=`到达第 ${a.level} 关 · 首答正确 ${a.correctTotal}/${a.answeredTotal} · 已完成 ${a.completedTotal??a.answeredTotal} 题 · 配对失误 ${a.mistakesTotal??a.wrongTotal} 次 · 碰撞 ${a.contactTotal??0} 次${a.recoveredTotal?` · 重试学会 ${a.recoveredTotal} 题`:''}`;$('shooter-earned-water').textContent=a.water;$('shooter-earned-suns').textContent=a.suns}
+  if(a.phase==='done'){WordShooter.unmount();$('shooter-play').hidden=true;$('shooter-summary').hidden=false;$('shooter-summary-title').textContent=a.outcome==='lost'?'守卫需要休息，再来挑战！':'本次探索，满载而归！';$('shooter-summary-copy').textContent=`到达第 ${a.level} 关 · 首答正确 ${a.correctTotal}/${a.answeredTotal} · 已完成 ${a.completedTotal??a.answeredTotal} 题 · 配对失误 ${a.mistakesTotal??a.wrongTotal} 次 · 碰撞 ${a.contactTotal??0} 次${a.recoveredTotal?` · 重试学会 ${a.recoveredTotal} 题`:''}`;$('shooter-earned-water').textContent=C.rewardAllowed(A().state.garden,'shooter',a.id)?a.water:0;$('shooter-earned-suns').textContent=C.rewardAllowed(A().state.garden,'shooter',a.id)?a.suns:0;if(!C.rewardAllowed(A().state.garden,'shooter',a.id))$('shooter-summary-copy').textContent+=' · 今日奖励次数已用完，本局不发水滴和太阳。'}
  }
  function resume(){const a=active();if(!a||a.settled)return false;render();if(a.mode==='listening')hear();return true}
  function scopeInfo(){const scope=$('shooter-scope').value,words=D.pool(scope);$('shooter-pool-count').textContent=`${words.length} 个去重词条 · 每个房间 10 题 · 房间持续开放`;$('shooter-editions').textContent=D.books().filter(b=>scope==='all'||String(b.grade)===scope||b.id===scope).map(b=>b.name).join('；')}

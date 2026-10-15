@@ -104,7 +104,7 @@
   const sunsToAward=j.attempts.reduce((sum,a)=>sum+(!a.sunAwarded&&a.outcome==='won'&&a.correct*10>=(a.correct+a.damage)*9?level('navy',a.levelId).rewardMultiplier:0),0),water=j.rewards.water-j.rewards.paidWater,suns=j.rewards.suns+sunsToAward-j.rewards.paidSuns;if(root.garden.water+water>1000000||root.garden.suns+suns>1000000)return false;
   for(const a of j.attempts)if(a.outcome==='won'&&!a.sunAwarded){a.sunAwarded=true;a.suns=a.correct*10>=(a.correct+a.damage)*9?level('navy',a.levelId).rewardMultiplier:0;j.rewards.suns+=a.suns}
   if(last.outcome===null){last.outcome=reason==='sunk'?'sunk':'abandoned';if(reason==='sunk')last.result={correct:last.correct,total:last.correct+last.damage,outcome:'sunk'}}
-  root.garden.water+=water;root.garden.suns+=suns;j.rewards.paidWater=j.rewards.water;j.rewards.paidSuns=j.rewards.suns;j.status=reason;j.settlement={reason,at:new Date().toISOString()};return journeySummary(j);
+  if(C?.grant)C.grant(root.garden,'navy',j.id,water,suns);else{root.garden.water+=water;root.garden.suns+=suns;}j.rewards.paidWater=j.rewards.water;j.rewards.paidSuns=j.rewards.suns;j.status=reason;j.settlement={reason,at:new Date().toISOString()};return journeySummary(j);
  }
  function validRoot(root){
   if(!object(root))return false;
@@ -222,7 +222,7 @@
   if(!rewards.length)list.append(el('p','progression-empty','家长还没有设置奖品。先去花园种花，约定好奖励后就能兑换。'));
   for(const r of rewards){const card=el('article','progression-reward'),texts=el('div');texts.append(el('h3','',r.title),el('p','',`${r.cost} 朵花`));const action=button(balance.available>=r.cost?'兑换奖励':'花朵还不够',()=>confirmReward(r));action.disabled=balance.available<r.cost;card.append(texts,action);list.append(card)}
   const log=$('progression-child-transactions');log.replaceChildren();
-  for(const t of p.transactions.slice(-30).reverse()){const row=el('div','progression-transaction');row.append(el('strong','',t.title),el('span','',`${t.cost} 朵 · ${{pending:'等待家长兑现',done:'已兑现',cancelled:'已取消，花朵已退回'}[t.status]}`));log.append(row)}
+  for(const t of p.transactions.slice().reverse()){const row=el('div','progression-transaction');row.append(el('strong','',t.title),el('span','',`${new Date(t.at).toLocaleString('zh-CN',{hour12:false})} · ${t.cost} 朵 · ${{pending:'等待家长兑现',done:'已兑现',cancelled:'已取消，花朵已退回'}[t.status]}`));log.append(row)}
  }
  function confirmReward(reward){
   confirmation={rewardId:reward.id,id:C.uid()};$('progression-confirm-title').textContent=`兑换“${reward.title}”`;
@@ -241,10 +241,10 @@
   const pending=$('progression-parent-pending');pending.replaceChildren();
   const open=p.transactions.filter(t=>t.status==='pending');if(!open.length)pending.append(el('p','progression-empty','目前没有待兑现的奖励。'));
   for(const t of open.slice().reverse()){
-   const row=el('article','progression-managed-reward'),texts=el('div');texts.append(el('strong','',t.title),el('small','',`${t.cost} 朵花 · ${new Date(t.at).toLocaleDateString('zh-CN')}`));const actions=el('div','progression-row-actions');actions.append(button('确认已兑现',()=>setTransaction(t.id,'done')),button('取消并返花',()=>setTransaction(t.id,'cancelled'),'progression-secondary'));row.append(texts,actions);pending.append(row);
+   const row=el('article','progression-managed-reward'),texts=el('div');texts.append(el('strong','',t.title),el('small','',`${t.cost} 朵花 · ${new Date(t.at).toLocaleString('zh-CN',{hour12:false})}`));const actions=el('div','progression-row-actions');actions.append(button('确认已兑现',()=>setTransaction(t.id,'done')),button('取消并返花',()=>setTransaction(t.id,'cancelled'),'progression-secondary'));row.append(texts,actions);pending.append(row);
   }
   const history=$('progression-parent-history');history.replaceChildren();
-  for(const t of p.transactions.filter(t=>t.status!=='pending').slice(-30).reverse()){const row=el('div','progression-transaction');row.append(el('strong','',t.title),el('span','',`${t.cost} 朵 · ${t.status==='done'?'已兑现':'已取消返花'}`));history.append(row)}
+  for(const t of p.transactions.filter(t=>t.status!=='pending').slice().reverse()){const row=el('div','progression-transaction');row.append(el('strong','',t.title),el('span','',`兑换：${new Date(t.at).toLocaleString('zh-CN',{hour12:false})} · ${t.cost} 朵 · ${t.status==='done'?'已兑现':'已取消返花'} · 处理：${new Date(t.updatedAt).toLocaleString('zh-CN',{hour12:false})}`));history.append(row)}
  }
  function resetForm(){editing=null;$('progression-prize-form')?.reset();if($('progression-prize-submit'))$('progression-prize-submit').textContent='添加奖品'}
  function render(){renderLevels();renderRewards();renderManagement();renderCampaignArt()}
@@ -260,7 +260,7 @@
   const management=dialog('progression-management','家长奖励管理','与孩子约定奖品、所需花朵，并记录兑现。此入口是家长管理，不设账号或密码。'),mb=el('div','progression-body');const mbalance=el('p','progression-balance');mbalance.id='progression-management-balance';
   const form=el('form','progression-prize-form');form.id='progression-prize-form';const title=el('input');title.id='progression-prize-title';title.type='text';title.maxLength=80;title.required=true;title.placeholder='如：一起去公园、选一本书';const tl=el('label','','奖品文字');tl.append(title);const cost=el('input');cost.id='progression-prize-cost';cost.type='number';cost.inputMode='numeric';cost.min='1';cost.max='10000';cost.step='1';cost.required=true;cost.value='3';const cl=el('label','','所需花朵');cl.append(cost);const submit=el('button','progression-button','添加奖品');submit.id='progression-prize-submit';submit.type='submit';form.append(tl,cl,submit,button('清空表单',resetForm,'progression-secondary'));
   form.onsubmit=event=>{event.preventDefault();const raw=cost.value.trim();if(!/^\d{1,5}$/.test(raw)||!configureReward({...(editing?{id:editing}:{}),title:title.value,cost:Number(raw),enabled:editing?data(getState()).rewards.find(r=>r.id===editing)?.enabled:true})){notice('请填写奖品文字和1至10000之间的整数花朵数量。');return}resetForm();notice('家长奖品已保存。')};
-  const manageList=el('div');manageList.id='progression-managed-rewards';const pending=el('div');pending.id='progression-parent-pending';const past=el('div');past.id='progression-parent-history';mb.append(mbalance,form,manageList,el('p','progression-management-note','奖励由家长兑现。这里记录约定，不会自动控制手机使用时间。'),el('h3','progression-section-title','待兑现'),pending,el('h3','progression-section-title','最近的兑现记录'),past);management.append(mb);
+  const manageList=el('div');manageList.id='progression-managed-rewards';const pending=el('div');pending.id='progression-parent-pending';const past=el('div');past.id='progression-parent-history';mb.append(mbalance,form,manageList,el('p','progression-management-note','奖励由家长兑现。这里记录约定，不会自动控制手机使用时间。'),el('h3','progression-section-title','待兑现'),pending,el('h3','progression-section-title','全部兑现记录'),past);management.append(mb);
   const confirm=dialog('progression-confirm','确认兑换',''),cb=el('div','progression-body');confirm.classList.add('progression-confirm');const ct=el('h3');ct.id='progression-confirm-title';const cp=el('p');cp.id='progression-confirm-copy';const status=el('p','progression-balance');status.id='progression-confirm-status';status.setAttribute('role','status');const cs=button('确认使用花朵',()=>{if(!confirmation)return;cs.disabled=true;const request=confirmation;if(redeem(request.rewardId,request.id)){confirmation=null;cs.hidden=true;status.textContent='已提交，等待家长兑现。'}else{cs.disabled=false;status.textContent='暂时无法兑换，请检查花朵余额或奖品是否开放。'}});cs.id='progression-confirm-submit';cb.append(ct,cp,status,cs);confirm.append(cb);confirm.addEventListener('close',()=>{confirmation=null});
   // 复用地图底部空白说明栏，避免新增浮动入口盖住建筑。
   const caption=document.querySelector('#map-view .map-caption');if(caption){caption.classList.add('progression-caption');const actions=el('div','progression-map-actions');actions.append(button('闯关探险',()=>show('campaign'),'progression-map-entry'),button('花朵兑换',()=>show('rewards'),'progression-map-exchange'));caption.append(actions)}

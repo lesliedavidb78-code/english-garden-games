@@ -15,13 +15,47 @@
   function int(n,max=1000000){return Number.isInteger(n)&&n>=0&&n<=max}
   function validWord(w){return Array.isArray(w)&&w.length===3&&typeof w[0]==='string'&&/^[a-z]+(?:[ '.-][a-z]+)*\.?$/i.test(w[0])&&w[0].length<=40&&typeof w[1]==='string'&&w[1].trim().length>0&&w[1].length<=40&&typeof w[2]==='string'&&w[2].length<=12}
   function validPlanting(s){return (s.selectedSeed===undefined&&s.seedGrowth===undefined)||(int(s.selectedSeed,5)&&Array.isArray(s.seedGrowth)&&s.seedGrowth.length===6&&s.seedGrowth.every(g=>int(g,99))&&s.seedGrowth[s.selectedSeed]===s.growth)}
-  function validBase(s,app){return s&&s.version===1&&s.app===app&&s.settings&&(s.settings.pack==='custom'||PACKS.some(p=>p.id===s.settings.pack))&&Array.isArray(s.custom)&&s.custom.length<=1000&&s.custom.every(validWord)&&new Set(s.custom.map(w=>w[0])).size===s.custom.length&&Array.isArray(s.history)&&s.history.length<=20000&&s.history.every(h=>h&&typeof h.id==='string'&&Number.isFinite(Date.parse(h.at))&&int(h.correct,10)&&int(h.total,10)&&h.total===10&&typeof h.mode==='string'&&h.mode.length<30)}
+  // Reward slots belong to a saved run, not a page visit. China calendar days;
+  // a continued voyage/room chain keeps its original slot across midnight.
+  const rewardKind=mode=>({spell:'spell',listen:'listening',reaction:'realm',meaning:'realm',dialogue:'battle'}[mode]||mode);
+  function rewardDay(now=new Date()){return new Date(now.getTime()+8*3600000).toISOString().slice(0,10)}
+  function validRewardLedger(g){const l=g?.rewardLedger;if(l===undefined)return true;return l&&l.version===1&&Array.isArray(l.runs)&&l.runs.length<=50000&&new Set(l.runs.map(r=>r?.kind+':'+r?.id)).size===l.runs.length&&l.runs.every(r=>r&&typeof r.id==='string'&&r.id.length<=150&&typeof r.group==='string'&&r.group.length<=150&&['navy','shooter','spell','listening','realm','battle','translate'].includes(r.kind)&&/^\d{4}-\d{2}-\d{2}$/.test(r.day)&&typeof r.eligible==='boolean'&&int(r.water)&&int(r.suns))}
+  function beginReward(g,kind,id,group=id,now=new Date()){
+    kind=rewardKind(kind);if(kind==='follow')return null;
+    if(!validRewardLedger(g))throw Error('invalid reward ledger');
+    const l=g.rewardLedger??=( {version:1,runs:[]} ),old=l.runs.find(r=>r.kind===kind&&r.id===id);if(old)return old;
+    if(l.runs.length>=50000)throw Error('reward ledger full');
+    const previous=l.runs.find(r=>r.kind===kind&&r.group===group),today=rewardDay(now),day=previous?.day||today;
+    const used=new Set(l.runs.filter(r=>r.kind===kind&&r.day===day&&r.eligible).map(r=>r.group)).size;
+    const row={kind,id,group,day,eligible:previous?previous.eligible:used<2,water:0,suns:0};l.runs.push(row);return row;
+  }
+  function rewardInfo(g,kind,id){return g.rewardLedger?.runs.find(r=>r.kind===rewardKind(kind)&&r.id===id)||null}
+  function rewardAllowed(g,kind,id){return rewardInfo(g,kind,id)?.eligible!==false}
+  function grant(g,kind,id,water=0,suns=0){const row=beginReward(g,kind,id);if(!row?.eligible)return false;g.water+=water;g.suns+=suns;row.water+=water;row.suns+=suns;return true}
+  function registerRuns(before,next){
+    const g=next.garden||next,bg=before.garden||before;
+    const a=g.active;if(a&&a.phase!=='done')beginReward(g,a.mode,a.id);
+    if(next.garden){
+      const n=next.navy?.active,j=next.navy?.journey;if(n&&!['won','sunk'].includes(n.phase))beginReward(g,'navy',n.campaign&&j?j.id:n.id);
+      const s=next.shooting?.active;if(s&&!s.settled)beginReward(g,'shooter',s.id);
+      const t=next.training?.active,prior=before.training?.active;
+      if(t&&t.phase!=='done'&&t.mode!=='follow'){
+        const continuation=t.campaign&&prior?.campaign&&prior.phase==='done'&&prior.correct>=10&&t.campaign.levelId===prior.campaign.levelId+1;
+        const group=continuation?(rewardInfo(bg,'battle',prior.id)?.group||prior.id):t.id;beginReward(g,t.mode,t.id,group);
+      }
+    }
+  }
+  // Backups never replace the primary record on a failed write. Keep both the
+  // previous and last successful state so a broken update can be inspected.
+  function persist(key,value){const text=JSON.stringify(value),old=localStorage.getItem(key);if(old===text)return;try{if(old)localStorage.setItem(key+':previous',old)}catch{}localStorage.setItem(key,text);try{localStorage.setItem(key+':last-good',text)}catch{toast('进度已保存，自动备份空间不足；请导出备份。')}}
+  function mergeFlowers(target,source){if(!Array.isArray(target)||!Array.isArray(source))return target;const result=copy(target),counts=new Map(),seen=new Map();const key=f=>JSON.stringify([f.variety,f.at]);for(const f of target)counts.set(key(f),(counts.get(key(f))||0)+1);for(const f of source){if(!f||!int(f.variety,5)||typeof f.at!=='string'||!Number.isFinite(Date.parse(f.at)))continue;const k=key(f),n=(seen.get(k)||0)+1;seen.set(k,n);if(n>(counts.get(k)||0))result.push(copy(f))}return result}
+  function validBase(s,app){return s&&validRewardLedger(s)&&s.version===1&&s.app===app&&s.settings&&(s.settings.pack==='custom'||PACKS.some(p=>p.id===s.settings.pack))&&Array.isArray(s.custom)&&s.custom.length<=1000&&s.custom.every(validWord)&&new Set(s.custom.map(w=>w[0])).size===s.custom.length&&Array.isArray(s.history)&&s.history.length<=20000&&s.history.every(h=>h&&typeof h.id==='string'&&Number.isFinite(Date.parse(h.at))&&int(h.correct,10)&&int(h.total,10)&&h.total===10&&typeof h.mode==='string'&&h.mode.length<30)}
   function validRound(a){return a===null||(a&&typeof a.id==='string'&&Array.isArray(a.words)&&a.words.length===10&&a.words.every(validWord)&&int(a.index,9)&&int(a.correct,10)&&Array.isArray(a.missed)&&a.missed.length<=10&&a.missed.every(validWord)&&['ready','answered','done'].includes(a.phase)&&typeof a.lastOK==='boolean'&&(a.lastAnswer===undefined||(typeof a.lastAnswer==='string'&&a.lastAnswer.length<=40))&&(a.lastChoices===undefined||(Array.isArray(a.lastChoices)&&a.lastChoices.length>=1&&a.lastChoices.length<=4&&a.lastChoices.every(x=>typeof x==='string'&&x.length>0&&x.length<=40)))&&typeof a.mode==='string'&&a.correct+a.missed.length===a.index+(a.phase==='ready'?0:1)&&(a.phase!=='done'||a.index===9))}
   class Store {
     constructor(app,fresh,validate){this.app=app;this.key=`english-${app}-v1`;this.validate=validate;this.state=fresh();this.blocked=false;try{const raw=localStorage.getItem(this.key);if(raw){const data=JSON.parse(raw);if(!validate(data))throw Error('invalid');this.state=data}}catch(e){this.blocked=true;toast('原有存档暂时无法读取，已保留原数据。请先导出备份或导入有效备份。')}}
-    update(mutator){if(this.blocked){toast('暂时不能保存，请先恢复有效备份。');return false}const next=copy(this.state);if(mutator(next)===false)return false;if(!this.validate(next)){toast('进度未保存，请返回后重试。');return false}try{localStorage.setItem(this.key,JSON.stringify(next));this.state=next;return true}catch(e){toast('当前浏览器无法保存，请检查储存空间和隐私模式。');return false}}
+    update(mutator){if(this.blocked){toast('暂时不能保存，请先恢复有效备份。');return false}try{const raw=localStorage.getItem(this.key);if(raw){const latest=JSON.parse(raw);if(!this.validate(latest))throw Error('invalid');this.state=latest}}catch{this.blocked=true;toast('旧页面已停止保存，原存档保持不变。');return false}const next=copy(this.state);if(mutator(next)===false)return false;registerRuns(this.state,next);if(!this.validate(next)){toast('进度未保存，请返回后重试。');return false}try{persist(this.key,next);this.state=next;return true}catch(e){toast('当前浏览器无法保存，请检查储存空间和隐私模式。');return false}}
     export(){let data;try{const raw=localStorage.getItem(this.key);data=this.blocked&&raw?raw:JSON.stringify(this.state,null,2)}catch(e){data=JSON.stringify(this.state,null,2)}const blob=new Blob([data],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${this.app}-进度-${new Date().toISOString().slice(0,10)}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('备份已导出，请保存到“文件”。')}
-    async import(file){if(!file)return;if(file.size>5000000){toast('备份文件过大。');return}try{const next=JSON.parse(await file.text());if(!this.validate(next))throw Error('invalid');const count=next.history.length;const detail=this.app==='garden'?`已开 ${next.flowers.length} 朵花，成长 ${next.growth}/100`:`累计 ${next.totalArrows} 支箭`;if(!confirm(`恢复这份备份？\n${count} 次完整学习；${detail}。\n将替换当前进度，建议先导出当前备份。`))return;localStorage.setItem(this.key,JSON.stringify(next));this.state=next;this.blocked=false;location.reload()}catch(e){toast('未导入：文件格式不正确或储存不可用，原进度没有改动。')}}
+    async import(file){if(!file)return;if(file.size>5000000){toast('备份文件过大。');return}try{const next=JSON.parse(await file.text());if(!this.validate(next))throw Error('invalid');const count=next.history.length;const detail=this.app==='garden'?`已开 ${next.flowers.length} 朵花，成长 ${next.growth}/100`:`累计 ${next.totalArrows} 支箭`;if(!confirm(`恢复这份备份？\n${count} 次完整学习；${detail}。\n将替换当前进度，建议先导出当前备份。`))return;persist(this.key,next);this.state=next;this.blocked=false;location.reload()}catch(e){toast('未导入：文件格式不正确或储存不可用，原进度没有改动。')}}
   }
   function words(s){return s.settings.pack==='custom'&&s.custom.length>=4?s.custom:PACKS.find(p=>p.id===s.settings.pack)?.words||PACKS[0].words}
   // Shuffle each cycle; exhaust distinct words before repeating, with no adjacent repeat.
@@ -42,11 +76,11 @@
   function install(){
     const label=document.createElement('p');label.className='footer';label.id='offline-status';document.querySelector('main').append(label);
     if(!('serviceWorker'in navigator)||!window.isSecureContext||location.protocol==='file:'){label.textContent='通过安全网址打开后，可以准备离线资源。';return}
-    const cacheName='english-games-offline-v34',base=new URL('../',location.href);let registration=null,poll=null,checkToken=0,checking=false;
+    const cacheName='english-games-offline-v35',base=new URL('../',location.href);let registration=null,poll=null,checkToken=0,checking=false;
     const pending=()=>{delete document.documentElement.dataset.offline;label.textContent='离线资源准备中，请保持联网…'};
     const failed=()=>{checkToken++;clearInterval(poll);poll=null;delete document.documentElement.dataset.offline;label.textContent='离线资源尚未准备，请保持联网，在主页面点“检查更新”重试。'};
     const verify=async()=>{if(checking)return;checking=true;const token=checkToken;try{
-      const cache=await caches.open(cacheName),marker=await cache.match(new URL('__offline-ready-v34',base)),data=marker?await marker.json():null;
+      const cache=await caches.open(cacheName),marker=await cache.match(new URL('__offline-ready-v35',base)),data=marker?await marker.json():null;
       if(!data||data.cache!==cacheName||data.completed!==919||data.total!==919)return;
       const keys=new Set((await cache.keys()).map(request=>{const url=new URL(request.url);url.search='';return url.href}));
       const sounds=[...new Set(Object.values(window.WORD_RECORDINGS||{}).map(entry=>entry.single||entry.file))];
@@ -61,10 +95,10 @@
   }
   class SharedGardenStore extends Store {
     constructor(app,fresh,validate){super(app,fresh,validate);this.shared=app==='garden'&&!!localStorage.getItem('english-adventure-v2');if(this.shared){try{const root=JSON.parse(localStorage.getItem('english-adventure-v2'));if(!validate(root.garden))throw Error('invalid');this.state=root.garden;this.blocked=false}catch(e){this.blocked=true}}}
-    update(mutator){if(!this.shared)return super.update(mutator);if(this.blocked)return false;try{const root=JSON.parse(localStorage.getItem('english-adventure-v2'));const next=copy(root.garden);if(mutator(next)===false)return false;if(!this.validate(next))throw Error('invalid');const changed=next.settings.pack!==root.garden.settings.pack||JSON.stringify(next.custom)!==JSON.stringify(root.garden.custom);root.garden=next;if(changed)retargetNavy(root);if(window.parent!==window&&window.parent.Adventure&&!window.parent.Adventure.validate(root))throw Error('invalid');localStorage.setItem('english-adventure-v2',JSON.stringify(root));this.state=next;window.parent.postMessage('garden-updated',location.origin);return true}catch(e){toast('进度未保存，请检查存档和储存空间。');return false}}
-    reload(){if(this.blocked)return false;try{const raw=localStorage.getItem(this.shared?'english-adventure-v2':this.key);if(!raw)return false;const parsed=JSON.parse(raw),next=this.shared?parsed.garden:parsed;if(!this.validate(next))throw Error('invalid');this.state=next;return true}catch{toast('存档无法同步，原始数据已保留。');return false}}
+    update(mutator){if(!this.shared&&this.app==='garden'&&localStorage.getItem('english-adventure-v2')){this.shared=true;this.blocked=false;if(!this.reload())return false}if(!this.shared)return super.update(mutator);if(this.blocked)return false;try{const root=JSON.parse(localStorage.getItem('english-adventure-v2'));const next=copy(root.garden);if(mutator(next)===false)return false;registerRuns(root.garden,next);if(!this.validate(next))throw Error('invalid');const changed=next.settings.pack!==root.garden.settings.pack||JSON.stringify(next.custom)!==JSON.stringify(root.garden.custom);root.garden=next;if(changed)retargetNavy(root);if(window.parent!==window&&window.parent.Adventure&&!window.parent.Adventure.validate(root))throw Error('invalid');persist('english-adventure-v2',root);this.state=next;window.parent.postMessage('garden-updated',location.origin);return true}catch(e){toast('进度未保存，请检查存档和储存空间。');return false}}
+    reload(){if(this.app==='garden'&&localStorage.getItem('english-adventure-v2'))this.shared=true;if(this.blocked)return false;try{const raw=localStorage.getItem(this.shared?'english-adventure-v2':this.key);if(!raw)return false;const parsed=JSON.parse(raw),next=this.shared?parsed.garden:parsed;if(!this.validate(next))throw Error('invalid');this.state=next;return true}catch{toast('存档无法同步，原始数据已保留。');return false}}
     export(){if(!this.shared)return super.export();const data=localStorage.getItem('english-adventure-v2');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=`英语花园-全部进度-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-    async import(file){if(this.shared&&window.parent.Adventure)return window.parent.Adventure.restore(file);return super.import(file)}
+    async import(file){if(this.shared&&window.parent.Adventure)return window.parent.Adventure.restore(file);if(this.shared){toast('请从探险地图的家长设置恢复备份，避免覆盖共享进度。');return}return super.import(file)}
   }
-  window.GameCommon={$,$$:(sel)=>document.querySelectorAll(sel),PACKS,copy,shuffle,uid,escape,toast,int,validWord,validBase,validRound,validPlanting,Store:SharedGardenStore,words,deck,drawWord,retargetNavy,migratePhotoPack,distractors,parseWords,parentSetup,historyRows,speak,stopSpeech,sound,install};
+  window.GameCommon={persist,mergeFlowers,rewardKind,rewardDay,validRewardLedger,beginReward,rewardInfo,rewardAllowed,grant,registerRuns,$,$$:(sel)=>document.querySelectorAll(sel),PACKS,copy,shuffle,uid,escape,toast,int,validWord,validBase,validRound,validPlanting,Store:SharedGardenStore,words,deck,drawWord,retargetNavy,migratePhotoPack,distractors,parseWords,parentSetup,historyRows,speak,stopSpeech,sound,install};
 })();

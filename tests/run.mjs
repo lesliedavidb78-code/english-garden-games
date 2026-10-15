@@ -17,5 +17,5 @@ function run(args) {
 const files=javascript(new URL('../',import.meta.url));
 for(const file of files)run(['--check',file]);
 console.log(`PASS ${files.length} 个 JavaScript 语法检查`);
-for(const name of ['vocabulary-controls','navy-controls','offline-controls','path-regression'])run([fileURLToPath(new URL(name+'.mjs',import.meta.url))]);
+for(const name of ['vocabulary-controls','navy-controls','offline-controls','path-regression','storage-rewards'])run([fileURLToPath(new URL(name+'.mjs',import.meta.url))]);
 console.log('PASS 全部回归套件（不代替真机或浏览器互动验收）');

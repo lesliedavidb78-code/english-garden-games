@@ -31,8 +31,8 @@ function harness({fastTimeout=false}={}){
     async open(name){if(!entries.has(name))entries.set(name,new MemoryCache());return entries.get(name)},
     async keys(){return [...entries.keys()]},
     async delete(name){
-      if(name.startsWith('english-games-offline-')&&name!=='english-games-offline-v34'){
-        assert(entries.get('english-games-offline-v34')?.entries.has(new URL('./__offline-ready-v34',href).href),'旧缓存只能在完整 marker 写入后删除');
+      if(name.startsWith('english-games-offline-')&&name!=='english-games-offline-v35'){
+        assert(entries.get('english-games-offline-v35')?.entries.has(new URL('./__offline-ready-v35',href).href),'旧缓存只能在完整 marker 写入后删除');
       }
       deleted.push(name);return entries.delete(name);
     }
@@ -194,7 +194,7 @@ const evidence=[
   '最终 919 必需 URL + 1 marker；marker 的 completed/total 均为 919；之后才允许删除旧 cache。',
   `两个同时 PREPARE 共享工作，最大实际模拟 fetch 并发 ${h.state.maxActive}；每个正常 URL 仅准备下载 1 次。`,
   'ready 后再次发送 PREPARE，累计网络请求数不变。',
-  '全部进度消息 cache=v34、total=919、completed 在 0..919、state 值合法。',
+  '全部进度消息 cache=v35、total=919、completed 在 0..919、state 值合法。',
   's0000.wav 网络失败条件下返回当前缓存 HTTP 200 和完整模拟正文。',
   'common.js 已有缓存时仍增加 1 次在线网络请求。',
   'common.js 网络失败时返回缓存 HTTP 200。',
