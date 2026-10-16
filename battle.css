@@ -12,3 +12,78 @@
 @media(max-height:600px){.dialogue-battle .battle-hud{padding:6px 8px}.dialogue-battle .battle-health-label strong{font-size:11px}.dialogue-battle .battle-dialogue{padding:8px 10px;min-height:68px}.dialogue-battle .battle-caption{font-size:14px!important}.dialogue-battle .battle-dialogue-translation{font-size:10px!important;line-height:1.35}.dialogue-battle .battle-dialogue-name{font-size:10px}.dialogue-battle .battle-dialogue-heading{margin-bottom:3px}.dialogue-battle .battle-intro{padding:12px}.dialogue-battle .battle-intro-content{padding:13px}.dialogue-battle .battle-intro-text{font-size:16px!important;min-height:70px}.dialogue-battle .battle-story-line{font-size:10px}}
 @media(orientation:landscape) and (max-height:520px){.dialogue-battle .battle-combo-card{left:2%;right:54%;top:30%}.dialogue-battle .battle-combo-card strong{font-size:28px}.dialogue-battle .battle-terminal-banner{left:3%;right:55%;top:26%}.dialogue-battle .battle-terminal-banner strong{font-size:18px}.dialogue-battle .battle-dialogue::before{display:none}.dialogue-battle .battle-backdrop img{object-position:50% 65%}.dialogue-battle .battle-intro{justify-content:flex-end;align-items:center}.dialogue-battle .battle-intro-content{width:55%}.dialogue-battle .battle-intro-text{font-size:15px!important;min-height:60px;line-height:1.5}.dialogue-battle .battle-intro-kicker{margin-bottom:7px!important}.dialogue-battle .battle-intro-actions{margin-top:8px}.dialogue-battle .battle-story-line{left:5%;right:55%;top:var(--battle-story-top,65%)}}
 @media(prefers-reduced-motion:reduce){.dialogue-battle *{animation:none!important;transition:none!important}.dialogue-battle .battle-combo-card{transform:none}.dialogue-battle.special-attack .battle-combo-card{opacity:1}.dialogue-battle.impact-freeze .battle-flash{opacity:0}.dialogue-battle.battle-shaking .battle-backdrop,.dialogue-battle.battle-shaking .battle-characters{translate:none}}
+
+/* 2.5D presentation pass: all decoration stays below the live question UI. */
+.dialogue-battle{background:#10263b}
+.dialogue-battle .battle-backdrop{overflow:hidden}
+.dialogue-battle .battle-atmosphere{background:linear-gradient(180deg,#071a36b3 0%,#0b27433d 19%,transparent 37%,#0b223953 58%,#07182bdf 83%,#081a30 100%)}
+.dialogue-battle .battle-sky-light{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 16% 22%,#b7edff24,transparent 45%),linear-gradient(120deg,transparent 32%,#a9d9e50a 42%,transparent 53%);mix-blend-mode:screen}
+.dialogue-battle .battle-characters{isolation:isolate}
+.dialogue-battle .battle-ground-plane{position:absolute;z-index:0;bottom:-3%;left:3%;right:3%;height:18%;border-radius:50%;background:radial-gradient(ellipse,#11243866 0%,#10233700 70%);pointer-events:none}
+.dialogue-battle .battle-ground-plane i{position:absolute;bottom:8%;left:2%;width:43%;height:54%;border:1px solid #b6eeff21;border-radius:50%;background:radial-gradient(ellipse,#9bdbf025,transparent 68%);box-shadow:0 0 25px #8edfff10,inset 0 0 18px #85efff0a;transform:rotate(-3deg)}
+.dialogue-battle .battle-ground-plane i+i{left:auto;right:2%;border-color:#ffce9e1f;background:radial-gradient(ellipse,#ffbd8a20,transparent 68%);transform:rotate(3deg)}
+.dialogue-battle .battle-ground-shadow{z-index:0;left:27%;width:49%;bottom:1.5%;height:6%;background:radial-gradient(ellipse,#03111ad9 0%,#07152191 36%,#10253800 73%);filter:blur(2px);transform:none;opacity:.85}
+.dialogue-battle .battle-mover{z-index:1;transform-origin:50% 92%}
+.dialogue-battle .battle-figure{filter:drop-shadow(2px 2px 1px #0714205c) drop-shadow(-2px -1px 2px #bef2ff20);animation:battle-depth-idle 4.2s ease-in-out infinite;transform-origin:50% 94%}
+.dialogue-battle .battle-monster .battle-figure{animation-duration:5s;animation-delay:-1.7s}
+.dialogue-battle .battle-charge-ring{border-width:2px;box-shadow:0 0 12px #77edff80,inset 0 0 8px #77edff45}
+.dialogue-battle .battle-hud{border-color:#b7d9ec52;background:linear-gradient(135deg,#14354cd9,#081b32ed);box-shadow:0 7px 18px #020d2447,inset 0 1px #e6fbff1a}
+.dialogue-battle .battle-health-track{height:10px;border-color:#b7d4de70;box-shadow:inset 0 2px 4px #0007}
+.dialogue-battle .battle-health-track span{position:relative;filter:drop-shadow(0 0 3px #3cebd175)}
+.dialogue-battle .battle-health-track span::after{content:"";position:absolute;inset:1px 0 50%;background:#fff3}
+.dialogue-battle .battle-mission{letter-spacing:.7px;color:#d9edf3}
+.dialogue-battle .battle-dialogue{border-color:#99b9d17a;background:linear-gradient(140deg,#18384ef5,#0b2137fa);box-shadow:0 10px 30px #020b234d,inset 0 1px #e1f6ff21,inset 3px 0 #99dbf22e;border-radius:15px}
+.dialogue-battle .battle-dialogue.hero-speaking{background:linear-gradient(140deg,#184142f7,#0d2838fa);box-shadow:0 10px 30px #020b234d,inset 0 1px #defff121,inset 3px 0 #9bf2c545}
+.dialogue-battle .battle-dialogue::before{background:#18384e}
+.dialogue-battle .battle-dialogue.hero-speaking::before{background:#184142}
+.dialogue-battle .battle-dialogue-heading{padding-bottom:5px;border-bottom:1px solid #bedfe812;margin-bottom:6px}
+.dialogue-battle .battle-dialogue-name{font-weight:700;letter-spacing:.6px}
+.dialogue-battle .battle-caption{color:#fff9ea}
+.dialogue-battle .battle-story-line{border:1px solid #adc9d52b;background:linear-gradient(90deg,#10233800,#183c50d6 15%,#183c50d6 85%,#10233800);border-radius:20px;color:#dcedef;padding:5px 13px;font-size:10px}
+.dialogue-battle .battle-edge-light{position:absolute;z-index:4;inset:0;opacity:0;pointer-events:none;box-shadow:inset 0 0 80px #ffb08023;transition:opacity .4s ease}
+.dialogue-battle.hero-danger .battle-edge-light{opacity:1}
+.dialogue-battle .battle-flash{background:radial-gradient(ellipse 95px 85px at var(--battle-hit-x,65%) var(--battle-hit-y,35%),#e5fdff8c,#94eaff12 54%,transparent 75%)}
+.dialogue-battle .battle-impact-word{font-size:clamp(16px,5vw,24px);color:#f5fffd;letter-spacing:1px;text-shadow:0 2px 3px #062839,0 0 12px #a6eeff9c;transform:translate(-50%,-50%) rotate(-6deg)}
+.dialogue-battle.monster-attacks .battle-impact-word{color:#ffe8c6;text-shadow:0 2px 3px #3c211d,0 0 12px #ffd0a47a}
+.dialogue-battle .battle-combo-card{z-index:6;top:24%;text-shadow:0 2px 5px #123443,0 0 18px #93eaff96}
+.dialogue-battle .battle-combo-card strong{font-size:clamp(22px,6vw,36px);letter-spacing:3px}
+.dialogue-battle .battle-combo-card span{font-size:11px}
+.dialogue-battle.special-attack .battle-impact-word{display:none}
+.dialogue-battle .battle-terminal-banner{background:linear-gradient(115deg,#10293bd9,#1e5d69ec,#10293bd9);box-shadow:0 8px 25px #0514275c,inset 0 1px #def9ff30}
+.dialogue-battle .battle-idle-dust i{width:2px;height:2px;box-shadow:0 0 4px #b6e8f370;animation-duration:11s}
+.dialogue-battle .battle-intro-content{background:linear-gradient(135deg,#193d50f5,#0a2038fa);border-color:#adc7d87a;box-shadow:0 16px 35px #0310258c,inset 0 1px #d4f3ff24}
+.dialogue-battle .battle-intro-next{background:linear-gradient(#b4f4f2,#88d4e0);box-shadow:inset 0 1px #fff7,0 3px 0 #3c7d91}
+/* Native films and image-frame films keep their original composition. */
+.dialogue-battle.film-active .battle-ground-plane{visibility:hidden}
+.dialogue-battle.film-active .battle-sky-light{opacity:.35}
+@keyframes battle-depth-idle{0%,100%{transform:translateY(0) rotate(-.2deg) scale(1,1)}50%{transform:translateY(-1px) rotate(.25deg) scale(1.005,1.012)}}
+@keyframes battle-impact-flash{0%{opacity:.32}100%{opacity:0}}
+@keyframes battle-screen-shake{0%,100%{translate:0 0}25%{translate:-2px 1px}60%{translate:1px -1px}}
+@media(max-width:359px){.dialogue-battle .battle-combo-card small{letter-spacing:2px;font-size:8px}.dialogue-battle .battle-impact-word{font-size:16px}.dialogue-battle .battle-dialogue-heading{padding-bottom:3px;margin-bottom:4px}}
+@media(orientation:landscape) and (max-height:520px){.dialogue-battle .battle-combo-card{top:30%;left:3%;right:55%}.dialogue-battle .battle-combo-card strong{font-size:24px}.dialogue-battle .battle-story-line{padding:3px 8px}.dialogue-battle .battle-dialogue-heading{padding-bottom:3px;margin-bottom:4px}}
+/* Wide desktops use the same stage / dialogue split as landscape phones. */
+@media(min-width:900px) and (min-height:521px) and (orientation:landscape){
+ body.training-focus.training-dialogue .training-card{--dialogue-choice-height:clamp(180px,36vh,324px)}
+ body.training-focus.training-dialogue .battle-hud{left:20px;right:auto;width:calc(46% - 40px);top:64px}
+ body.training-focus.training-dialogue .battle-characters{left:0;width:46%;top:24%;height:72%}
+ body.training-focus.training-dialogue .battle-mission{top:118px;left:24px;right:56%;text-align:left;font-size:12px}
+ body.training-focus.training-dialogue .battle-dialogue{left:49%;right:24px;top:132px;bottom:auto;padding:20px 22px;min-height:135px}
+ body.training-focus.training-dialogue .battle-dialogue::before{display:none}
+ body.training-focus.training-dialogue .battle-dialogue-name{font-size:13px}
+ body.training-focus.training-dialogue .battle-dialogue-controls{right:18px;top:14px}
+ body.training-focus.training-dialogue .battle-dialogue-line{margin-top:10px}
+ body.training-focus.training-dialogue [data-battle="caption"]{font-size:clamp(19px,1.7vw,25px)!important;line-height:1.4}
+ body.training-focus.training-dialogue .battle-dialogue-translation{font-size:13px!important;line-height:1.5}
+ body.training-focus.training-dialogue #training-choices,body.training-focus.training-dialogue .training-card.reviewing #training-choices{left:49%;right:24px;bottom:90px;gap:12px}
+ body.training-focus.training-dialogue .training-card .training-choice,body.training-focus.training-dialogue .training-card.reviewing .training-choice{font-size:clamp(16px,1.6vw,21px);line-height:1.4;padding:15px 18px 15px 42px}
+ body.training-focus.training-dialogue .training-choice::before{left:13px;top:15px}
+ body.training-focus.training-dialogue #training-next{left:49%;right:24px;bottom:25px;width:calc(51% - 24px);min-height:50px}
+ body.training-focus.training-dialogue #training-audio-note{left:49%;right:24px;bottom:78px}
+ body.training-focus.training-dialogue .battle-story-line{left:4%;right:58%;top:auto;bottom:4%;font-size:12px}
+ body.training-focus.training-dialogue .battle-combo-card{left:4%;right:58%;top:27%}
+ body.training-focus.training-dialogue .battle-terminal-banner{left:4%;right:58%;top:30%}
+ body.training-focus.training-dialogue .battle-complete .battle-dialogue{top:32%;bottom:auto}
+ body.training-focus.training-dialogue .battle-intro{justify-content:flex-end;align-items:center;padding:24px}
+ body.training-focus.training-dialogue .battle-intro-content{width:47%}
+}
+@media(prefers-reduced-motion:reduce){.dialogue-battle .battle-figure,.dialogue-battle .battle-idle-dust i{animation:none!important}.dialogue-battle .battle-flash{display:none}.dialogue-battle .battle-ground-plane{opacity:.65}.dialogue-battle .battle-edge-light{transition:none}.dialogue-battle.battle-shaking .battle-backdrop,.dialogue-battle.battle-shaking .battle-characters{animation:none!important;translate:none!important}}

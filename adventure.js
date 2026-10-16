@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.16-01';
+  const C=GameCommon,$=C.$,KEY='english-adventure-v2',RELEASE='10.16-02';
   const fingerprint=text=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return `${text.length}:${h>>>0}`};
   const freshGarden=()=>({version:1,app:'garden',settings:{pack:'pep5-photo-upper-all'},custom:[],water:0,suns:0,growth:0,selectedSeed:0,seedGrowth:[0,0,0,0,0,0],flowers:[],history:[],active:null});
   const freshNavy=()=>({totalArrows:0,history:[],legacyHistory:[],active:null});
@@ -312,7 +312,7 @@
   NavyFleet.init({stage:$('river'),heroBoat:$('hero-boat')});fillSettings();renderBoat();renderRecords();renderLanding();if(location.hash==='#garden')switchView('garden');
   $('offline-status').textContent=`版本 ${RELEASE} · 离线资源准备中…`;
   if('serviceWorker'in navigator){
-   const offlineCache='english-games-offline-v35';
+   const offlineCache='english-games-offline-v36';
    let framesPreparation=null,offlinePoll=null,offlineRegistration=null;
    const offlineFailure=()=>{clearInterval(offlinePoll);offlinePoll=null;$('offline-status').textContent=`版本 ${RELEASE} · 离线未准备，联网点“检查更新”重试`};
    const requestOffline=()=>{const worker=offlineRegistration?.active||navigator.serviceWorker.controller;worker?.postMessage({type:'PREPARE_OFFLINE'})};
@@ -332,9 +332,9 @@
     // Wait for that renderer before deciding which offline assets are required.
     if(document.readyState==='loading')await new Promise(resolve=>document.addEventListener('DOMContentLoaded',resolve,{once:true}));
     if(!window.BattleFilm)throw Error('battle-renderer-unavailable');
-    const cache=await caches.open(offlineCache),marker=await cache.match(new URL('__offline-ready-v35',location.href));
+    const cache=await caches.open(offlineCache),marker=await cache.match(new URL('__offline-ready-v36',location.href));
     const complete=marker?await marker.json():null;
-    if(complete?.cache!==offlineCache||complete.completed!==919||complete.total!==919){requestOffline();return}
+    if(complete?.cache!==offlineCache||complete.completed!==920||complete.total!==920){requestOffline();return}
     clearInterval(offlinePoll);offlinePoll=null;
     const essential=['assets/realm-art/hero-v1.png','word-realm.js','word-realm.css','progression.js','progression-data.js','battle-campaign.js','assets/progression-art/monsters-v1.png','assets/progression-art/scenes-v1.png','assets/progression-art/river-scenes-v1.png','assets/battle-media/manifest.js','assets/battle-media/video/portrait/victory_shield.mp4','assets/battle-media/video/landscape/victory_shield.mp4','assets/battle-media/audio/voice/vo_intro_monster.mp3','assets/word-audio/words/w0381.mp3'];
     essential.push('battle-frames.js','battle-frames.css','navy-fleet.js','navy-fleet.css','navy-campaign-ui.css','word-shooter.js','word-shooter.css','shooter-campaign.js','shooter-campaign.css','shooter-data.js','shooter-vocabulary.js','shooter-audio.js','shooter-audio-manifest.js','assets/shooter-art/room-v1.png','assets/shooter-art/sprites-v1.png','assets/straw-fleet-side-v2.png',...Object.values(window.SHOOTER_WORD_CLIPS||{}));

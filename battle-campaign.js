@@ -46,7 +46,7 @@
  }
  function intro(a){const l=level(a);return [
   {speaker:l.monster,text:`${l.scene}的通讯已经被我切断！我要占领这里，再逼近地球。谁敢阻挡我？`},
-  {speaker:'奥特曼',text:`我们会守护大家的家园！小小通讯员，现在需要你的英语力量，帮我夺回${l.scene}。`},
+  {speaker:'光之守护者',text:`我们会守护大家的家园！小小通讯员，现在需要你的英语力量，帮我夺回${l.scene}。`},
   {speaker:'守护队',text:`本关学习：${l.subtitle}。听力、词义、翻译与对话都会出现；答对10题获胜，累计答错10题撤退。标有闪电的题，要在${l.seconds}秒内回应。`}
  ]}
  let bound=null,observer=null,frame=0,currentLevel=null;
@@ -58,6 +58,7 @@
   const mover=el.querySelector('.battle-monster .battle-mover'),r=mover?.getBoundingClientRect(),sprite=el.querySelector('.campaign-monster-sprite');
   if(r&&sprite){const size=Math.min(r.width,r.height);sprite.style.width=`${size}px`;sprite.style.height=`${size}px`;sprite.style.marginLeft=`${-size/2}px`}
   const scene=el.querySelector('.campaign-scene-sprite');
+  const art={"1": {"background": "assets-v2/images/battle-stages/stage01_chongqing.png"}, "2": {"monster": "assets-v2/images/sprites/monsters/monster_02_octopus.png", "background": "assets-v2/images/battle-stages/stage02_harbor.png"}, "3": {"monster": "assets-v2/images/sprites/monsters/monster_03_rhino.png", "background": "assets-v2/images/battle-stages/stage03_tokyo.png"}, "4": {"monster": "assets-v2/images/sprites/monsters/monster_04_crocodile.png", "background": "assets-v2/images/battle-stages/stage04_wetland.png"}, "5": {"monster": "assets-v2/images/sprites/monsters/monster_05_golem.png", "background": "assets-v2/images/battle-stages/stage05_volcano.png"}, "6": {"monster": "assets-v2/images/sprites/monsters/monster_06_ice_dragon.png", "background": "assets-v2/images/battle-stages/stage06_moon.png"}, "7": {"monster": "assets-v2/images/sprites/monsters/monster_07_mantis.png", "background": "assets-v2/images/battle-stages/stage07_nybridge.png"}, "8": {"monster": "assets-v2/images/sprites/monsters/monster_08_scorpion.png", "background": "assets-v2/images/battle-stages/stage08_desert.png"}, "9": {"monster": "assets-v2/images/sprites/monsters/monster_09_eagle.png", "background": "assets-v2/images/battle-stages/stage09_cloud.png"}, "10": {"monster": "assets-v2/images/sprites/monsters/monster_10_three_head_dragon.png", "background": "assets-v2/images/battle-stages/stage10_orbital.png"}}[String(l.id)];if(art){if(sprite&&art.monster){sprite.style.backgroundImage=`url('${art.monster}')`;sprite.style.backgroundSize='contain';sprite.style.backgroundPosition='center bottom'}if(scene){scene.style.backgroundImage=`url('${art.background}')`;scene.style.backgroundSize='cover';scene.style.backgroundPosition='center'}return}
   if(scene&&b.width&&b.height){const cw=2115/5,ch=744/2,scale=Math.max(b.width/cw,b.height/ch),col=l.artIndex%5,row=Math.floor(l.artIndex/5);scene.style.backgroundSize=`${2115*scale}px ${744*scale}px`;scene.style.backgroundPosition=`${-col*cw*scale+(b.width-cw*scale)/2}px ${-row*ch*scale+(b.height-ch*scale)/2}px`}
  }
  function queueFit(){cancelAnimationFrame(frame);frame=requestAnimationFrame(fit)}
@@ -70,7 +71,7 @@
   const oldMonster=el.querySelector('.battle-monster img.battle-figure');if(oldMonster)oldMonster.hidden=!!l&&!l.videoAvailable;
   let sprite=el.querySelector('.campaign-monster-sprite');if(!sprite){sprite=document.createElement('div');sprite.className='battle-figure campaign-monster-sprite';sprite.setAttribute('role','img');oldMonster.after(sprite)}sprite.hidden=!l||l.videoAvailable;
   let scene=el.querySelector('.campaign-scene-sprite');if(!scene){scene=document.createElement('div');scene.className='campaign-scene-sprite';scene.setAttribute('aria-hidden','true');el.querySelector('.battle-backdrop').prepend(scene)}scene.hidden=!l||l.videoAvailable;
-  const labels=el.querySelectorAll('.battle-health-label strong');if(labels[1])labels[1].textContent=l?.monster||'怪兽';el.setAttribute('aria-label',l?`第${l.id}关：奥特曼对战${l.monster}，守护${l.scene}`:'奥特曼与怪兽的英语对话大战');
+  const labels=el.querySelectorAll('.battle-health-label strong');if(labels[1])labels[1].textContent=l?.monster||'怪兽';el.setAttribute('aria-label',l?`第${l.id}关：光之守护者对战${l.monster}，守护${l.scene}`:'光之守护者与怪兽的英语对话大战');
   el.classList.toggle('campaign-timed',!!l&&!!a.items?.[a.index]?.timed&&a.phase==='ready');
   if(l){sprite.setAttribute('aria-label',l.monster);sprite.style.backgroundPosition=`${l.artIndex%5*25}% ${Math.floor(l.artIndex/5)*100}%`;if(a.correct>=10)el.querySelector('[data-battle="result-title"]').textContent=`${l.scene}守护成功！`}
   if(l&&!l.videoAvailable)oldMonster.before(sprite);else oldMonster.after(sprite);

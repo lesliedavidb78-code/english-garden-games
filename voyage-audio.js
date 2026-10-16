@@ -3,8 +3,8 @@
   'use strict';
   const C=GameCommon,base='assets/audio/',files={
     quiet:'music/bgm_river_adventure_loop_quiet.mp3',adventurous:'music/bgm_river_adventure_loop_adventurous.mp3',
-    river:'ambience/amb_river_mist_loop.mp3',shot:'sfx/sfx_arrow_whoosh.mp3',impact:'sfx/sfx_arrow_straw_hit.mp3',
-    crack:'sfx/sfx_hull_crack.mp3',leak:'sfx/sfx_water_leak_loop.mp3',sink:'sfx/sfx_boat_sink.mp3',
+    river:'ambience/amb_river_mist_loop.mp3',shot:'../../assets-v2/audio/web/sfx/navy_arrow_launch_v1.mp3',impact:'../../assets-v2/audio/web/sfx/navy_arrow_hit_v1.mp3',
+    crack:'../../assets-v2/audio/web/sfx/navy_hull_crack_v1.mp3',leak:'sfx/sfx_water_leak_loop.mp3',sink:'sfx/sfx_boat_sink.mp3',
     win:'sfx/sfx_victory_sting.mp3',five:'dialogue/vo_five_leaks_01.mp3',sunk:'dialogue/vo_sink_01.mp3'
   };
   let options={music:'quiet',effects:true,dialogue:true};

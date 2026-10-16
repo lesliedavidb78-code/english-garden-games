@@ -20,3 +20,45 @@ body.training-focus.training-realm .training-card>:not(#training-realm-scene){di
 @media(max-height:560px){.word-realm{grid-template-rows:43px minmax(0,1fr) auto}.realm-brand strong{font-size:16px}.realm-brand small{font-size:7px}.word-realm .realm-hud{padding-block:4px}.realm-deck{gap:5px;padding-top:7px;padding-bottom:7px}.realm-deck-heading{min-height:24px}.word-realm .realm-hear{min-height:25px;font-size:10px}.word-realm .realm-ammo-chip{min-height:39px;padding-block:6px;font-size:12px}.realm-feedback{min-height:42px;padding-block:4px}.realm-feedback strong{font-size:13px}.word-realm .realm-fire,.word-realm .realm-next{min-height:37px;font-size:13px;padding:7px}.realm-equipped{font-size:8px}.realm-room-sign{top:6px;padding:4px 7px}.realm-story{font-size:9px}.realm-room-gate{width:37px;height:59px;font-size:17px}.realm-chest-overlay{padding:9px}.realm-chest-panel{padding:12px;gap:0}.realm-chest-art{height:44px;width:58px}.realm-chest-panel h2{font-size:16px;margin:7px 0 4px}.realm-chest-panel>p{font-size:10px;line-height:1.3;margin-bottom:10px}.realm-upgrades{gap:5px;margin-bottom:10px}.word-realm .realm-upgrade{padding:8px;min-height:53px}.realm-upgrade strong{font-size:12px}.realm-upgrade small{font-size:10px}.realm-upgrade-icon{width:27px;height:27px;font-size:22px}}
 @media(orientation:landscape) and (max-height:620px){.word-realm{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:44px minmax(0,1fr)}.realm-hud{grid-column:1/-1;grid-row:1}.realm-arena{grid-column:1;grid-row:2}.realm-deck{grid-column:2;grid-row:2;padding:7px 10px;justify-content:center;border-top:0;border-left:1px solid #e5e1a557;box-shadow:-8px 0 22px #00192066}.realm-room-sign{top:8px}.realm-story{left:9px;right:9px;bottom:7px}.realm-room-gate{height:68px}.realm-chest-overlay{padding:10px}.realm-chest-panel{max-width:660px;display:grid;grid-template-columns:95px 1fr;gap:6px 15px;padding:16px}.realm-chest-art{grid-column:1;grid-row:1/3;width:90px;height:75px;align-self:center}.realm-chest-kicker{grid-column:2;text-align:left;margin:0;align-self:end}.realm-chest-panel h2{grid-column:2;text-align:left;margin:0;font-size:18px}.realm-chest-panel>p{grid-column:1/-1;margin:0 0 7px;text-align:left}.realm-upgrades{grid-column:1/-1;flex-direction:row;margin:0;gap:8px}.word-realm .realm-upgrade{flex:1;align-items:flex-start;gap:7px;padding:10px;min-height:98px}.realm-upgrade-icon{width:25px;height:25px;min-width:25px;font-size:20px}.realm-chest-panel>.realm-next{grid-column:1/-1;margin-top:6px}}
 @media(prefers-reduced-motion:reduce){.word-realm *{animation:none!important;transition:none!important}}
+
+/* 2.5D stage layers: floor contact, far light, and nearer edges remain decorative. */
+.realm-scene{filter:saturate(.94) brightness(.85);transform:scale(1.015);transform-origin:50% 55%}
+.realm-scene-shade{background:linear-gradient(180deg,#122e3a25,transparent 37%,#17373c45 75%,#0e2d3bba),radial-gradient(ellipse at 57% 42%,#ecffd51a,transparent 68%)}
+.realm-light-shafts{position:absolute;inset:-5% 0 0;z-index:1;pointer-events:none;background:linear-gradient(115deg,transparent 18%,#faffd513 19%,#faffd507 27%,transparent 28%,transparent 48%,#bfffe811 49%,transparent 64%);mix-blend-mode:screen}
+.realm-foreground{position:absolute;inset:0;z-index:9;pointer-events:none;box-shadow:inset 20px 0 28px -22px #061c2db3,inset -20px 0 28px -22px #061c2d80,inset 0 -18px 25px -20px #061c2db3}
+.realm-ground{background:linear-gradient(180deg,transparent,#315b5161 38%,#254b4b99);border-top:1px solid #c4edcb0f}
+.realm-ground::before{content:'';position:absolute;left:24%;right:14%;height:70%;bottom:-18%;border:1px solid #c5f4df35;border-radius:50%;box-shadow:0 0 0 8px #b9ffe607,inset 0 0 15px #b2ffe60c;transform:rotate(-5deg)}
+.realm-motes{position:absolute;inset:0;z-index:3;overflow:hidden;pointer-events:none}
+.realm-motes i{position:absolute;left:17%;top:32%;width:3px;height:3px;background:#edffd0;border-radius:50%;box-shadow:0 0 6px #e5ffb5;opacity:.4;animation:realm-drift 7s ease-in-out infinite}
+.realm-motes i:nth-child(2){left:37%;top:57%;animation-delay:-2s;width:2px;height:2px}.realm-motes i:nth-child(3){left:58%;top:28%;animation-delay:-4s}.realm-motes i:nth-child(4){left:78%;top:60%;animation-delay:-1s;width:2px;height:2px}.realm-motes i:nth-child(5){left:26%;top:76%;animation-delay:-3s}.realm-motes i:nth-child(6){left:88%;top:38%;animation-delay:-5s}
+.realm-hero::before{content:'';position:absolute;z-index:-1;left:15%;right:4%;bottom:6%;height:13%;background:radial-gradient(ellipse,#021b2a88,transparent 70%);transform:rotate(-8deg);pointer-events:none}
+.realm-hero-art{transform-origin:50% 92%;filter:drop-shadow(2px 4px 2px #041f2955)}
+.realm-monster-shadow{left:10%;right:7%;height:16%;bottom:-4%;background:radial-gradient(ellipse,#031a248a,transparent 70%);filter:none;transform:rotate(-7deg)}
+.realm-monster-body{filter:drop-shadow(2px 6px 4px #03222b70);animation:realm-creature-breathe 3.2s ease-in-out infinite;transform-origin:50% 92%}
+.realm-word{background:linear-gradient(150deg,#48635deb,#1b3d46f7);border-color:#f3e5b79c;box-shadow:0 4px 0 #09263977,0 7px 15px #07213366,inset 0 1px #fff3ca26}
+.realm-room-sign{box-shadow:0 4px 10px #09263955,inset 0 1px #d7ffda16}
+.realm-room-gate{overflow:visible;border-color:#c6e0b988;background:radial-gradient(ellipse,#99ebd73b,#183e46cc 68%);box-shadow:inset 0 0 22px #a7e5df52,0 0 16px #a7e5df2e,5px 4px 0 #10353d66}
+.realm-room-gate::before{content:'';position:absolute;inset:7%;border:1px dashed #ceffd685;border-radius:45% 45% 7px 7px;pointer-events:none}
+.realm-room-gate::after{content:'';position:absolute;bottom:-14%;left:-15%;right:-18%;height:16%;border:1px solid #adffdd40;border-radius:50%;background:#a7ffd315;box-shadow:0 0 15px #aaffcf24;transform:rotate(-6deg)}
+.realm-room-gate>i{position:absolute;inset:15% 17%;border-radius:50%;background:radial-gradient(ellipse,#b9ffe33b,transparent 68%);animation:realm-gate-light 3s ease-in-out infinite}
+.realm-room-gate>span{position:relative;text-shadow:0 0 12px #c2ffe3}
+.realm-correct.realm-reviewed:not(.realm-firing) .realm-room-gate{background:radial-gradient(ellipse,#c4ffde80,#65a98d38 60%,#173e3d);box-shadow:inset 0 0 20px #c7ffc873,0 0 30px #b9f6cc66,5px 4px 0 #10353d66}
+.realm-hud{background:linear-gradient(125deg,#28534bf5,#153c42f5)!important;border-bottom-color:#d3e8b853!important;box-shadow:0 3px 0 #082c3b70,0 6px 18px #061f3070!important}
+.realm-deck{background:linear-gradient(150deg,#254c44fc,#12303bfc);border-top-color:#dbe2b366;box-shadow:0 -6px 25px #082535b3,inset 0 1px #d7ffd71c}
+.word-realm .realm-ammo-chip{box-shadow:inset 0 1px #f4ffd125,0 3px 0 #0c2b36,0 6px 11px #05233255}
+.word-realm .realm-ammo-chip.selected{background:linear-gradient(150deg,#69845c,#385e4e);border-color:#fff0b8;box-shadow:inset 0 1px #faffdd38,0 3px 0 #17392f,0 0 14px #eef3ad2e}
+.realm-loaded .realm-fire{animation:realm-load-confirm .32s ease-out}
+.realm-walking .realm-hero-art{animation:realm-walk-depth .3s ease-in-out infinite}
+.realm-charging .realm-hero-art{animation:realm-cast-ready .17s ease-out both}
+.realm-casting .realm-hero-art{animation:realm-cast-release .42s ease-out both}
+.realm-hit .realm-monster-body{animation:realm-creature-hit .5s ease-out;filter:brightness(1.35) drop-shadow(0 0 10px #c1ffe0)}
+.realm-paused *{animation-play-state:paused!important}
+@keyframes realm-drift{0%,100%{transform:translate(0,0);opacity:.18}50%{transform:translate(9px,-18px);opacity:.5}}
+@keyframes realm-creature-breathe{0%,100%{transform:scale(1,1) rotate(-.8deg)}50%{transform:translateY(-2px) scale(1.025,.985) rotate(.8deg)}}
+@keyframes realm-gate-light{50%{opacity:.45;transform:scale(.85)}}
+@keyframes realm-walk-depth{0%,100%{transform:rotate(-2deg) translateY(0)}50%{transform:rotate(2deg) translateY(-3px)}}
+@keyframes realm-cast-ready{to{transform:rotate(-5deg) translateX(-2px)}}
+@keyframes realm-cast-release{0%{transform:rotate(-5deg) translateX(-2px)}25%{transform:rotate(4deg) translateX(3px)}100%{transform:rotate(0) translateX(0)}}
+@keyframes realm-creature-hit{0%{transform:scale(1)}20%{transform:translateX(7px) rotate(7deg) scale(.97,1.02)}55%{transform:translateX(-2px) rotate(-2deg)}100%{transform:translateX(0) rotate(0)}}
+@keyframes realm-load-confirm{50%{filter:brightness(1.15);box-shadow:0 3px 0 #775b2f,0 0 15px #d9f0a857}}
+@media(prefers-reduced-motion:reduce){.word-realm *{animation:none!important;transition:none!important}.realm-motes{display:none}}

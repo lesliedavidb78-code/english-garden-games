@@ -56,3 +56,6 @@ body.study-focus{height:100vh;height:100dvh;overflow:hidden;padding:0!important}
  .study-focus #spell-zone{gap:8px}.study-focus .letter-pool{gap:4px}
  .study-focus .study-card h2{font-size:18px}.study-focus .flower-choices .choice:before{display:none}
 }
+
+/* R2 plants already include their pots. */
+.plant-r2{width:100%;height:100%;object-fit:contain;object-position:center bottom}.plant .plant-r2{max-height:230px}.seed-preview .plant-r2,.flower-card .plant-r2{height:120px}.garden-scene .soil{display:none}

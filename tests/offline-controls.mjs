@@ -31,8 +31,8 @@ function harness({fastTimeout=false}={}){
     async open(name){if(!entries.has(name))entries.set(name,new MemoryCache());return entries.get(name)},
     async keys(){return [...entries.keys()]},
     async delete(name){
-      if(name.startsWith('english-games-offline-')&&name!=='english-games-offline-v35'){
-        assert(entries.get('english-games-offline-v35')?.entries.has(new URL('./__offline-ready-v35',href).href),'旧缓存只能在完整 marker 写入后删除');
+      if(name.startsWith('english-games-offline-')&&name!=='english-games-offline-v37'){
+        assert(entries.get('english-games-offline-v37')?.entries.has(new URL('./__offline-ready-v37',href).href),'旧缓存只能在完整 marker 写入后删除');
       }
       deleted.push(name);return entries.delete(name);
     }
@@ -76,9 +76,9 @@ function harness({fastTimeout=false}={}){
 }
 
 const h=harness(),{CACHE,FILE_URLS,CORE_URLS,READY_URL}=h.inspect;
-check('保持 919 个独立资源，88 个核心资源、831 个媒体资源',()=>{
-  assert.equal(FILE_URLS.length,919);assert.equal(new Set(FILE_URLS).size,919);
-  assert.equal(CORE_URLS.length,88);assert(CORE_URLS.every(url=>! /\.(mp3|wav|mp4)$/.test(url)));
+check('保持 1052 个独立资源，147 个核心资源、905 个媒体资源',()=>{
+  assert.equal(FILE_URLS.length,1052);assert.equal(new Set(FILE_URLS).size,1052);
+  assert.equal(CORE_URLS.length,147);assert(CORE_URLS.every(url=>! /\.(mp3|wav|mp4)$/.test(url)));
 });
 const old=await h.caches.open('english-games-offline-v30');
 const oldMedia=new URL('./assets/battle-media/video/portrait/idle_loop.mp4',h.href).href;
@@ -86,8 +86,8 @@ await old.put(oldMedia,new Response('ABCDE',{headers:{'Content-Type':'video/mp4'
 await h.emit('install');
 const cache=await h.caches.open(CACHE);
 check('安装只缓存核心资源，成功 skipWaiting，不提前删旧缓存',()=>{
-  assert.equal(cache.entries.size,88);assert.equal(h.state.skipWaiting,1);assert.equal(h.deleted.length,0);
-  assert.equal([...h.calls.values()].reduce((n,v)=>n+v,0),88);
+  assert.equal(cache.entries.size,147);assert.equal(h.state.skipWaiting,1);assert.equal(h.deleted.length,0);
+  assert.equal([...h.calls.values()].reduce((n,v)=>n+v,0),147);
 });
 await h.emit('activate');
 check('激活只 claim，不删旧缓存',()=>{assert.equal(h.state.claimed,1);assert(h.entries.has('english-games-offline-v30'))});
@@ -109,7 +109,7 @@ await Promise.all([h.emit('message',{data:{type:'PREPARE_OFFLINE'}}),h.emit('mes
 const firstCompleted=cache.entries.size;
 check('503 最多尝试 3 次并报告失败，保存已经完成的资源',()=>{
   assert.equal(h.calls.get(failure),3);assert.equal(h.messages.at(-1).state,'failed');
-  assert.equal(h.messages.at(-1).completed,firstCompleted);assert(firstCompleted>88&&firstCompleted<919);
+  assert.equal(h.messages.at(-1).completed,firstCompleted);assert(firstCompleted>147&&firstCompleted<1052);
   assert.equal(cache.entries.has(READY_URL),false);assert(h.entries.has('english-games-offline-v30'));
 });
 const callsBeforeRetry=new Map(h.calls);
@@ -119,11 +119,11 @@ await Promise.all([h.emit('message',{data:{type:'PREPARE_OFFLINE'}}),h.emit('mes
 const marker=await (await cache.match(READY_URL)).json();
 check('重试准确命中续传，不再次下载已完成资源',()=>{
   for(const [url,count] of callsBeforeRetry){if(firstPresent.has(url)&&url!==failure)assert.equal(h.calls.get(url),count)}
-  assert.equal(h.calls.get(failure),4);assert.equal(cache.entries.size,920);
+  assert.equal(h.calls.get(failure),4);assert.equal(cache.entries.size,FILE_URLS.length+1);
 });
-check('准确完成 919 项后才写 marker 与删除旧缓存',()=>{
-  assert.deepEqual(marker,{cache:CACHE,completed:919,total:919});
-  assert.equal(h.messages.at(-1).state,'ready');assert.equal(h.messages.at(-1).completed,919);
+check('准确完成 1052 项后才写 marker 与删除旧缓存',()=>{
+  assert.deepEqual(marker,{cache:CACHE,completed:1052,total:1052});
+  assert.equal(h.messages.at(-1).state,'ready');assert.equal(h.messages.at(-1).completed,1052);
   assert.equal(h.entries.has('english-games-offline-v30'),false);
 });
 check('并发消息共用队列，下载并发不超过 4',()=>{
@@ -134,8 +134,8 @@ await h.emit('message',{data:{type:'PREPARE_OFFLINE'}});
 check('就绪后再次收到消息不重新下载全量资源',()=>{
   assert.equal([...h.calls.values()].reduce((n,v)=>n+v,0),callsAtReady);assert.equal(h.messages.at(-1).state,'ready');
 });
-check('进度字段完整、计数不超过 919',()=>{
-  assert(h.messages.every(m=>m.type==='OFFLINE_PROGRESS'&&m.cache===CACHE&&m.total===919&&m.completed>=0&&m.completed<=919&&['preparing','ready','failed'].includes(m.state)));
+check('进度字段完整、计数不超过 1052',()=>{
+  assert(h.messages.every(m=>m.type==='OFFLINE_PROGRESS'&&m.cache===CACHE&&m.total===1052&&m.completed>=0&&m.completed<=1052&&['preparing','ready','failed'].includes(m.state)));
 });
 
 const offlineWav=new URL('./assets/shooter-audio/s0000.wav',h.href).href;
@@ -174,37 +174,37 @@ await assert.rejects(coreFailed.emit('install'),/HTTP 503/);
 const savedCore=new Set(coreFailed.entries.get(CACHE).entries.keys()),oldCalls=new Map(coreFailed.calls);
 check('核心安装失败不激活、不删除旧缓存、保留已下载核心',()=>{
   assert.equal(coreFailed.state.skipWaiting,0);assert(coreFailed.entries.has('english-games-offline-v30'));
-  assert.equal(coreFailed.calls.get(coreFailURL),3);assert(savedCore.size>0&&savedCore.size<88);
+  assert.equal(coreFailed.calls.get(coreFailURL),3);assert(savedCore.size>0&&savedCore.size<147);
 });
 coreFailed.state.fail.delete(coreFailURL);await coreFailed.emit('install');
 check('核心安装重试继续补缺失资源',()=>{
-  assert.equal(coreFailed.state.skipWaiting,1);assert.equal(coreFailed.entries.get(CACHE).entries.size,88);
+  assert.equal(coreFailed.state.skipWaiting,1);assert.equal(coreFailed.entries.get(CACHE).entries.size,147);
   for(const url of savedCore)assert.equal(coreFailed.calls.get(url),oldCalls.get(url));
 });
 
 const evidence=[
-  'FILE_URLS 去重后 919；CORE_URLS 88，全部非 MP3/WAV/MP4；媒体 831。',
-  '安装后仅 88 个缓存项、88 次下载；skipWaiting 1 次；旧 v30 未删除。',
+  'FILE_URLS 去重后 1052；CORE_URLS 147，全部非 MP3/WAV/MP4；媒体 905。',
+  '安装后仅 147 个缓存项、147 次下载；skipWaiting 1 次；旧 v30 未删除。',
   'clients.claim 1 次；旧 v30 仍存在。',
   '缺失当前版本 MP4 且网络失败时返回 206；Content-Range 为 bytes 1-3/5。',
   'ABCDE 的 bytes=1-3 正文为 BCD，长度 3。',
   'bytes=7-9 超出 5 字节文件，返回 416。',
   `模拟单 URL 503 共 3 次；failed.completed=${firstCompleted}；未生成 ready marker。`,
   '先前成功缓存的每个 URL 在重试后请求次数不变；故障 URL 第 4 次成功。',
-  '最终 919 必需 URL + 1 marker；marker 的 completed/total 均为 919；之后才允许删除旧 cache。',
+  '最终 1052 必需 URL + 1 marker；marker 的 completed/total 均为 1052；之后才允许删除旧 cache。',
   `两个同时 PREPARE 共享工作，最大实际模拟 fetch 并发 ${h.state.maxActive}；每个正常 URL 仅准备下载 1 次。`,
   'ready 后再次发送 PREPARE，累计网络请求数不变。',
-  '全部进度消息 cache=v35、total=919、completed 在 0..919、state 值合法。',
+  '全部进度消息 cache=v37、total=1052、completed 在 0..1052、state 值合法。',
   's0000.wav 网络失败条件下返回当前缓存 HTTP 200 和完整模拟正文。',
   'common.js 已有缓存时仍增加 1 次在线网络请求。',
   'common.js 网络失败时返回缓存 HTTP 200。',
   '将 30 s 定时器缩为 2 ms；请求监听 AbortSignal，3 次后 failed，模拟活跃请求归零。',
   'HTTP 200 的 ReadableStream 持续不结束；3 次 AbortSignal 终止读流，故障 URL 与 marker 均未缓存。',
   `核心文件 503 三次，skipWaiting=0；成功的 ${savedCore.size} 项核心继续保留，旧 v30 仍存在。`,
-  '清除核心故障后第二次 install 达到 88 核心并 skipWaiting=1；先前成功 URL 没有重复下载。'
+  '清除核心故障后第二次 install 达到 147 核心并 skipWaiting=1；先前成功 URL 没有重复下载。'
 ];
 checks.forEach((item,index)=>{item.evidence=evidence[index]});
 
-const report={at:new Date().toISOString(),boundary:'Node VM 中运行正式 sw.js；CacheStorage、客户端与网络为内存模拟，不替代真实浏览器安装、公网下载或手机断网验证。超时场景将计时器缩至 2 ms，仅验证 AbortSignal/重试路径。',cache:CACHE,total:919,core:88,media:831,pass:checks.length,fail:0,maxMockDownloads:h.state.maxActive,checks};
+const report={at:new Date().toISOString(),boundary:'Node VM 中运行正式 sw.js；CacheStorage、客户端与网络为内存模拟，不替代真实浏览器安装、公网下载或手机断网验证。超时场景将计时器缩至 2 ms，仅验证 AbortSignal/重试路径。',cache:CACHE,total:1052,core:147,media:905,pass:checks.length,fail:0,maxMockDownloads:h.state.maxActive,checks};
 fs.writeFileSync(new URL('./.results/offline-controls.json',import.meta.url),JSON.stringify(report,null,2)+'\n');
 console.log(`PASS ${checks.length} 项离线缓存模型检查`);

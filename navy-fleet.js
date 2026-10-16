@@ -2,11 +2,63 @@
 (function () {
   'use strict';
   const ART = 'assets/straw-soldier-boat-clean.png';
-  const SIDE_ART = 'assets/straw-fleet-side-v2.png';
+  const SIDE_ART = 'assets-v2/images/sprites/boat_follower_empty.png';
+  const LEADER_ART = 'assets-v2/images/sprites/boat_main_kongming.png';
   const NS = 'http://www.w3.org/2000/svg';
   let fleet = null;
   const bound = (v, lo, hi) => Math.min(hi, Math.max(lo, Number(v) || 0));
   const clonePose = (p) => ({ ...p });
+  // Decorations stay outside the tilted hull: the boat rocks, its contact shadow stays on the water.
+  function waterContact(node, index = 0) {
+    const water = document.createElement('div');
+    water.className = 'navy-fleet-contact'; water.setAttribute('aria-hidden', 'true');
+    water.style.setProperty('--wake-delay', `${-index * .47}s`);
+    water.innerHTML = '<i class="navy-fleet-shadow"></i><i class="navy-fleet-reflection"></i><i class="navy-fleet-ripple"></i><i class="navy-fleet-ripple"></i><i class="navy-fleet-ripple"></i>';
+    node.prepend(water); return water;
+  }
+  function sailLight(node) {
+    const light = document.createElement('i'); light.className = 'navy-fleet-sail-light'; light.setAttribute('aria-hidden', 'true'); node.append(light); return light;
+  }
+  function visualPause(f) {
+    const view = document.body.dataset.adventureView;
+    f.stage.dataset.fleetFxPaused = String(document.hidden || f.stage.classList.contains('paused') || !!(f.overlay && !f.overlay.hidden) || (!!view && view !== 'voyage'));
+  }
+  function impact(f, slot) {
+    if (f !== fleet || f.reduced || f.stage.dataset.fleetFxPaused === 'true') return;
+    if (f.bursts.size >= 4) { const oldest = f.bursts.values().next().value; oldest.remove(); f.bursts.delete(oldest); }
+    const burst = document.createElement('span'); burst.className = 'navy-fleet-impact'; burst.setAttribute('aria-hidden', 'true');
+    burst.style.left = slot.style.left; burst.style.top = slot.style.top;
+    burst.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i>';
+    f.hero.append(burst); f.bursts.add(burst);
+    burst.addEventListener('animationend', event => { if (event.target === burst) { burst.remove(); f.bursts.delete(burst); } });
+  }
+  function atmosphere(f) {
+    const scenery = document.createElement('div'); scenery.className = 'navy-fleet-atmosphere'; scenery.setAttribute('aria-hidden', 'true');
+    scenery.innerHTML = '<i class="navy-fleet-haze far"></i><i class="navy-fleet-haze near"></i><i class="navy-fleet-sunwater"></i><i class="navy-fleet-water-glint"></i><i class="navy-fleet-water-glint"></i><i class="navy-fleet-water-glint"></i>';
+    f.stage.prepend(scenery); f.scenery = scenery; f.bursts = new Set();
+    f.motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+    f.onMotionChange = event => {
+      f.reduced = event.matches;
+      if (f.reduced) { for (const burst of f.bursts) burst.remove(); f.bursts.clear(); }
+    };
+    f.motionQuery.addEventListener?.('change', f.onMotionChange);
+    f.heroWater = waterContact(f.dock); f.heroLight = sailLight(f.hero);
+    f.overlay = f.stage.querySelector('#overlay');
+    f.pauseObserver = new MutationObserver(() => visualPause(f));
+    f.pauseObserver.observe(f.stage, { attributes: true, attributeFilter: ['class'] });
+    if (f.overlay) f.pauseObserver.observe(f.overlay, { attributes: true, attributeFilter: ['hidden'] });
+    f.pauseObserver.observe(document.body, { attributes: true, attributeFilter: ['data-adventure-view'] });
+    f.onVisibility = () => visualPause(f); document.addEventListener('visibilitychange', f.onVisibility); visualPause(f);
+    const arrows = f.hero.querySelector('#stuck-arrows');
+    if (arrows) {
+      f.impactObserver = new MutationObserver(records => {
+        // pending is removed before arrow-quiver is added; both mutations refer to the same arrival.
+        const arrivals = new Set(records.map(record => record.target));
+        for (const slot of arrivals) if (slot.classList?.contains('arrow-quiver')) impact(f, slot);
+      });
+      f.impactObserver.observe(arrows, { attributes: true, attributeFilter: ['class'], subtree: true });
+    }
+  }
   function attachments(node) {
     for (const side of ['left', 'right']) { const ring = document.createElement('i'); ring.className = `navy-fleet-attachment ${side}`; ring.setAttribute('aria-hidden', 'true'); node.append(ring); }
   }
@@ -63,6 +115,7 @@
     node.dataset.fleetY = String(p.y);
     node.dataset.fleetScale = String(p.scale);
     node.dataset.fleetDepth = String(depth);
+    node.style.setProperty('--fleet-depth', String(depth));
     node.classList.toggle('navy-fleet-reversed', p.heading === -1);
     const badge = node.querySelector('.navy-fleet-badge');
     if (badge && f.data.boats >= 4) {
@@ -99,10 +152,10 @@
     const spray = document.createElement('div');
     spray.className = 'navy-fleet-spray';
     spray.innerHTML = '<i></i><i></i><i></i>';
-    motion.append(img, spray); attachments(motion);
+    motion.append(img, spray); attachments(motion); sailLight(motion);
     const badge = document.createElement('span');
     badge.className = 'navy-fleet-badge';
-    ship.append(motion, badge);
+    ship.append(motion, badge); waterContact(ship, i);
     return { ship, motion, badge, index: i };
   }
   function updateLabels(f) {
@@ -111,6 +164,7 @@
     f.layer.dataset.boats = String(f.data.boats);
     f.layer.dataset.currentBoat = String(f.viewIndex + 1);
     f.layer.dataset.holes = String(f.data.holes);
+    f.dock.classList.toggle('navy-fleet-loaded', count(f.data, f.viewIndex) >= f.data.capacities[f.viewIndex]);
     const damage = Math.min(f.data.holes, 9);
     f.hero.style.setProperty('--fleet-heel', `${damage * 6}deg`);
     f.hero.style.setProperty('--fleet-flood', `${damage * 2}px`);
@@ -205,6 +259,7 @@
     layer.prepend(chainSvg); layer.classList.add('navy-fleet-enabled'); stage.classList.add('navy-fleet-stage');
     fleet = { stage, hero, layer, dock, frontBadge, chainSvg, chainShadow: paths[0], chainMetal: paths[1], chainLinks: paths[2], escorts: new Map(), animations: new Set(), viewIndex: 0, data: snapshot(null, null), transitioning: false, chainFrame: 0, reduced: matchMedia('(prefers-reduced-motion: reduce)').matches, onHandoff: options.onHandoff, run: 0, poses: convoyPoses(1), chains: [], sideArt: false };
     const f = fleet;
+    atmosphere(f);
     // 统一远景中，长中文词义由同屏提示牌承接；原帆内容/匹配模式仍由判题逻辑决定。
     const cue = stage.querySelector('#cue'), sail = hero.querySelector('#sail-word');
     if (cue?.parentElement && sail) {
@@ -222,7 +277,7 @@
       f.sideArt = true; f.layer.classList.add('navy-fleet-side-art');
       f.layer.style.setProperty('--fleet-ship-aspect', `${art.naturalWidth} / ${art.naturalHeight}`);
       f.originalHeroSource = f.hero.querySelector('#boat-image')?.getAttribute('src');
-      const heroImage = f.hero.querySelector('#boat-image'); if (heroImage) heroImage.src = SIDE_ART;
+      const heroImage = f.hero.querySelector('#boat-image'); if (heroImage) heroImage.src = LEADER_ART;
       for (const e of f.escorts.values()) e.motion.querySelector('img').src = SIDE_ART;
       if (!f.transitioning) layout(f);
     }; art.src = SIDE_ART;
@@ -279,6 +334,7 @@
   function stop(options = {}) {
     const f = fleet; if (!f) return;
     f.run++; f.transitioning = false; f.leadDetached = false;
+    for (const burst of f.bursts || []) burst.remove(); f.bursts?.clear();
     cancelAnimationFrame(f.chainFrame); f.chainFrame = 0;
     for (const effect of f.animations) effect.cancel(); f.animations.clear();
     f.stage.classList.remove('navy-fleet-sailing');
@@ -289,6 +345,9 @@
   function reset() {
     const f = fleet; if (!f) return;
     stop({ snap: false }); f.observer?.disconnect(); window.removeEventListener('resize', f.resize);
+    f.pauseObserver?.disconnect(); f.impactObserver?.disconnect(); document.removeEventListener('visibilitychange', f.onVisibility);
+    f.motionQuery?.removeEventListener?.('change', f.onMotionChange);
+    f.scenery?.remove(); f.heroLight?.remove(); delete f.stage.dataset.fleetFxPaused;
     f.clueObserver?.disconnect();
     if (f.cluePanel) { const cue = f.cluePanel.querySelector('#cue'); if (cue) f.cluePanel.before(cue); f.cluePanel.remove(); }
     for (const e of f.escorts.values()) e.ship.remove();

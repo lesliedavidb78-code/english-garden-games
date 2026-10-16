@@ -24,3 +24,26 @@
 /* Expanded room uses a following camera, never smaller vocabulary. */
 .ws-ground,.ws-enemies{overflow:hidden}.ws-minimap{position:absolute!important;inset:auto auto auto 12px!important;top:70px!important;width:90px!important;height:63px!important;border:1px solid #9bccbb70;border-radius:6px;z-index:3;pointer-events:auto;touch-action:none;opacity:.92}
 @media(max-height:560px){.ws-minimap{top:62px!important;width:72px!important;height:50px!important}}
+
+/* Layered 2.5D treatment. All decoration stays behind the controls and words. */
+.word-shooter{background:#12303a}
+.ws-hud{background:linear-gradient(125deg,#244f56f8,#122b3cf8);border-bottom-color:#b9ead34f;box-shadow:0 3px 0 #091f2d80,0 7px 22px #04152166,inset 0 1px #d4ffee24}
+.ws-deck{background:linear-gradient(135deg,#264a4dfc,#112b3bfc);border-top-color:#c4dfb45e;box-shadow:0 -7px 25px #082335a6,inset 0 1px #d8f4d11f}
+.ws-room-tag,.ws-mission{box-shadow:0 4px 12px #041c3750,inset 0 1px #e8ffdb20;background:linear-gradient(140deg,#2d514be8,#153544ed)}
+.ws-mission strong{color:#fff2bb;text-shadow:0 2px #082c34}
+.ws-enemy>span{background:linear-gradient(155deg,#3d5e5cf5,#1a3545f5);border-color:#fff0b68c;box-shadow:0 3px 0 #0a253e99,0 5px 10px #041c3355,inset 0 1px #ffffe22b}
+.ws-floor-word{background:linear-gradient(145deg,#fff6dc,#ead19b 60%,#dbb97a);border-top-color:#fffbe8;border-bottom-color:#9d784d;box-shadow:0 3px 0 #a6814d,0 8px 12px #07233655,inset 0 1px #fffbe0}
+.ws-floor-word.near{background:linear-gradient(145deg,#fbffe4,#d8ecad);box-shadow:0 3px 0 #789360,0 0 0 2px #e5ffc17a,0 0 20px #c8e89355,0 9px 12px #07233650}
+.word-shooter .ws-fire{box-shadow:inset 0 3px 0 #e5ffe344,inset 0 -5px 0 #13334788,0 5px 0 #0c283fcc,0 9px 18px #03172966}
+.word-shooter .ws-pickup{box-shadow:inset 0 2px 0 #e5ffe333,inset 0 -3px 0 #17384688,0 4px 0 #0c283fcc,0 8px 12px #03172955}
+.word-shooter.ws-aiming .ws-fire i{animation:ws-focus-reticle 1.4s ease-in-out infinite}
+.ws-joystick{box-shadow:inset 0 3px 12px #09243180,inset 0 -2px #ecffcb20,0 4px 0 #09203390,0 8px 18px #03172966}
+.ws-minimap{box-shadow:0 4px 11px #06223480,inset 0 1px #c7ffed33}
+.ws-chest-panel{background:radial-gradient(ellipse at 50% 0,#667c49,#2e5650 44%,#173445);border-color:#f7e3a295;box-shadow:0 25px 60px #021226a6,inset 0 1px #fff0b440}
+.ws-chest-illustration{animation:ws-chest-reveal .65s cubic-bezier(.2,.75,.25,1) both}
+.ws-upgrade{box-shadow:inset 0 1px #e7ffd130,0 3px 0 #122e36;transition:transform .15s,box-shadow .15s}
+.ws-upgrade:not(:disabled):hover{transform:translateY(-2px);box-shadow:inset 0 1px #e7ffd130,0 5px 0 #122e36,0 8px 18px #071b3155}
+.ws-paused *{animation-play-state:paused!important}
+@keyframes ws-focus-reticle{50%{transform:scale(1.12);filter:drop-shadow(0 0 5px #baffdc)}}
+@keyframes ws-chest-reveal{0%{opacity:0;transform:perspective(220px) rotateY(-13deg) translateY(15px) scale(.88)}70%{transform:perspective(220px) rotateY(-13deg) translateY(-3px) scale(1.03)}100%{opacity:1;transform:perspective(220px) rotateY(-13deg)}}
+@media(prefers-reduced-motion:reduce){.word-shooter *{animation:none!important;transition:none!important}}

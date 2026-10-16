@@ -76,12 +76,12 @@
   function install(){
     const label=document.createElement('p');label.className='footer';label.id='offline-status';document.querySelector('main').append(label);
     if(!('serviceWorker'in navigator)||!window.isSecureContext||location.protocol==='file:'){label.textContent='通过安全网址打开后，可以准备离线资源。';return}
-    const cacheName='english-games-offline-v35',base=new URL('../',location.href);let registration=null,poll=null,checkToken=0,checking=false;
+    const cacheName='english-games-offline-v36',base=new URL('../',location.href);let registration=null,poll=null,checkToken=0,checking=false;
     const pending=()=>{delete document.documentElement.dataset.offline;label.textContent='离线资源准备中，请保持联网…'};
     const failed=()=>{checkToken++;clearInterval(poll);poll=null;delete document.documentElement.dataset.offline;label.textContent='离线资源尚未准备，请保持联网，在主页面点“检查更新”重试。'};
     const verify=async()=>{if(checking)return;checking=true;const token=checkToken;try{
-      const cache=await caches.open(cacheName),marker=await cache.match(new URL('__offline-ready-v35',base)),data=marker?await marker.json():null;
-      if(!data||data.cache!==cacheName||data.completed!==919||data.total!==919)return;
+      const cache=await caches.open(cacheName),marker=await cache.match(new URL('__offline-ready-v36',base)),data=marker?await marker.json():null;
+      if(!data||data.cache!==cacheName||data.completed!==920||data.total!==920)return;
       const keys=new Set((await cache.keys()).map(request=>{const url=new URL(request.url);url.search='';return url.href}));
       const sounds=[...new Set(Object.values(window.WORD_RECORDINGS||{}).map(entry=>entry.single||entry.file))];
       if(!sounds.length||!sounds.every(file=>keys.has(new URL(file,base).href)))return;

@@ -2,11 +2,11 @@
  'use strict';
  const $=id=>document.getElementById(id),A=Adventure;
  const regions=[
-  {id:'garden',name:'单词花园',subtitle:'学习 · 种花 · 收集',x:29,y:45,icon:'🌻',type:'garden'},
-  {id:'voyage',name:'草船港口',subtitle:'听单词 · 帮草船收箭',x:26,y:69,icon:'⛵',type:'voyage'},
-  {id:'city',name:'守护城市',subtitle:'英语对话 · 奥特曼大战',x:70,y:31,icon:'',type:'city'},
-  {id:'shooter',name:'单词守卫',subtitle:'移动射击 · 词义弹 · 宝箱',x:70,y:50,icon:'',type:'shooter'},
-  {id:'training',name:'探险训练营',subtitle:'听力 · 跟读 · 翻译',x:70,y:69,icon:'📖',type:'training'}
+  {id:'garden',name:'单词花园',subtitle:'学习 · 种花 · 收集',x:33,y:34,icon:'🌻',type:'garden'},
+  {id:'voyage',name:'草船港口',subtitle:'听单词 · 帮草船收箭',x:24,y:62,icon:'⛵',type:'voyage'},
+  {id:'city',name:'守护城市',subtitle:'英语对话 · 光之守护者大战',x:77,y:24,icon:'',type:'city'},
+  {id:'shooter',name:'单词守卫',subtitle:'移动射击 · 词义弹 · 宝箱',x:77,y:48,icon:'',type:'shooter'},
+  {id:'training',name:'探险训练营',subtitle:'听力 · 跟读 · 翻译',x:68,y:72,icon:'📖',type:'training'}
  ];
  function icon(r){if(r.type==='shooter')return '<span class="map-shooter-icon" aria-hidden="true"><i></i></span>'; if(r.type==='city')return '<span class="map-hero-pair" aria-hidden="true"><img src="assets/battle-art/hero-v3.png" alt=""><img src="assets/battle-art/monster-v3.png" alt=""></span>';if(r.type==='voyage')return '<span class="map-boat-icon" aria-hidden="true"><img src="assets/straw-soldier-boat.png" alt=""></span>';return `<span class="map-pin-icon" aria-hidden="true">${r.icon}</span>`}
  function build(){const pins=$('map-pins'),list=$('map-destinations');for(const r of regions){for(const parent of [pins,list]){const b=document.createElement('button');b.type='button';b.className=parent===pins?'map-pin map-pin-'+r.type:'map-destination';b.dataset.region=r.id;b.style.setProperty('--pin-x',r.x+'%');b.style.setProperty('--pin-y',r.y+'%');b.innerHTML=icon(r)+`<span class="map-pin-label"><strong>${r.name}</strong><small>${r.subtitle}</small></span>`;b.setAttribute('aria-label','进入'+r.name+'：'+r.subtitle);b.onclick=()=>open(r.id);parent.append(b)}}}
