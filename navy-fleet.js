@@ -3,7 +3,7 @@
   'use strict';
   const ART = 'assets/straw-soldier-boat-clean.png';
   const SIDE_ART = 'assets-v2/images/sprites/boat_follower_empty.png';
-  const LEADER_ART = 'assets-v2/images/sprites/boat_main_kongming.png';
+  // 人物由 #kongming-body 动态绘制；船底图必须无人物，避免重影并保留漏水动作。
   const NS = 'http://www.w3.org/2000/svg';
   let fleet = null;
   const bound = (v, lo, hi) => Math.min(hi, Math.max(lo, Number(v) || 0));
@@ -277,7 +277,7 @@
       f.sideArt = true; f.layer.classList.add('navy-fleet-side-art');
       f.layer.style.setProperty('--fleet-ship-aspect', `${art.naturalWidth} / ${art.naturalHeight}`);
       f.originalHeroSource = f.hero.querySelector('#boat-image')?.getAttribute('src');
-      const heroImage = f.hero.querySelector('#boat-image'); if (heroImage) heroImage.src = LEADER_ART;
+      const heroImage = f.hero.querySelector('#boat-image'); if (heroImage) heroImage.src = SIDE_ART;
       for (const e of f.escorts.values()) e.motion.querySelector('img').src = SIDE_ART;
       if (!f.transitioning) layout(f);
     }; art.src = SIDE_ART;
